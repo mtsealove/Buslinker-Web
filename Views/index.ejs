@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <title>BusLinker</title>
+    <script src="/public/js/container.js"></script>
+</head>
+
+<body>
+    <!-- nav bar -->
+    <%- include('nav') %>
+    <div class="main">
+        <div id="contents">
+            <!-- 브랜드 네임과 소개 -->
+            <section class="centered">
+                <h1 id="brand"><b>사람</b>과 <b>화물</b>을 <b>잇다</b></h1>
+                <h2 id="brand-big"><b>People</b> X <b>Cargo</b></h2>
+            </section>
+            <!-- What we do? -->
+            <section class="centered">
+                <h1>What We Do?</h1>
+                <div id="what-we-do-container">
+                    <div class="what-we-do">
+                        <img src="/public/images/circle_img.png" class="what-we-do-img" />
+                        <h3>통근버스 운영</h3>
+                        <pre>Lorem ipsum dolor sit amet, 
+consetetur sadipscing elitr, 
+sed diam nonumy eirmod tempor invidunt ut 
+labore et dolore magna aliquyam erat,
+sed diam voluptua. At vero eos</pre>
+                    </div>
+
+                    <div class="what-we-do">
+                        <img src="/public/images/circle_img.png" class="what-we-do-img" />
+                        <h3>화물 입고</h3>
+                        <pre>Lorem ipsum dolor sit amet, 
+consetetur sadipscing elitr, 
+sed diam nonumy eirmod tempor invidunt ut 
+labore et dolore magna aliquyam erat,
+sed diam voluptua. At vero eos</pre>
+                    </div>
+
+                    <div class="what-we-do">
+                        <img src="/public/images/circle_img.png" class="what-we-do-img" />
+                        <h3>화물 출고</h3>
+                        <pre>Lorem ipsum dolor sit amet, 
+consetetur sadipscing elitr, 
+sed diam nonumy eirmod tempor invidunt ut 
+labore et dolore magna aliquyam erat,
+sed diam voluptua. At vero eos</pre>
+                    </div>
+                </div>
+            </section>
+            <!-- 웹 관리기능 간단 소개 -->
+            <section class="centered">
+                <div class="horizontal right">
+                    <div id="web-des">
+                        <h2>A nice section heading</h2>
+                        <h1><b>goes here</b></h1>
+                        <br><br>
+                        <pre>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
+diam nonumy eirmod tempor invidunt ut labore et dolore
+magna aliquyam erat, sed diam voluptua. At vero eos et</pre>
+                    </div>
+                    <img src="/public/images/macbook-pro-wire.png" id="labtop" />
+                </div>
+            </section>
+            <!-- 앱 관리기능 간단 소개 -->
+            <section class="centered">
+                <h1>A nice section heading goes here</h1>
+                <label>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed</label>
+                <br />
+                <div class="horizontal center">
+                    <img src="/public/images/iphones.png" id="phones" />
+                    <div id="app-des">
+                        <div class="horizontal">
+                            <img src="/public/images/circle.png" class="app" />
+                            <img src="/public/images/circle.png" class="app" />
+                        </div>
+                        <br>
+                        <pre>Lorem ipsum dolor sit amet, consetetur
+sadipscing elitr, sed diam nonumy eirmod
+tempor invidunt ut labore et dolore magna
+aliquyam erat, sed diam voluptua. At vero eos et</pre>
+                        <br>
+                        <div class="horizontal">
+                            <a href="#"><img id="google-play" src="/public/images/google-play-badge.png"></img></a>
+                            <a href="#"><img id="app-store" src="/public/images/app-store-badge.svg"></img></a>
+                        </div>
+                    </div>
+                    <!-- google play and ios download link -->
+
+                </div>
+        </div>
+        </section>
+        <!-- footer -->
+        <%- include('footer') %>
+    </div>
+</body>
+
+</html>

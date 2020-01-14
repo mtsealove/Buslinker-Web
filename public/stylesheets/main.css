@@ -1,0 +1,277 @@
+/* logo */
+
+.logo-txt {
+    margin-top: 5px;
+    margin-left: 5px;
+    font-family: eurostile;
+    font-size: 20pt;
+}
+
+.logo-img {
+    width: 45px;
+    height: 45px;
+}
+
+.logo-big {
+    width: 60px;
+    height: 60px;
+}
+
+.logo-huge {
+    width: 120px;
+    height: 120px;
+}
+
+.logo-txt-middle {
+    font-family: eurostile;
+    font-size: 24pt;
+    margin-top: 10px;
+}
+
+.logo-txt-big {
+    font-family: eurostile;
+    font-size: 40pt;
+    margin-top: 17px;
+    margin-left: 15px;
+}
+
+.logo-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* navigation */
+
+.nav-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.nav-top {
+    margin-left: 20px;
+    margin-right: 20px;
+    font-size: 15pt;
+}
+
+#nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 70px;
+}
+
+#start-btn {
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+/* footer */
+
+footer {
+    background-color: #2699FB;
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.footer-body {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+/* contents */
+
+.main {
+    position: fixed;
+    top: 70px;
+    width: 100%;
+    overflow: scroll;
+}
+
+.centered {
+    width: 100%;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+/* 정중앙 */
+.full-center {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.horizontal {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.right {
+    justify-content: flex-end;
+}
+
+.center {
+    justify-content: center;
+}
+
+#web-des {
+    margin-right: 200px;
+}
+
+#app-des {
+    margin-left: 100px;
+}
+
+/* what we do */
+
+#what-we-do-container {
+    margin-top: 50px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+}
+
+.what-we-do {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.what-we-do-img {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+}
+
+/* images */
+
+#labtop {
+    margin-right: -200px;
+    height: 600px;
+}
+
+#phones {
+    width: 300px;
+}
+
+.app {
+    width: 80px;
+    height: 80px;
+    margin: 10px;
+}
+
+#google-play {
+    width: 150px;
+    height: 58px;
+}
+
+#app-store {
+    width: 150px;
+    height: 40px;
+}
+
+/* work */
+
+.works-img {
+    height: 100px;
+    width: 100px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.work-line {
+    margin-left: 100px;
+    border-left: 6px solid #E8EFF7;
+}
+
+.work-circle {
+    background-color: #186AA5;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    text-align: center;
+    margin: 0 auto;
+    font-size: 16pt;
+    vertical-align: middle;
+    line-height: 60px;
+    margin-left: -33px;
+}
+
+.work-txt {
+    margin-left: 60px;
+}
+
+/* tab */
+
+.tab {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.tab-item {
+    display: inline;
+    font-size: 18pt;
+    margin-left: 20px;
+    margin-right: 20px;
+    cursor: pointer;
+    padding-top: 5px;
+    color: gray;
+}
+
+.tab-active {
+    border-bottom: 2px solid #186AA5;
+    padding-bottom: 5px;
+    color: #186AA5;
+}
+
+/* process */
+
+.process-container {
+    padding-top: 80px;
+    padding-bottom: 80px;
+}
+
+.process-img {
+    width: 280px;
+    height: 280px;
+}
+
+.process-txt-left {
+    margin-right: 100px;
+}
+
+.process-txt-right {
+    margin-left: 100px;
+}
+
+/* form */
+#touch-form {
+    width: 60%;
+    min-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}

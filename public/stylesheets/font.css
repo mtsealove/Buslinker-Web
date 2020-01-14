@@ -1,0 +1,37 @@
+@font-face{
+    font-family: 'eurostile';
+    src: url('/public/fonts/EuroStyle\ Normal.ttf');
+}
+
+.font-white {
+    color: white;
+}
+
+.size-12 {
+    font-size: 12pt;
+}
+
+.size-11 {
+    font-size: 11pt;
+}
+
+#brand {
+    font-size: 60pt;
+}
+
+#brand-big {
+    font-size: 75pt;
+}
+
+/* text */
+#philosophy {
+    margin-top: 30px;
+    font-size: 24pt;
+    text-align: center;
+}
+
+#philosophy-sub {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 16pt;
+}

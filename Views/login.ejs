@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <title>로그인</title>
+    <script>
+        $(function () {
+            $('#login-btn').click(function(){
+                login();
+            });
+        });
+
+        //login method
+        function login() {
+            if($('#input_email').val()=='') {
+                alert('메일을 입력하세요');
+                return;
+            } else if($('#input_pw').val()=='') {
+                alert('비밀번호를 입력하세요');
+                return;
+            } else {
+                //login by ajax async
+                $.ajax({
+                url: "/Login",
+                type: "post",
+                data: {
+                    email:$('#input_email').val(),
+                    pw: $('#input_pw').val()
+                },
+                dataType: "json",
+                success: function(data) {
+                    //ID 사용 가능할 시 
+                    if(data.userName) {
+                        alert('환영합니다 '+data.userName+ ' 님');
+                        // move to each other page
+                        switch(data.userCat){
+                            case 0:
+                                location.href='/Bus/Status';
+                                break;
+                        }
+                    } else {
+                        alert('아이디와 비밀번호를 확인하세요');
+                    }
+                },
+                error: function(err) {
+                }
+            });
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <section class="full-center">
+        <img src="/public/images/logo_512x512.png" class="logo-huge">
+        <label class="logo-txt-middle">Bus<b>Linker</b></label><br>
+        <b><label style="color: #186AA5;">로그인</label></b>
+        <br>
+        <form>
+            <input class="form-control" type="email" name="email" placeholder="Email" id="input_email"><br>
+            <input class="form-control" type="password" name="pw" placeholder="Password" id="input_pw"><br>
+            <button class="btn btn-primary btn-block" type="button" id="login-btn">로그인</button>
+        </form>
+        <br>
+        <label>비밀번호를 잊어버리셨나요?</label>
+    </section>
+</body>
+
+</html>

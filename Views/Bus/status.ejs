@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <title>운행현황</title>
+    <script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8d8a439d20cdda219547d464d94644cf"></script>
+    <script>
+        $(function () {
+            setMainHeight();
+            initMap();
+            $('#info-div').hide();
+            $('#info').hover(function () {
+                $('#info-div').fadeIn(100);
+            })
+            $('#info').mouseleave(function () {
+                $('#info-div').fadeOut(100);
+            })
+        });
+        function initMap() {
+            var mapContainer = document.getElementById('map');
+            var mapOption = {
+                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                level: 3 // 지도의 확대 레벨
+            };
+            // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+            var map = new kakao.maps.Map(mapContainer, mapOption);
+        }
+        function setMainHeight() {
+            var height = $(window).height();
+            height -= 46;
+            $('.conatiner').css('height', height);
+        }
+    </script>
+</head>
+
+<body>
+    <%- include('nav') %>
+    <section class="container">
+        <div>
+            <!-- map -->
+            <div id="map"></div>
+            <!-- map info -->
+            <div id="info-div">
+                <div class="horizontal center">
+                    <img src="/public/images/bus.png">
+                    <label class="font-white" style="margin-left: 10px;">통근 운행중</label>
+                </div>
+                <div class="horizontal center">
+                    <img src="/public/images/bus.png">
+                    <label class="font-white" style="margin-left: 10px;">출고 운행중</label>
+                </div>
+                <div class="horizontal center">
+                    <img src="/public/images/bus.png">
+                    <label class="font-white" style="margin-left: 10px;">입고 운행중</label>
+                </div>
+            </div>
+            <!-- info show button -->
+            <img src="/public/images/info.png" id="info">
+            <!-- data list -->
+            <div id="list">
+                <div>
+                    <table id="tab">
+                        <tr>
+                            <td class="tab-item tab-active">전체</td>
+                            <td class="tab-item">입고</td>
+                            <td class="tab-item">출고</td>
+                            <td class="tab-item">통근</td>
+                        </tr>
+                    </table>
+                    <label>오늘의 운행 현황</label>
+                    <p>총 10대</p>
+                    <table style="width: 95%;margin-left: 2.5%;" class="table-hover">
+                        <tr style="font-size: 8.7pt;text-align: center;">
+                            <td>통근</td>
+                            <td>조성호 기사<br>19고 0756</td>
+                            <td>마포구청<br>서울특별시 마포구 성산2동 월드컵로 212</td>
+                    
+                            <td>CJ대한통운<br>서울특별시 영등포구 영등포동1가 618-1</td>
+                            <td>출근 운행중</td>
+                            <td>김알바<br>010-4713-8131</td>
+                        </tr>
+                    </table>
+            </di>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>

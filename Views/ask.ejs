@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <title>BusLinker</title>
+    <script src="/public/js/container.js"></script>
+</head>
+
+<body>
+    <%- include('nav') %>
+    <div class="main">
+        <div id="contents">
+            <section class="centered" style="padding: 70px;">
+                <h1>Get in touch</h1>
+                <br>
+                <form id="touch-form">
+                    <div class="horizontal" style="width: 100%;">
+                        <input name="email" type="email" class="form-control" placeholder="Email">
+                        <select name="subject" class="custom-select">
+                            <option value="subject1">subject1</option>
+                            <option value="subject2">subject2</option>
+                        </select>
+                    </div>
+                    <br>
+                    <textarea class="form-control" rows="15" placeholder="Write Your Message Here"></textarea><br>
+                    <button class="btn btn-primary">Submit</button><br>
+                    <p>email@example.com | 002-010-66269735</p>
+                </form>
+            </section>
+        </div>
+        <%- include('footer') %>
+    </div>
+</body>
+</html>

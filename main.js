@@ -1,0 +1,86 @@
+const express = require('express');
+const body_parser = require('body-parser');
+const session = require('express-session');
+const app = express();
+const port = 3200;
+
+app.set('view engine', 'ejs');
+app.set('views', './Views');
+app.use(body_parser.json());
+app.use(body_parser.urlencoded({ extended: true, limit: '150mb' }));
+app.use(session({
+    key: 'sid',
+    secret: 'secret',
+    resave: 'false',
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 10  //로그인 유지 시간(10시간)
+    }
+}));
+app.use('/public', express.static('public'));
+
+// index page
+app.get('/', (req, res) => {
+    res.render('index', { user: getUser(req) });
+});
+
+// intro page
+app.get('/Introduction', (req, res)=> {
+    res.render('intro', {user: getUser(req)});
+})
+
+// ask page
+app.get('/Ask', (req, res)=>{
+    res.render('ask', {user:getUser(req)});
+})
+
+// login page
+app.get('/Login', (req, res)=> {
+    if(getUser(req).userID) {  //already logined
+        res.send('<script>alert("잘못된 접근입니다");history.go(-1)</script>');
+    } else {
+        res.render('login');
+    }
+})
+
+app.get('/Bus/Status', (req, res)=> {
+    res.render('./Bus/status');
+})
+
+// login ajax
+app.post('/Login', (req, res)=>{
+    const email=req.body['email'];
+    const pw=req.body['pw'];
+    
+    // dummy
+    const result={
+        userID: email,
+        userName: 'test',
+        userCat: 0
+    };
+
+    res.json(result);
+});
+
+// get user info from session
+function getUser(req) {
+    var id = req.session.userID;
+    var name = req.session.userName;
+    var cat = req.session.userCat;
+    if (!id) {
+        id = '';
+        cat = '';
+        name = '';
+    }
+    const info = {
+        userID: id,
+        userName: name,
+        userCat: cat
+    }
+    return info;
+}
+
+app.listen(port, () => {
+    const ip = require('ip');
+    console.log('server runings on ' + ip.address() + ' : ' + port);
+})

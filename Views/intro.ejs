@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <title>BusLinker</title>
+    <script src="/public/js/container.js"></script>
+    <script src="/public/js/process.js"></script>
+</head>
+
+<body>
+    <%- include('nav') %>
+    <div class="main">
+        <div id="contents">
+            <!-- 회사 철학 -->
+            <section class="centered">
+                <div class="horizontal">
+                    <img src="/public/images/logo_512x512.png" class="logo-big" />
+                    <h1 class="logo-txt-big">Bus<b>Linker</b></h1>
+                </div>
+                <div style="background-color:#186AA5; width: 200px; height: 10px;"></div>
+                <h2 id="philosophy"><b>회사 철학 dolor sit amet, consetetur sadipscing elitr, diam <br>
+                        nonumy eirmod tempor invidunt ut labore et dolore
+                    </b></h2>
+                <h3 id="philosophy-sub">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, diam nonumy eirmod <br>
+                    tempor invidunt ut labore et dolore
+                </h3>
+            </section>
+            <!-- how it works -->
+            <section class="centered">
+                <h1>How it works</h1>
+                <br>
+                <div class="horizontal">
+                    <div class="vertical">
+                        <img src="/public/images/circle_img.png" class="works-img">
+                        <img src="/public/images/circle_img.png" class="works-img">
+                        <img src="/public/images/circle_img.png" class="works-img">
+                    </div>
+                    <div class="vertical work-line">
+                        <div class="work-circle">1</div><br><br><br>
+                        <div class="work-circle">2</div><br><br><br>
+                        <div class="work-circle">3</div>
+                    </div>
+                    <div class="work-txt">
+                        <h3>step #1</h3>
+                        <pre>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
+diam nonumy eirmod tempor invidunt ut labore et dolore
+magna aliquyam erat, sed diam voluptua. At vero eos</pre><br>
+
+                        <h3>step #2</h3>
+                        <pre>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
+diam nonumy eirmod tempor invidunt ut labore et dolore
+magna aliquyam erat, sed diam voluptua. At vero eos</pre><br>
+
+                        <h3>step #3</h3>
+                        <pre>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
+diam nonumy eirmod tempor invidunt ut labore et dolore
+magna aliquyam erat, sed diam voluptua. At vero eos</pre>
+                    </div>
+                </div>
+            </section>
+            <!-- process -->
+            <section class="centered">
+                <ul id="tab">
+                    <li class="tab-item tab-active" data-filter="0">물류회사</li>
+                    <li class="tab-item" data-filter="1">화주사</li>
+                    <li class="tab-item" data-filter="2">버스회사</li>
+                </ul>
+                <br>
+                <!-- 물류사 -->
+                <div id="logistic-div">
+                    <div class="horizontal process-container">
+                        <img src="/public/images/circle_img.png" class="process-img">
+                        <div class="process-txt-right">
+                            <h2>Lorem ipsum dolor sit<br>
+                                amet, consetetur</h2><br>
+                            <pre>Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+sed diam nonumy eirmod tempor invidunt ut labore et
+dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+                            </pre>
+                        </div>
+                    </div>
+                    <div class="horizontal process-container">
+                        <div class="process-txt-left">
+                            <h2>Lorem ipsum dolor sit<br>
+                                amet, consetetur</h2><br>
+                            <pre>Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+sed diam nonumy eirmod tempor invidunt ut labore et
+dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+                            </pre>
+                        </div>
+                        <img src="/public/images/circle_img.png" class="process-img">
+                    </div>
+                </div>
+                <!-- 화주사 -->
+                <div id="owner-div">
+                    <div class="horizontal process-container">
+                        <img src="/public/images/circle_img.png" class="process-img">
+                        <div class="process-txt-right">
+                            <h2>Lorem ipsum dolor sit<br>
+                                amet, consetetur</h2><br>
+                            <pre>Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+sed diam nonumy eirmod tempor invidunt ut labore et
+dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+                            </pre>
+                        </div>
+                    </div>
+                    <div class="horizontal process-container">
+                        <div class="process-txt-left">
+                            <h2>Lorem ipsum dolor sit<br>
+                                amet, consetetur</h2><br>
+                            <pre>Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+sed diam nonumy eirmod tempor invidunt ut labore et
+dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+                            </pre>
+                        </div>
+                        <img src="/public/images/circle_img.png" class="process-img">
+                    </div>
+                </div>
+                <!-- 버스사 -->
+                <div id="bus-div">
+                    <div class="horizontal process-container">
+                        <img src="/public/images/circle_img.png" class="process-img">
+                        <div class="process-txt-right">
+                            <h2>Lorem ipsum dolor sit<br>
+                                amet, consetetur</h2><br>
+                            <pre>Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+sed diam nonumy eirmod tempor invidunt ut labore et
+dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+                            </pre>
+                        </div>
+                    </div>
+                    <div class="horizontal process-container">
+                        <div class="process-txt-left">
+                            <h2>Lorem ipsum dolor sit<br>
+                                amet, consetetur</h2><br>
+                            <pre>Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+sed diam nonumy eirmod tempor invidunt ut labore et
+dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+                            </pre>
+                        </div>
+                        <img src="/public/images/circle_img.png" class="process-img">
+                    </div>
+                </div>
+            </section>
+        </div>
+        <%- include('footer') %>
+    </div>
+</body>
+
+</html>
