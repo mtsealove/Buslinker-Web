@@ -5,6 +5,50 @@
     <%- include('config') %>
     <title>BusLinker</title>
     <script src="/public/js/container.js"></script>
+    <script>
+        $(function () {
+            $('#submit_btn').click(function () {
+                checkInput();
+            })
+            $('#input_email').change(function () {
+                if (!checkEmail($(this).val())) {
+                    $(this).css('color', 'red');
+                } else {
+                    $(this).css('color', 'black');
+                }
+            })
+
+        })
+
+        function checkInput() {
+            if ($('#input_email').val() == '') {
+                alert('메일 주소를 입력해주세요');
+                return;
+            } else if (!checkEmail($('#input_email').val())) {
+                alert('올바르지 않은 메일 주소입니다');
+                return;
+            } else if ($('#input_message').val() == '') {
+                alert('문의 내용을 입력해주세요');
+                return;
+            } else {
+                if (confirm('문의사항을 전송하시겠습니까?')) {
+                    $('#touch-form').submit();
+                }
+            }
+        }
+
+        function checkEmail(email) {
+            if (email.length < 5) {
+                return false;
+            } else if (email.indexOf('@') == -1) {
+                return false;
+            } else if (email.indexOf('.com') == -1 && email.indexOf('.kr') == -1 && email.indexOf('.net')) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -14,17 +58,20 @@
             <section class="centered" style="padding: 70px;">
                 <h1>Get in touch</h1>
                 <br>
-                <form id="touch-form">
+                <form id="touch-form" method="POST" action="/Ask">
                     <div class="horizontal" style="width: 100%;">
-                        <input name="email" type="email" class="form-control" placeholder="Email">
+                        <input name="email" type="email" class="form-control" placeholder="Email" id="input_email">
+
                         <select name="subject" class="custom-select">
-                            <option value="subject1">subject1</option>
-                            <option value="subject2">subject2</option>
+                            <% for(var i=0; i<subjects.length; i++) { %>
+                            <option value="<%=subjects[i].SubjectID%>"><%=subjects[i].SubjectName%></option>
+                            <% } %>
                         </select>
                     </div>
                     <br>
-                    <textarea class="form-control" rows="15" placeholder="Write Your Message Here"></textarea><br>
-                    <button class="btn btn-primary">Submit</button><br>
+                    <textarea class="form-control" rows="15" placeholder="Write Your Message Here" name="message"
+                        id="input_message"></textarea><br>
+                    <button class="btn btn-primary" type="button" id="submit_btn">Submit</button><br>
                     <p>email@example.com | 002-010-66269735</p>
                 </form>
             </section>
@@ -32,4 +79,5 @@
         <%- include('footer') %>
     </div>
 </body>
+
 </html>

@@ -39,7 +39,7 @@
 }
 
 #map {
-    width: 50vw;
+    width: 55vw;
     height: 100vh;
 }
 
@@ -74,7 +74,7 @@
     top: 62px;
     right: 0;
     height: 100vh;
-    width: 50vw;
+    width: 45vw;
     z-index: 2;
     background-color: white;
 }
@@ -89,10 +89,38 @@
     font-size: 15pt;
     cursor: pointer;
     color: gray;
+    padding-bottom: 5px;
+    border-bottom: 2px solid transparent;
 }
 
 .tab-active {
     border-bottom: 2px solid #186AA5;
-    padding-bottom: 5px;
     color: #186AA5;
+}
+
+/* table */
+#table-container {
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 30px;
+}
+
+.tr {
+    font-size: 9pt;
+    text-align: center;
+    border-bottom: 1px solid black;
+}
+
+.filter {
+    font-size: 14pt;
+}
+
+.location-name {
+    font-size: 13pt;
+}
+
+.action {
+    font-size: 12pt;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }

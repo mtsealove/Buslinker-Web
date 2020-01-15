@@ -7,6 +7,7 @@
     <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8d8a439d20cdda219547d464d94644cf"></script>
     <script>
+        var map;
         $(function () {
             setMainHeight();
             initMap();
@@ -16,22 +17,65 @@
             })
             $('#info').mouseleave(function () {
                 $('#info-div').fadeOut(100);
-            })
+            });
+
+            initTab();
+            initTable();
         });
+
         function initMap() {
             var mapContainer = document.getElementById('map');
             var mapOption = {
                 center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                level: 3 // 지도의 확대 레벨
+                level: 9 // 지도의 확대 레벨
             };
             // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
-            var map = new kakao.maps.Map(mapContainer, mapOption);
+            map = new kakao.maps.Map(mapContainer, mapOption);
         }
+
         function setMainHeight() {
             var height = $(window).height();
             height -= 46;
             $('.conatiner').css('height', height);
         }
+
+        function initTab() {
+            // tab click
+            $('.tab-item').click(function () {
+                // change tab show
+                $('.tab-active').removeClass('tab-active');
+                $(this).addClass('tab-active');
+
+                const filter = $(this).attr('data-filter');
+                //hide all
+                $('.tr').fadeOut(200);
+                if (filter != -1)  //not all
+                    $(`.tr[data-filter=${filter}]`).fadeIn(200);
+                else //all
+                    $('.tr').fadeIn(200);
+            });
+        }
+
+        function initTable() {
+                $('.tr').click(function () {
+                    const lat = $(this).attr('data-lat');
+                    const lng = $(this).attr('data-lng');
+
+                    var moveLatLon = new kakao.maps.LatLng(lat, lng);
+                    // 지도 중심을 이동 시킵니다
+                    map.setCenter(moveLatLon);
+
+                    // 마커가 표시될 위치입니다 
+                    var markerPosition = new kakao.maps.LatLng(lat, lng);
+                    // 마커를 생성합니다
+                    var marker = new kakao.maps.Marker({
+                        position: markerPosition
+                    });
+                    // 마커가 지도 위에 표시되도록 설정합니다
+                    marker.setMap(map);
+                    console.log('test');
+                });
+            }
     </script>
 </head>
 
@@ -63,28 +107,47 @@
                 <div>
                     <table id="tab">
                         <tr>
-                            <td class="tab-item tab-active">전체</td>
-                            <td class="tab-item">입고</td>
-                            <td class="tab-item">출고</td>
-                            <td class="tab-item">통근</td>
+                            <td class="tab-item tab-active" data-filter="-1">전체</td>
+                            <td class="tab-item" data-filter="0">입고</td>
+                            <td class="tab-item" data-filter="1">출고</td>
+                            <td class="tab-item" data-filter="2">통근</td>
                         </tr>
                     </table>
-                    <label>오늘의 운행 현황</label>
-                    <p>총 10대</p>
-                    <table style="width: 95%;margin-left: 2.5%;" class="table-hover">
-                        <tr style="font-size: 8.7pt;text-align: center;">
-                            <td>통근</td>
-                            <td>조성호 기사<br>19고 0756</td>
-                            <td>마포구청<br>서울특별시 마포구 성산2동 월드컵로 212</td>
-                    
-                            <td>CJ대한통운<br>서울특별시 영등포구 영등포동1가 618-1</td>
-                            <td>출근 운행중</td>
-                            <td>김알바<br>010-4713-8131</td>
-                        </tr>
-                    </table>
-            </di>
+                    <div id="table-container">
+                        <label>오늘의 운행 현황</label>
+                        <h4><b>총 12대</b></h4>
+                        <table style="width: 100%;" class="table-hover">
+                            <tr class="tr" data-filter="0" data-lat="37.539256" data-lng="127.086304">
+                                <td class="filter"><b>통근</b></td>
+                                <td>조성호 기사<br>19고 0756</td>
+                                <td><span class="location-name"><b>마포구청</b></span><br>서울특별시 마포구 성산2동 월드컵로 212</td>
+                                <td><img src="/public/images/right_arrow.png"></td>
+                                <td><span class="location-name"><b>CJ대한통운</b></span><br>서울특별시 영등포구 영등포동1가 618-1</td>
+                                <td class="action"><b>출근 운행중</b></td>
+                                <td>김알바<br>010-4713-8131</td>
+                            </tr>
+                            <tr class="tr" data-filter="0">
+                                <td class="filter"><b>통근</b></td>
+                                <td>조성호 기사<br>19고 0756</td>
+                                <td><span class="location-name"><b>마포구청</b></span><br>서울특별시 마포구 성산2동 월드컵로 212</td>
+                                <td><img src="/public/images/right_arrow.png"></td>
+                                <td><span class="location-name"><b>CJ대한통운</b></span><br>서울특별시 영등포구 영등포동1가 618-1</td>
+                                <td class="action"><b>출근 운행중</b></td>
+                                <td>김알바<br>010-4713-8131</td>
+                            </tr>
+                            <tr class="tr" data-filter="1">
+                                <td class="filter"><b>통근</b></td>
+                                <td>조성호 기사<br>19고 0756</td>
+                                <td colspan="3"><span class="location-name"><b>마포구청</b></span><br>서울특별시 마포구 성산2동 월드컵로
+                                    212</td>
+                                <td class="action"><b>출근 운행중</b></td>
+                                <td>김알바<br>010-4713-8131</td>
+                            </tr>
+                        </table>
+                    </div>
+                    </di>
+                </div>
             </div>
-        </div>
     </section>
 
 </body>
