@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('config')%>
+        <title>회원가입</title>
+        <script>
+            $(function() {
+                $('.signup-card').hover(function() {
+                    $(this).css('opacity', 1);
+                });
+                $('.signup-card').mouseleave(function() {
+                    $(this).css('opacity', 0.6);
+                });
+                $('.signup-card').click(function() {
+                    const cat=$(this).attr('data-cat');
+                    location.href=`/Manager/Signup/Form?MemberCat=${cat}`;
+                })
+            });
+        </script>
+    </head>
+    <body>
+        <section class="full">
+            <h1>BusLinker에 오신것을 환영합니다</h1>
+            <p>회원 유형을 선택해주세요</p><br><br>
+
+            <div id="signup-container">
+                <div class="signup-card" data-cat="2">
+                    <div class="signup-img-div"> 
+                        <img class="signup-img" src="/public/images/avatar.png">
+                    </div>
+                    <div class="signup-body">
+                        <h2 class="font-white">버스사</h2>
+                        <hr style="color: white; background-color: white;" />
+                        <label class="font-white">버스사 대표계정 회원가입</label>
+                    </div>
+                </div>
+
+                <div class="signup-card" data-cat="3">
+                    <div class="signup-img-div"> 
+                        <img class="signup-img" src="/public/images/avatar.png">
+                    </div>
+                    <div class="signup-body">
+                        <h2 class="font-white">화주사</h2>
+                        <hr style="color: white; background-color: white;" />
+                        <label class="font-white">화주사 대표계정 회원가입</label>
+                    </div>
+                </div>
+
+                <div class="signup-card" data-cat="4">
+                    <div class="signup-img-div"> 
+                        <img class="signup-img" src="/public/images/avatar.png">
+                    </div>
+                    <div class="signup-body">
+                        <h2 class="font-white">물류사</h2>
+                        <hr style="color: white; background-color: white;" />
+                        <label class="font-white">물류사 대표계정 회원가입</label>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>

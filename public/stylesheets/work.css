@@ -4,6 +4,11 @@
     width: 100%;
     top: 0;
 }
+
+.logo-container {
+    cursor: pointer;
+}
+
 .logo-txt {
     margin-top: 5px;
     margin-left: 5px;
@@ -27,6 +32,7 @@
 }
 
 /* navigation */
+
 .nav-top {
     margin-left: 20px;
     margin-right: 20px;
@@ -44,8 +50,9 @@
 }
 
 .container {
-    width: 100%;
+    width: 100vw;
     position: fixed;
+    left: 0px;
     top: 62px;
 }
 
@@ -99,6 +106,7 @@
 }
 
 /* table */
+
 #table-container {
     padding-left: 15px;
     padding-right: 15px;
@@ -123,4 +131,113 @@
     font-size: 12pt;
     padding-top: 20px;
     padding-bottom: 20px;
+}
+
+#manage-route {
+    width: 99vw;
+    border-spacing: 20px;
+    padding: 20px;
+}
+
+th.head {
+    padding: 10px;
+    border-bottom: 1px solid #186AA5;
+    border-right: 10px solid white;
+    margin: 100px;
+}
+
+.search {
+    border: 1px solid #011D46;
+    padding: 5px;
+    border-radius: 5px;
+    width: 180px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.input-search {
+    background-color: transparent;
+    border: none;
+    width: 130px;
+}
+
+.lock{
+    margin-left: 10px;
+}
+
+.route-conatiner {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-left: 20px;
+}
+
+.route-line {
+    margin-top: -15px;
+    display: flex;
+    flex-direction: row;
+    margin-left: 20px;
+    width: 91%;
+    justify-content: space-between;
+}
+
+.route {
+    width: 100%;
+    margin-bottom: -2px;
+    display: flex;
+    flex-direction: row;
+    padding: 0px;
+}
+
+.line {
+    border-bottom: 4px solid white;
+}
+
+.line-commute {
+    border-color: #FB2626;
+}
+
+.line-collect {
+    border-color: #FF7800;
+}
+
+.line-delivery {
+    border-color: #6E00FF;
+}
+
+.route-circle {
+    background-color: #021B46;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    line-height: 30px;
+    margin-bottom: -15px;
+}
+
+.route-txt {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-left: 60px;
+    margin-right: 40px;
+}
+
+.drop-down {
+    padding: 10px;
+}
+
+.route-search-td {
+    vertical-align: top;
+}
+.route-tr {
+    border-bottom: 1px solid #6D809D;
+}
+.route-td {
+    vertical-align: top;
+    min-width: 95px;
+    vertical-align: top;
+    padding-top: 20px;
+    text-align: center;
 }

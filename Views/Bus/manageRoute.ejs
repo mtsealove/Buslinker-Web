@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <title>노선 관리</title>
+    <script>
+        $(function () {
+            setLine();
+            setCircleSize();
+            searchDriver();
+            $('.preview').hide();
+            unlock();
+        });
+
+        function setLine() {
+            for (var i = 0; i < $('.route').length; i++) {
+                const cnt = $('.route').eq(i).children('.line').length;
+                const lines = 100 / cnt;
+                $('.route').eq(i).children('.line').css('width', lines + '%');
+            }
+        }
+
+        function setCircleSize() {
+            for (var i = 0; i < $('.route-circle').length; i++) {
+                const width = $('.route-circle').eq(i).width();
+                $('.route-circle').eq(i).css('height', width);
+                $('.route-circle').eq(i).css('margin-bottom', -(width / 2) + 1.5);
+            }
+        }
+
+        function searchDriver(key) {
+            $('.search-driver').keydown(function(key){
+                if($(this).val()!='') {
+                    $(this).parent().parent().children('.preview').show(200);
+
+                } else {
+                    $(this).parent().parent().children('.preview').hide(200);
+                }
+            })
+        }
+
+        function getDriver(drvier, div) {
+              //login by ajax async
+                $.ajax({
+                url: "/Bus/Get/Drivers",
+                type: "post",
+                data: {
+                  input: drvier
+                },
+                dataType: "json",
+                success: function(data) {
+                    //login success
+                    if(data.userName) {
+                        div.remove('tr');
+                    } else {
+                        
+                    }
+                },
+                error: function(err) {
+                }
+            }); 
+        }
+
+        function unlock() {
+            $('.lock').click(function() {
+                const input=$(this).parent().children('.input-search');
+                input.removeAttr("readonly");
+                input.focus();
+                $(this).attr('src', '/public/images/search.png');
+            })
+        }
+    </script>
+</head>
+
+<body>
+    <%- include('nav') %>
+    <div class="container">
+        <table id="manage-route">
+            <thead>
+                <tr>
+                    <th class="head">노선명</th>
+                    <th class="head">버스기사</th>
+                    <th class="head">차량번호</th>
+                    <th class="head">경로</th>
+                </tr>
+            <tbody>
+                <tr class="route-tr">
+                    <td class="route-td">서초-대한통운</td>
+                    <!-- 버스 기사 검색 -->
+                    <td class="route-search-td">
+                        <div class="search">
+                            <input class="input-search search-driver" readonly>
+                            <img src="/public/images/lock.png" class="lock">
+                        </div>
+                        <!-- 버스기사 추천-->
+                        <div class="search preview" >
+                            <div class="card-body">
+
+                            </div>
+                        </div>
+                    </td>
+                    <!-- 차량 검색 -->
+                    <td class="route-search-td">
+                        <div class="search">
+                            <input class="input-search search-bus" readonly>
+                            <img src="/public/images/lock.png" class="lock">
+                        </div>
+                        <!-- 차량 추천 -->
+                    </td>
+                    <td style="width: 70%;" class="route-td">
+                        <!-- 경로 -->
+                        <div class="route-conatiner">
+                            전체
+                            <div class="route-line">
+                                <div class="route">
+                                    <div class="route-circle"></div>
+                                    <div class="line line-commute"></div>
+                                    <div class="route-circle"></div>
+                                    <div class="line line-commute"></div>
+                                    <div class="route-circle"></div>
+                                    <div class="line line-collect"></div>
+                                    <div class="route-circle"></div>
+                                    <div class="line line-delivery"></div>
+                                    <div class="route-circle"></div>
+                                    <div class="line line-delivery"></div>
+                                    <div class="route-circle"></div>
+                                    <div class="line line-delivery"></div>
+                                    <div class="route-circle"></div>
+                                    <div class="line line-collect"></div>
+                                    <div class="route-circle"></div>
+                                    <div class="line line-commute"></div>
+                                    <div class="route-circle"></div>
+                                    <div class="line line-commute"></div>
+                                    <div class="route-circle"></div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="route-txt">
+                            <label>차고지</label>
+                            <label>차고지</label>
+                            <label>차고지</label>
+                            <label>차고지</label>
+                            <label>차고지</label>
+                            <label>차고지</label>
+                            <label>차고지</label>
+                            <label>차고지</label>
+                            <label>차고지</label>
+                            <label>차고지</label>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+            </thead>
+        </table>
+    </div>
+</body>
+
+</html>

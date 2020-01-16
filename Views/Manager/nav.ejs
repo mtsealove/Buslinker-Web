@@ -6,10 +6,6 @@
 
         const url=$(location).attr('pathname');
         $(`.nav-top[data-url='${url}']`).addClass('active');
-        
-        $('#start-btn').click(function(){
-            location.href='/Login';
-        });
     })
 </script>
 <div id="nav">
@@ -28,7 +24,7 @@
         <ul class="navbar-nav mr-auto">
         </ul>
 
-        <div class="nav-container" d>
+        <div class="nav-container" >
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item nav-top" data-url="/Introduction">
                     <a class="nav-link" href="/Introduction">회사소개</a>
@@ -42,15 +38,6 @@
                 <li class="nav-item nav-top">
                     <a class="nav-link" href="#">고객지원</a>
                 </li>
-                <!-- not logined -->
-                <% if(!user.userID) { %>
-                <li class="nav-item">
-                    <button type="button" class="btn btn-outline-primary" id="start-btn">시작하기</button>
-                </li>
-                <% } else { %>
-                <!-- if logined -->
-
-                <% } %>
             </ul>
         </div>
     </div>

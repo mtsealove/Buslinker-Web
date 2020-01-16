@@ -9,6 +9,12 @@
             $('#login-btn').click(function(){
                 login();
             });
+
+            $('#input_pw').keydown(function(key){
+                if(key.keyCode==13) {
+                    login();
+                }
+            });
         });
 
         //login method
@@ -35,9 +41,10 @@
                         alert('환영합니다 '+data.userName+ ' 님');
                         // move to each other page
                         switch(data.userCat){
-                            case 0:
+                            case 2:
                                 location.href='/Bus/Status';
                                 break;
+                            
                         }
                     } else {
                         alert('아이디와 비밀번호를 확인하세요');

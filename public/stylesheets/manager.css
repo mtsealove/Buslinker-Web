@@ -1,0 +1,43 @@
+.full {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#signup-container {
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.signup-card {
+    width: 400px;
+    opacity: 0.6;
+}
+
+.signup-img-div {
+    height: 400px;
+    background-color: #7FA7CC;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.signup-img {
+    width: 100px;
+    height: 100px;
+}
+
+.signup-body {
+    background-color: #1C69A5;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

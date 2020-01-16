@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <%- include('config') %>
     <title>운행현황</title>
@@ -21,6 +20,7 @@
 
             initTab();
             initTable();
+            initMapLocation();
         });
 
         function initMap() {
@@ -57,25 +57,32 @@
         }
 
         function initTable() {
-                $('.tr').click(function () {
-                    const lat = $(this).attr('data-lat');
-                    const lng = $(this).attr('data-lng');
+            $('.tr').click(function () {
+                const lat = $(this).attr('data-lat');
+                const lng = $(this).attr('data-lng');
 
-                    var moveLatLon = new kakao.maps.LatLng(lat, lng);
-                    // 지도 중심을 이동 시킵니다
-                    map.setCenter(moveLatLon);
+                var moveLatLon = new kakao.maps.LatLng(lat, lng);
+                // 지도 중심을 이동 시킵니다
+                map.setCenter(moveLatLon);
 
-                    // 마커가 표시될 위치입니다 
-                    var markerPosition = new kakao.maps.LatLng(lat, lng);
-                    // 마커를 생성합니다
-                    var marker = new kakao.maps.Marker({
-                        position: markerPosition
-                    });
-                    // 마커가 지도 위에 표시되도록 설정합니다
-                    marker.setMap(map);
-                    console.log('test');
+                // 마커가 표시될 위치입니다 
+                var markerPosition = new kakao.maps.LatLng(lat, lng);
+                // 마커를 생성합니다
+                var marker = new kakao.maps.Marker({
+                    position: markerPosition
                 });
-            }
+                // 마커가 지도 위에 표시되도록 설정합니다
+                marker.setMap(map);
+                console.log('test');
+            });
+        }
+
+        function initMapLocation() {
+            const lat = $('.tr:first').attr('data-lat');
+            const lng = $('.tr:first').attr('data-lng');
+            var moveLatLon = new kakao.maps.LatLng(lat, lng);
+            map.setCenter(moveLatLon);
+        }
     </script>
 </head>
 
