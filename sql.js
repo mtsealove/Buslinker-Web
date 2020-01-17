@@ -48,3 +48,33 @@ exports.login=(id, pw, callback)=> {
         }
     });
 }
+
+// id reuse check
+exports.checkId=(id, callback)=> {
+    const query=`select count(*) as cnt from Members where ID='${id}'`;
+    connection.query(query, (error, results, fields)=> {
+        if(error){
+            console.error(error);
+        } else {
+            if(results[0].cnt==0) {
+                callback(true);
+            } else {
+                callback(false);
+            }
+        }
+    });
+}
+
+exports.createMember=(Name, ID, Password, MemberCat, Phone, ProfilePath, BizNum, BizAddr, BizClass, CenterAddr, callback)=> {
+    const query=`insert into Members set Name='${Name}', ID='${ID}', Password='${crypto.Chipe(Password)}', MemberCat=${MemberCat},
+    Phone='${Phone}', ProfilePath='${ProfilePath}', BizNum='${BizNum}', BizAddr='${BizAddr}', BizClass='${BizClass}', CenterAddr='${CenterAddr}'`;
+
+    connection.query(query, (error, results, fields)=> {
+        if(error) {
+            console.error(error);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    })
+}

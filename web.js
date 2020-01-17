@@ -4,6 +4,15 @@ exports.startApp = (port) => {
     const session = require('express-session');
     const app = express();
     const sql = require('./sql');
+    const multer = require('multer');
+    const upload = multer({ dest: 'public/uploads/' });
+
+    const Ok = {
+        Result: true
+    };
+    const Not = {
+        Result: false
+    };
 
     app.set('view engine', 'ejs');
     app.set('views', './Views');
@@ -87,29 +96,98 @@ exports.startApp = (port) => {
         });
     });
 
-     // Bus
-     app.get('/Bus/Status', (req, res) => {
+    // Bus
+    app.get('/Bus/Status', (req, res) => {
         res.render('./Bus/status');
     });
 
-    app.get('/Bus/Manage/Route', (req, res)=> {
+    app.get('/Bus/Manage/Route', (req, res) => {
         res.render('./Bus/manageRoute');
     });
 
-    app.get('/Bus/Get/Drivers', (req, res)=> {
+    app.get('/Bus/Manage/Driver', (req, res)=>{
+        res.render('./Bus/manageDriver');
+    });
+
+    app.get('/Bus/Get/Drivers', (req, res) => {
 
     })
 
     // Manager
     //sign up choose
-    app.get('/Manager/SignUp', (req, res)=> {
+    app.get('/Manager/SignUp', (req, res) => {
         res.render('./Manager/signup');
     })
 
+    // create Member
+    const cpUpload = upload.fields([{ name: 'profile', maxCount: 1 }, { name: 'biz', maxCount: 1 }]);
+    app.post('/Manager/SignUp', cpUpload, (req, res) => {
+        console.log(req.files['profile']);
+        console.log(req.files['biz']);
+        var filePath = __dirname + '/' + (req.files['biz'][0]).path;
+
+        const email = req.body['email'];
+        const password = req.body['password'];
+        const phone = req.body['phone'];
+        const cat = req.body['cat'];
+        const center = req.body['center'];
+        var ProfilePath='';
+
+        if(req.files['profile']!=null) {
+            ProfilePath=(req.files['profile'][0]).path;
+        }
+
+        var request = require('request');
+        const fs = require('fs');
+        const options = {
+            url: 'https://ocr.api.friday24.com/business-license',
+            headers: {
+                'Authorization': 'Bearer kmRN36IXKLDiI6fy7BKz',
+                'Content-Type': 'multipart/form-data'
+            },
+            formData: {
+                'file': fs.createReadStream(filePath),
+            }
+        };
+
+        request.post(options, (error, response, body) => {
+            if (error) {
+                console.error(error);
+            } else {
+                const json = JSON.parse(body);
+                const name = json.license.corpName;
+                const bizNum=json.license.bizNum;
+                const bizAddr=json.license.addr;
+                const bizClass=json.license.bizClass;
+                sql.createMember(name, email, password, cat, phone, ProfilePath, bizNum, bizAddr, bizClass, center, (result)=> {
+                    if(result) {
+                        res.redirect('/Manager/SignUp/Complete');
+                    }
+                });   
+            }
+        });
+    });
+
+    app.get('/Manager/SignUp/Complete', (req, res)=> {
+        res.render('./Manager/complete');
+    })
+
     //sign up
-    app.get('/Manager/SignUp/Form', (req, res)=> {
-        const Cat=req.query.MemberCat;
-        res.render('./Manager/signup_form', {MemberCat:Cat});
+    app.get('/Manager/SignUp/Form', (req, res) => {
+        const Cat = req.query.MemberCat;
+        res.render('./Manager/signup_form', { MemberCat: Cat });
+    });
+
+    //id reuse check ajax
+    app.get('/Manager/Reuse', (req, res) => {
+        const id = req.query.id;
+        sql.checkId(id, (result) => {
+            if (result) {
+                res.json(Ok);
+            } else {
+                res.json(Not);
+            }
+        });
     });
 
     app.listen(port, () => {
@@ -117,8 +195,8 @@ exports.startApp = (port) => {
     })
 }
 
- // get user info from session
- function getUser(req) {
+// get user info from session
+function getUser(req) {
     var id = req.session.userID;
     var name = req.session.userName;
     var cat = req.session.userCat;

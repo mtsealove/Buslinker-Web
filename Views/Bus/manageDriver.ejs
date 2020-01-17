@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <title>기사 관리</title>
+</head>
+
+<body>
+    <%- include('nav') %>
+    <section class="container">
+        <div id="manage-head">
+            <div>
+                <label>기사 현황</label>
+                <div class="horizontal">
+                <h3>총 20명</h3>
+                <label>(배차 미배정 2명)</label>
+                </div>
+            </div>
+            <div>
+                <input class="form-control">
+            </div>
+        </div>
+        <table id="manage-route">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th class="head">
+                        <div class="th-down">
+                            <label>이름</label>
+                            <img src="/public/images/down.png" class="drop-down">
+                        </div>
+                    </th>
+                    <th class="head">
+                        <div class="th-down">
+                            <label>전화번호</label>
+                            <img src="/public/images/down.png" class="drop-down">
+                        </div>
+                    </th>
+                    <th class="head">
+                        <div class="th-down">
+                            <label>차량번호</label>
+                            <img src="/public/images/down.png" class="drop-down">
+                        </div>
+                    </th>
+                    <th class="head">
+                        <div class="th-down">
+                            <label>노선</label>
+                            <img src="/public/images/down.png" class="drop-down">
+                        </div>
+                    </th>
+                    <th class="head">스케줄</th>
+                    <th class="head">
+                        <div class="th-down">
+                            <label>운행기간</label>
+                            <img src="/public/images/down.png" class="drop-down">
+                        </div>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td>
+                        <div class="horizontal">
+                            <img src="/public/images/user.png" class="table-img" >
+                            <div>
+                                <label>조성호</label>
+                                <label class="size-10">leopard310</label>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</body>
+
+</html>

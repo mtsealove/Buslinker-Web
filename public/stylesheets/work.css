@@ -143,6 +143,7 @@ th.head {
     padding: 10px;
     border-bottom: 1px solid #186AA5;
     border-right: 10px solid white;
+    color: #011D46;
     margin: 100px;
 }
 
@@ -225,7 +226,8 @@ th.head {
 }
 
 .drop-down {
-    padding: 10px;
+    width: 20px;
+    height: 10px;
 }
 
 .route-search-td {
@@ -240,4 +242,28 @@ th.head {
     vertical-align: top;
     padding-top: 20px;
     text-align: center;
+}
+
+#manage-head {
+    margin-top: 20px;
+    padding-left: 80px;
+    padding-right: 100px;
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.th-down {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.table-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
 }

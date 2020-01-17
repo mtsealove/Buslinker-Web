@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <title>회원가입 완료</title>
+    <script>
+        var count = 3;
+        $(function () {
+            setInterval(function(){
+                count--;
+                $('#count-down').text(count+'초 후 이전 페이지로 이동합니다');
+                if(count<0) {
+                    location.href='/Manager/SignUp';
+                }
+            }, 1000);
+        })
+    </script>
+</head>
+
+<body>
+    <div id="nav">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="logo-container">
+                <img src="/public/images/logo_512x512.png" class="logo-img" />
+                <span class="logo-txt">Bus<b>Linker</b></span>
+            </div>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <section class="full">
+        <h1>회원가입이 완료되었습니다</h1>
+        <label id="count-down">3초 후 이전 페이지로 이동합니다</label>
+    </section>
+</body>
+
+</html>

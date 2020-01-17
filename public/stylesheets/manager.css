@@ -41,3 +41,37 @@
     justify-content: center;
     align-items: center;
 }
+
+#nav {
+    position: fixed;
+    width: 100%;
+    top: 0;
+}
+
+.logo-container {
+    cursor: pointer;
+}
+
+.logo-txt {
+    margin-top: 5px;
+    margin-left: 5px;
+    font-family: eurostile;
+    font-size: 20pt;
+}
+
+.logo-img {
+    width: 45px;
+    height: 45px;
+}
+
+.user-img {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 15px;
+    border-radius: 100px;
+}
+
+.error-msg {
+    font-size: 10pt;
+    color: red;
+}

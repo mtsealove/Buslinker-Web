@@ -1,10 +1,250 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <%- include('config') %>
-        <title>회원가입</title>
-    </head>
-    <body>
-        <% include('nav')%>
-    </body>
+
+<head>
+    <%- include('config') %>
+    <title>회원가입</title>
+    <script>
+        $(function () {
+            $('.error-msg').hide();
+
+            $('#user_img').click(function () {
+                $('#input_profile').trigger('click');
+            });
+
+            $('#input_profile').change(function () {
+                readURL(this);
+            });
+
+            $('#input_email').change(function() {
+                checkIdReuse();
+            });
+
+            $('#input_email').keydown(function () {
+                if (checkEmail($(this).val())) {
+                    $('#err_email').fadeOut();
+                } else {
+                    $('#err_email').fadeIn();
+                }
+            });
+
+            $('#input_pw').keydown(function () {
+                if (checkPassword($(this).val())) {
+                    $('#err_pw').fadeOut();
+                } else {
+                    $('#err_pw').fadeIn();
+                }
+            })
+
+            $('#input_pw_ck').keydown(function () {
+                const pw = $('#input_pw').val();
+                if ($(this).val() == pw) {
+                    $('#err_pw_ck').fadeOut();
+                } else {
+                    $('#err_pw_ck').fadeIn();
+                }
+            })
+
+            $('#input_phone').keydown(function () {
+                if ($(this).val().length < 12) {
+                    $('#err_phone').fadeIn();
+                } else {
+                    $('#err_phone').fadeOut();
+                }
+            });
+
+            $('#complete_btn').click(function() {
+                checkInput();
+            });
+        });
+
+        function inputPhoneNumber(obj) {
+            var number = obj.value.replace(/[^0-9]/g, "");
+            var phone = "";
+            if (number.length < 4) {
+                return number;
+            } else if (number.length < 7) {
+                phone += number.substr(0, 3);
+                phone += "-";
+                phone += number.substr(3);
+            } else if (number.length < 11) {
+                phone += number.substr(0, 3);
+                phone += "-";
+                phone += number.substr(3, 3);
+                phone += "-";
+                phone += number.substr(6);
+            } else {
+                phone += number.substr(0, 3);
+                phone += "-";
+                phone += number.substr(3, 4);
+                phone += "-";
+                phone += number.substr(7);
+            }
+            obj.value = phone;
+        }
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#user_img').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function checkEmail(email) {
+            if (email.indexOf('@') == -1) {
+                return false;
+            } else if (email.indexOf('.com') == -1 && email.indexOf('.kr') == -1 && email.indexOf('.net')) {
+                return false;
+            } else if (email.length < 5) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function checkPassword(pw) {
+            const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const lower = 'abcdefghijklmnopqrstuvwxyz';
+            const sp = '~!@#$%^&*()_+=-[{]}<,.>/?:';
+            var upperB = false, lowerB = false, spB = false;
+
+            for (var i = 0; i < upper.length; i++) {
+                if (pw.indexOf(upper.charAt(i)) != -1) {
+                    upperB = true;
+                    break;
+                }
+            }
+            for (var i = 0; i < lower.length; i++) {
+                if (pw.indexOf(lower.charAt(i)) != -1) {
+                    lowerB = true;
+                    break;
+                }
+            }
+
+            for (var i = 0; i < sp.length; i++) {
+                if (pw.indexOf(sp.charAt(i)) != -1) {
+                    spB = true;
+                    break;
+                }
+            }
+
+            if (upperB && lowerB && spB && pw.length >= 10) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function checkInput() {
+            if (!checkEmail($('#input_email').val())) {
+                $('#input_email').focus();
+                return;
+            } else if($('#reuse_email').attr('data-check')==0){
+                $('#input_email').focus();
+                return;
+            } else if (!checkPassword($('#input_pw').val())) {
+                $('#input_pw').focus();
+                return;
+            } else if ($('#input_pw').val() != $('#input_pw_ck').val()) {
+                $('#input_pw_ck').focus();
+                return;
+            } else if ($('#input_phone').val().length < 12) {
+                $('#input_phone').focus();
+                return;
+            } else if ($('#input_biz').val() == '') {
+                alert('사업자등록증을 업로드하세요');
+                return;
+            } else {
+                if(confirm('회원가입을 완료하시겠습니까?')) {
+                    $('#signup_form').submit();
+                }
+            }
+        }
+
+        function checkIdReuse() {
+            $.ajax({
+                url: "/Manager/Reuse",
+                type: "get",
+                data: {
+                    id:$('#input_email').val()
+                },
+                dataType: "json",
+                success: function(data) {
+                    //login success
+                    if(data.Result) {
+                        $('#reuse_email').fadeOut();
+                        $('#reuse_email').attr('data-check', '1');
+                    } else {
+                        $('#reuse_email').fadeIn();
+                        $('#reuse_email').attr('data-check', '0');
+                    }
+                },
+                error: function(err) {
+                }
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <div id="nav">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="logo-container">
+                <img src="/public/images/logo_512x512.png" class="logo-img" />
+                <span class="logo-txt">Bus<b>Linker</b></span>
+            </div>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                </ul>
+
+                <div class="nav-container">
+                    <button class="btn btn-link" id="complete_btn">완료하기</button>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <section class="full">
+        <img src="/public/images/user.png" class="user-img" id="user_img">
+        <h5>프로필 사진 등록</h5>
+        <label class="size-10" for="input_profile">회사의 대표 이미지를 설정해주세요.</label><br>
+        <form enctype="multipart/form-data" method="POST" action="/Manager/SignUp" id="signup_form">
+
+            <input type="number" value="<%=MemberCat%>" name="cat" hidden>
+            <input type="file" accept="image/*" hidden name="profile" id="input_profile">
+
+            <label>이메일</label>
+            <input class="form-control" name="email" type="email" id="input_email" placeholder="Email">
+            <label class="error-msg" id="err_email">올바른 이메일을 입력해주세요.</label>
+            <label class="error-msg" id="reuse_email" data-check="0">이미 사용중인 이메일입니다.</label><br>
+            <label>비밀번호</label>
+            <input class="form-control" name="password" type="password" id="input_pw" placeholder="Password">
+            <label class="error-msg" id="err_pw">비밀번호는 영문 대/소문자, 특수문자 포함 10자 이상이여야 합니다.</label><br>
+            <label>비밀번호 확인</label>
+            <input class="form-control" type="password" id="input_pw_ck" placeholder="Password Check">
+            <label class="error-msg" id="err_pw_ck">비밀번호가 일치하지 않습니다.</label><br>
+            <label>전화번호</label>
+            <input class="form-control" name="phone" type="tel" id="input_phone" placeholder="Phone number"
+                onkeyup="inputPhoneNumber(this)">
+            <label class="error-msg" id="err_phone">올바른 전화번호를 입력해주세요.</label><br>
+            <label>물류센터 주소</label>
+            <input class="form-control" name="center" type="text" id="input_center" placeholder="Center Address"><br>
+            <label>사업자등록증</label>
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="input_biz" accept="image/*" name="biz" required>
+                <label class="custom-file-label" for="input_biz">파일을 선택하세요</label>
+            </div>
+        </form>
+    </section>
+</body>
+
 </html>
