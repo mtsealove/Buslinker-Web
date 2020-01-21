@@ -105,9 +105,98 @@ exports.startApp = (port) => {
         res.render('./Bus/manageRoute');
     });
 
-    app.get('/Bus/Manage/Driver', (req, res)=>{
-        res.render('./Bus/manageDriver');
+    app.get('/Bus/Manage/Driver', (req, res) => {
+        const corp=req.session.userID;
+        sql.getDrivers(corp, (results)=> {
+            res.render('./Bus/manageDriver', {driverList:results});
+        })       
     });
+
+    // driver sign up form 
+    app.get('/Bus/Manage/Create/Driver', (req, res) => {
+        const corp = req.session.userID;
+        sql.getBus(corp, null, null, (results) => {
+            res.render('./Bus/createDriver', { buslist: results });
+        })
+    });
+
+    // create driver
+    const signUpDriver = upload.fields([{ name: 'profile', maxCount: 1 }, { name: 'license', maxCount: 1 }]);
+    app.post('/Bus/Manage/Create/Driver', signUpDriver, (req, res) => {
+        var profilePath = '', licensePath = '';
+
+        // profile maybe not selected
+        if (req.files['profile']) {
+            profilePath = (req.files['profile'][0]).path;
+        }
+        if (req.files['license']) {
+            licensePath = (req.files['license'][0]).path;
+        }
+
+        const name = req.body['name'];
+        const id = req.body['id'];
+        const pw = req.body['pw'];
+        const phone = req.body['phone'];
+        const bus_id = req.body['bus_id'];
+        const corp = req.session.userID;
+
+        sql.createDriver(corp, name, id, pw, phone, bus_id, profilePath, licensePath, (result) => {
+            if (result) {
+                res.send(`<script>alert('회원가입이 완료되었습니다');location.href='/Bus/Manage/Driver';</script>`);
+            } else {
+                res.send(`<script>alert('오류가 발생하였습니다');history.go(-1);</script>`);
+            }
+        });
+    });
+
+    // remove driver
+    app.post('/Bus/Manage/Remove/Driver', (req, res)=> {
+        const corp=req.session.userID;
+        const id=req.body['id'];
+        sql.removeDriver(corp, id, (result)=> {
+            if(result){
+                res.json(Ok);
+            } else {
+                res.json(Not);
+            }
+        }); 
+    });
+
+    app.get('/Bus/Manage/Bus', (req, res) => {
+        var order = req.query.order;
+        var asc = req.query.asc;
+        const corp = req.session.userID;
+
+        sql.getBus(corp, order, asc, (results) => {
+            res.render('./Bus/manageBus', { busList: results });
+        })
+
+    });
+
+    // create bus by ajax
+    app.post('/Bus/Manage/Create/Bus', (req, res) => {
+        const corp = req.session.userID;
+        const num = req.body['num'];
+        sql.createBus(corp, num, (result) => {
+            if (result) {
+                res.json(Ok);
+            } else {
+                res.json(Not);
+            }
+        })
+    });
+
+    // remove bus by ajax
+    app.post('/Bus/Manage/Remove/Bus', (req, res) => {
+        const id = req.body['id'];
+        sql.removeBus(id, (result) => {
+            if (result) {
+                res.json(Ok);
+            } else {
+                res.json(Not);
+            }
+        });
+    })
 
     app.get('/Bus/Get/Drivers', (req, res) => {
 
@@ -131,10 +220,11 @@ exports.startApp = (port) => {
         const phone = req.body['phone'];
         const cat = req.body['cat'];
         const center = req.body['center'];
-        var ProfilePath='';
+        var ProfilePath = '';
+        const garage = req.body['garage'];
 
-        if(req.files['profile']!=null) {
-            ProfilePath=(req.files['profile'][0]).path;
+        if (req.files['profile'] != null) {
+            ProfilePath = (req.files['profile'][0]).path;
         }
 
         var request = require('request');
@@ -156,19 +246,19 @@ exports.startApp = (port) => {
             } else {
                 const json = JSON.parse(body);
                 const name = json.license.corpName;
-                const bizNum=json.license.bizNum;
-                const bizAddr=json.license.addr;
-                const bizClass=json.license.bizClass;
-                sql.createMember(name, email, password, cat, phone, ProfilePath, bizNum, bizAddr, bizClass, center, (result)=> {
-                    if(result) {
+                const bizNum = json.license.bizNum;
+                const bizAddr = json.license.addr;
+                const bizClass = json.license.bizClass;
+                sql.createMember(name, email, password, cat, phone, ProfilePath, bizNum, bizAddr, bizClass, center, garage, (result) => {
+                    if (result) {
                         res.redirect('/Manager/SignUp/Complete');
                     }
-                });   
+                });
             }
         });
     });
 
-    app.get('/Manager/SignUp/Complete', (req, res)=> {
+    app.get('/Manager/SignUp/Complete', (req, res) => {
         res.render('./Manager/complete');
     })
 

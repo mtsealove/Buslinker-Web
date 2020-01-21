@@ -4,6 +4,8 @@
 <head>
     <%- include('config') %>
     <title>회원가입</title>
+    <link rel="stylesheet" href="/public/stylesheets/sign_up.css">
+    <script src="/public/js/signup_form.js" ></script>
     <script>
         $(function () {
             $('.error-msg').hide();
@@ -20,7 +22,7 @@
                 checkIdReuse();
             });
 
-            $('#input_email').keydown(function () {
+            $('#input_email').keyup(function () {
                 if (checkEmail($(this).val())) {
                     $('#err_email').fadeOut();
                 } else {
@@ -28,7 +30,7 @@
                 }
             });
 
-            $('#input_pw').keydown(function () {
+            $('#input_pw').keyup(function () {
                 if (checkPassword($(this).val())) {
                     $('#err_pw').fadeOut();
                 } else {
@@ -36,7 +38,7 @@
                 }
             })
 
-            $('#input_pw_ck').keydown(function () {
+            $('#input_pw_ck').keyup(function () {
                 const pw = $('#input_pw').val();
                 if ($(this).val() == pw) {
                     $('#err_pw_ck').fadeOut();
@@ -45,7 +47,7 @@
                 }
             })
 
-            $('#input_phone').keydown(function () {
+            $('#input_phone').keyup(function () {
                 if ($(this).val().length < 12) {
                     $('#err_phone').fadeIn();
                 } else {
@@ -58,31 +60,6 @@
             });
         });
 
-        function inputPhoneNumber(obj) {
-            var number = obj.value.replace(/[^0-9]/g, "");
-            var phone = "";
-            if (number.length < 4) {
-                return number;
-            } else if (number.length < 7) {
-                phone += number.substr(0, 3);
-                phone += "-";
-                phone += number.substr(3);
-            } else if (number.length < 11) {
-                phone += number.substr(0, 3);
-                phone += "-";
-                phone += number.substr(3, 3);
-                phone += "-";
-                phone += number.substr(6);
-            } else {
-                phone += number.substr(0, 3);
-                phone += "-";
-                phone += number.substr(3, 4);
-                phone += "-";
-                phone += number.substr(7);
-            }
-            obj.value = phone;
-        }
-
         function readURL(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
@@ -91,52 +68,7 @@
                 }
                 reader.readAsDataURL(input.files[0]);
             }
-        }
-
-        function checkEmail(email) {
-            if (email.indexOf('@') == -1) {
-                return false;
-            } else if (email.indexOf('.com') == -1 && email.indexOf('.kr') == -1 && email.indexOf('.net')) {
-                return false;
-            } else if (email.length < 5) {
-                return false;
-            } else {
-                return true;
-            }
-        }
-
-        function checkPassword(pw) {
-            const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const lower = 'abcdefghijklmnopqrstuvwxyz';
-            const sp = '~!@#$%^&*()_+=-[{]}<,.>/?:';
-            var upperB = false, lowerB = false, spB = false;
-
-            for (var i = 0; i < upper.length; i++) {
-                if (pw.indexOf(upper.charAt(i)) != -1) {
-                    upperB = true;
-                    break;
-                }
-            }
-            for (var i = 0; i < lower.length; i++) {
-                if (pw.indexOf(lower.charAt(i)) != -1) {
-                    lowerB = true;
-                    break;
-                }
-            }
-
-            for (var i = 0; i < sp.length; i++) {
-                if (pw.indexOf(sp.charAt(i)) != -1) {
-                    spB = true;
-                    break;
-                }
-            }
-
-            if (upperB && lowerB && spB && pw.length >= 10) {
-                return true;
-            } else {
-                return false;
-            }
-        }
+        }        
 
         function checkInput() {
             if (!checkEmail($('#input_email').val())) {
@@ -157,6 +89,8 @@
             } else if ($('#input_biz').val() == '') {
                 alert('사업자등록증을 업로드하세요');
                 return;
+            } else if($('#input_garage').val()==''){
+                alert('차고지 주소를 입력하세요');
             } else {
                 if(confirm('회원가입을 완료하시겠습니까?')) {
                     $('#signup_form').submit();
@@ -243,6 +177,12 @@
                 <input type="file" class="custom-file-input" id="input_biz" accept="image/*" name="biz" required>
                 <label class="custom-file-label" for="input_biz">파일을 선택하세요</label>
             </div>
+            <% if(MemberCat==2) { %>
+                <br><br><label>차고지 주소</label>
+                <input class="form-control" type="text" name="garage" id="input_garage" placeholder="차고지 주소">
+            <% } else { %>
+                <input hidden name="garage" id="input_garage" value="none">
+            <% } %>
         </form>
     </section>
 </body>

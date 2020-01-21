@@ -63,15 +63,3 @@
     width: 45px;
     height: 45px;
 }
-
-.user-img {
-    width: 200px;
-    height: 200px;
-    margin-bottom: 15px;
-    border-radius: 100px;
-}
-
-.error-msg {
-    font-size: 10pt;
-    color: red;
-}

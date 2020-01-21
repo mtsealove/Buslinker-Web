@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>기사 등록</title>
+    <%- include('config') %>
+    <link rel="stylesheet" href="/public/stylesheets/sign_up.css">
+    <script src="/public/js/signup_form.js"></script>
+    
+    <script>
+        $(function () {
+            $('#user_img').click(function(){
+                $('#input_profile').trigger('click');
+            });
+            
+            $('#input_profile').change(function() {
+                readURL(this);
+            });
+
+            $('#reuse_email').hide();
+            $('#check_id').hide();
+            $('#check_pw').hide();
+            $('#check_same').hide();
+
+
+            $('.bus-tr').click(function() {
+                $('.bus_check').removeClass('bus_checked');
+                $(this).children('td').children('.bus_check').addClass('bus_checked');
+                const id=$(this).data('id');
+                $('#input_bus').val(id);
+            });
+
+            $('#complete_btn').click(function() {
+                checkInput();
+            });
+
+            setRadio();
+            setSearch();
+            setKeyUp();
+        });
+
+        function setKeyUp() {
+            $('#input_id').keyup(function() {
+                checkIdReuse();
+                if(!checkEmail($(this).val())) {
+                    $('#check_id').fadeIn();
+                    $('#check_id').data('check', '0');
+                } else {
+                    $('#check_id').fadeOut();
+                    $('#check_id').data('check', '1');
+                }
+            });
+
+            $('#input_pw').keyup(function(){
+                if(!checkPassword($(this).val())){
+                    $('#check_pw').fadeIn();
+                    console.log('true');
+                } else {
+                    $('#check_pw').fadeOut();
+                    console.log('false');
+                }
+            });
+
+            $('#input_pw_check').keyup(function() {
+                if($(this).val()==$('#input_pw').val()) {
+                    $('#check_same').fadeOut();
+                } else {
+                    $('#check_same').fadeIn();
+                }
+            });
+        }
+
+        function setSearch() {
+            $('#input-search').keyup(function () {
+                const word = $(this).val();
+                const list = $('.bus-tr');
+                for (var i = 0; i < list.length; i++) {
+                    if ($(list[i]).data('num').indexOf(word) == -1) {
+                        $(list[i]).hide();
+                    } else {
+                        $(list[i]).show();
+                    }
+                }
+            });
+        }
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#user_img').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function checkInput() {
+            if($('#input_name').val()=='') {
+                alert('이름을 입력하세요');
+                $('#input_name').focus();
+            } else if($('reuse_email').data('check')=='0'||$('#check_id').data('check')==0) {
+                $('#input_id').focus();
+            } else if(!checkPassword($('#input_pw').val())) {
+                $('#input_pw').focus();
+            } else if($('#input_pw_check').val()!=$('#input_pw').val()) {
+                $('#input_pw_check').focus();
+            } else if($('#input_phone').val().length<12){
+                $('#input_phone').focus();
+            } else if($('#input_license').val()=='') {
+                alert('운전면허 파일을 선택하세요');
+            } else {
+                $('#signup_form').submit();
+            }
+        }
+
+        function checkIdReuse() {
+            $.ajax({
+                url: "/Manager/Reuse",
+                type: "get",
+                data: {
+                    id:$('#input_id').val()
+                },
+                dataType: "json",
+                success: function(data) {
+                    //login success
+                    if(data.Result) {
+                        $('#reuse_email').fadeOut();
+                        $('#reuse_email').attr('data-check', '1');
+                    } else {
+                        $('#reuse_email').fadeIn();
+                        $('#reuse_email').attr('data-check', '0');
+                    }
+                },
+                error: function(err) {
+                }
+            });
+        }
+
+        function setRadio() {
+            $('input[type="radio"]').click(function(){
+                const car=$(this).val();
+                if(car==0) {
+                    $('#input-search').attr('readonly', true).attr('disabled', true);
+                    $('#input-search').val('');
+                    $('.bus_checked').removeClass('bus_checked');
+                    $('.bus-tr').hide();
+                    $('#input_bus').val('-1');
+                } else {
+                    $('#input-search').attr('readonly', false).attr('disabled', false);
+                    $('.bus-tr').show();
+                }
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <div id="nav-signup">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="logo-container">
+                <img src="/public/images/logo_512x512.png" class="logo-img" />
+                <span class="logo-txt">Bus<b>Linker</b></span>
+            </div>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                </ul>
+
+                <div class="nav-container">
+                    <button class="btn btn-link" id="complete_btn">완료하기</button>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <section class="full">
+        <img src="/public/images/user.png" class="user-img" id="user_img">
+        <h5>프로필 사진 등록</h5>
+        <label class="size-10" for="input_profile">기사의 대표 이미지를 설정해주세요.</label><br>
+        <form enctype="multipart/form-data" action="/Bus/Manage/Create/Driver" method="POST" id="signup_form">
+            <input type="file" name="profile" id="input_profile" hidden>
+            <div class="horizontal">
+                <!-- default data -->
+                <div class="sector">
+                    <label>이름</label>
+                    <input class="form-control" type="text" id="input_name" name="name"><br>
+                    <label>아이디</label>
+                    <input class="form-control" type="text" id="input_id" name="id">
+                    <label class="error-msg" id="reuse_email" data-check="0">이미 사용중인 이메일입니다.</label>
+                    <label class="error-msg" id="check_id" data-check="0">올바른 이메일을 입력해주세요.</label><br>
+                    <label>비밀번호</label>
+                    <input class="form-control" type="password" id="input_pw" name="pw">
+                    <label class="error-msg" id="check_pw" data-check="0">비밀번호는 영문 대/소문자 특수문자 포함 10자 이상이여야 합니다.</label><br>
+                    <label>비밀번호 확인</label>
+                    <input class="form-control" type="password" id="input_pw_check">
+                    <label class="error-msg" id="check_same" data-check="0">비밀번호가 일치하지 않습니다.</label><br>
+                    <label>전화번호</label>
+                    <input class="form-control" type="tel" id="input_phone" name="phone" onkeyup="inputPhoneNumber(this)"><br>
+                    <label>운전면허</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="input_license" accept="image/*" name="license"
+                            required>
+                        <label class="custom-file-label" for="input_biz">파일을 선택하세요</label>
+                    </div>
+                </div>
+                <!-- bus select -->
+                <div class="sector">
+                    <label>차량 보유 여부</label><br>
+                    <input type="radio" name="bus" id="radio-true" value="1" checked><label for="radio-true" class="size-10">차량을
+                        보유함</label>
+                    <input type="radio" name="bus" id="radio-false" value="0"><label for="radio-false"
+                        class="size-10">차량을 보유하지 않음</label>
+                    <div class="form-control horizontal">
+                        <input style="width: 100%; border: none;" id="input-search">
+                        <img src="/public/images/search.png">
+                    </div><br>
+                    <div class="card" style="height: 420px; overflow: scroll;">
+                        <input hidden name="bus_id" id="input_bus">
+                        <table class="table-hover table">
+                            <% for(var i=0; i<buslist.length; i++) { %>
+                            <tr class="bus-tr" data-num="<%=buslist[i].Num%>" data-id="<%=buslist[i].ID%>">
+                                <td><%=buslist[i].Num%></td>
+                                <td><img src="/public/images/check_box.png" class="bus_check"></td>
+                            </tr>
+                            <% } %>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </section>
+</body>
+
+</html>

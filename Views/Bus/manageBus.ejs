@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <title>차량 관리</title>
+    <script>
+    $(function() {
+        $('#add-tr').hide();
+        $('#add-btn').click(function() {
+            $('#add-tr').toggle(500);
+        });
+        $('#yes').click(function() {
+            if($('#car-num').val()) {
+                    createBus();
+            } else {
+                alert('차량 번호를 입력하세요.');
+            }
+        });
+        $('#no').click(function(){
+            $('#car-num').val('');
+            $('#add-tr').hide(500);
+        });
+
+        $('.remove-btn').click(function(){
+            const id=$(this).data('id');
+            if(confirm('차량을 삭제하시겠습니까?')) {
+                removeBus(id);
+            }
+        });
+        
+    });
+    
+    function createBus() {
+        $.ajax({
+                url: "/Bus/Manage/Create/Bus",
+                type: "post",
+                data: {
+                    num: $('#car-num').val()
+                },
+                dataType: "json",
+                success: function(data) {
+                    if(data.Result) {
+                        alert('차량이 등록되었습니다');
+                        location.reload();
+                    } else {
+                        alert('오류가 발생하였습니다');
+                    }
+                },
+                error: function(err) {
+                }
+            });
+    }
+
+    function removeBus(id) {
+        $.ajax({
+                url: "/Bus/Manage/Remove/Bus",
+                type: "post",
+                data: {
+                    id: id
+                },
+                dataType: "json",
+                success: function(data) {
+                    if(data.Result) {
+                        alert('차량이 삭제되었습니다.');
+                        location.reload();
+                    } else {
+                        alert('오류가 발생하였습니다.');
+                    }
+                },
+                error: function(err) {
+                }
+            });
+    }
+    </script>
+</head>
+
+<body>
+    <%- include('nav') %>
+    <section class="container">
+        <div id="manage-head">
+            <div>
+                <label>차량 현황</label>
+                <div class="horizontal">
+                    <h3>총 20대</h3>
+                    <label>(기사 미배정 2대)</label>
+                </div>
+            </div>
+            <div class="form-control horizontal" style="width: 250px;">
+                <input style="width: 100%; border: none;" placeholder="차량 번호를 검색하세요">
+                <img src="/public/images/search.png" id="search-btn">
+            </div>
+        </div>
+        <table id="manage-route">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th class="head">
+                        <div class="th-down">
+                            <label>차량</label>
+                            <img src="/public/images/down.png" class="drop-down">
+                        </div>
+                    </th>
+                    <th class="head">
+                        <div class="th-down">
+                            <label>담당 기사</label>
+                            <img src="/public/images/down.png" class="drop-down">
+                        </div>
+                    </th>
+               
+                    <th class="head">
+                        <div class="th-down">
+                            <label>노선</label>
+                            <img src="/public/images/down.png" class="drop-down">
+                        </div>
+                    </th>
+                    <th class="head">
+                        <div class="th-down">
+                            <label>운행기간</label>
+                            <img src="/public/images/down.png" class="drop-down">
+                        </div>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- add btn -->
+                <tr>
+                    <td colspan="5">
+                        <div style="width: 100%; text-align: center;">
+                            <div style="cursor: pointer;" id="add-btn">
+                                <br>
+                                <img src="/public/images/add.png" width="30" height="30">
+                                <p style="margin-top: 10px; opacity: 0.3;" class="size-13"><b>차량 추가</b></p>
+                            </div>
+                    </td>
+                </tr>
+                <!-- add form -->
+                <tr id="add-tr">
+                    <td></td>
+                    <td><input style="border:none; width: 200px;" placeholder="차량번호를 입력해주세요" id="car-num"></td>
+                    <td><label style="opacity: 0.3;">미배정</label></td>
+                    <td><label style="opacity: 0.3;">미배정</label></td>
+                    <td><label style="opacity: 0.3;">미배정</label></td>
+                    <td> <div class="horizontal">
+                        <img src="/public/images/yes.png" class="check_icon" id="yes">
+                        <img src="/public/images/no.png" class="check_icon" id="no">
+                    </div></td>
+                </tr>
+
+                <!-- real data -->
+                <% for(var i=0; i<busList.length; i++) { %>
+                <tr>
+                    <td><img src="/public/images/remove.png" class="check_icon remove-btn" data-id="<%=busList[i].ID%>"></td>
+                    <td style="width: 200px;">
+                        <p><b><%=busList[i].Num%></b></p>
+                    </td>
+                    <td>
+                        <% if(!busList[i].Name)
+                            busList[i].Name='미배정' %>
+                        <p><b><%=busList[i].Name%></b></p>
+                        <p style="margin-top: -10px;" class="size-10"><%=busList[i].Phone%></p>
+                    </td>
+                    <td><b>마포 정류장 - CJ 대한통운</b></td>
+                    <td><b>2019.01.18 ~ 2020.01.18</b></td>
+                    <td>
+                        <div class="horizontal">
+                            <img src="/public/images/yes.png" class="check_icon hide">
+                            <img src="/public/images/no.png" class="check_icon hide">
+                        </div>
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </section>
+</body>
+
+</html>

@@ -4,6 +4,43 @@
 <head>
     <%- include('config') %>
     <title>기사 관리</title>
+    <script>
+    $(function() {
+        $('.remove-btn').click(function() {
+            const name=$(this).data('name');
+            const id=$(this).data('id');
+            if(confirm(name+' 기사를 제거하시겠습니까?')) {
+                $.post("/Bus/Manage/Remove/Driver", {id: id}, function(data){
+                    if(data.Result) {
+                        alert('기사가 제거되었습니다.');
+                        location.reload();
+                    } else{
+                        alert('오류가 발생하였습니다.');
+                    }
+                });
+            }
+        });
+        $('#create-btn').click(function() {
+            location.href='/Bus/Manage/Create/Driver';
+        })
+
+        setSearch();
+    });
+
+    function setSearch() {
+        $('#search_input').keyup(function(){
+            const word=$(this).val();
+            const tr=$('.driver-tr');
+            for(var i=0; i<tr.length; i++) {
+                if(($(tr[i]).data('name')).indexOf(word)==-1) {
+                    $(tr[i]).hide();
+                } else {
+                    $(tr[i]).show();
+                }
+            }
+        })
+    }
+    </script>
 </head>
 
 <body>
@@ -13,12 +50,13 @@
             <div>
                 <label>기사 현황</label>
                 <div class="horizontal">
-                <h3>총 20명</h3>
+                <h3>총 <%=driverList.length%>명</h3>
                 <label>(배차 미배정 2명)</label>
                 </div>
             </div>
-            <div>
-                <input class="form-control">
+            <div class="form-control horizontal" style="width: 250px;">
+                <input style="width: 100%; border: none;" placeholder="기사 이름을 검색하세요" id="search_input">
+                <img src="/public/images/search.png" id="search-btn">
             </div>
         </div>
         <table id="manage-route">
@@ -59,21 +97,42 @@
                     <th></th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td></td>
+            <tbody style="text-align: center;">
+                <% for(var i=-0; i<driverList.length; i++) { %>
+                <tr data-name="<%=driverList[i].Name%>" class="driver-tr">
+                    <td><img src="/public/images/remove.png" class="check_icon remove-btn" 
+                        data-name="<%=driverList[i].Name%>" data-id="<%=driverList[i].ID%>"></td>
                     <td>
-                        <div class="horizontal">
-                            <img src="/public/images/user.png" class="table-img" >
-                            <div>
-                                <label>조성호</label>
-                                <label class="size-10">leopard310</label>
+                        <div class="horizontal" style="align-items: flex-start; margin-top: 10px; text-align: left;">
+                            <img src="/<%=driverList[i].ProfilePath%>" class="table-img" >
+                            <div style="margin-left: 10px; margin-top: 5px;">
+                                <p><b><%=driverList[i].Name%></b></p>
+                                <p class="size-10" style="margin-top: -20px;"><%=driverList[i].ID%></p>
                             </div>
                         </div>
                     </td>
+                    <td><b><%=driverList[i].Phone%></b></td>
+                    <td>
+                        <div class="form-control horizontal" style="justify-content: space-between;">
+                            <input  value="<%=driverList[i].Num%>" style="width: 100%; border: none;">
+                            <img src="/public/images/search.png">
+                        </div></td>
+                    <td><b>마포 정류장 - CJ 대한통운</b></td>
+                    <td><b>월수금 출근, 화목 퇴근</b></td>
+                    <td><b>2019.01.18 ~ 2020.01.18</b></td>
+                    <td>
+                        <div class="horizontal">
+                            <img src="/public/images/yes.png" class="check_icon hide">
+                            <img src="/public/images/no.png"  class="check_icon hide">
+                        </div>
+                    </td>
                 </tr>
+                <% } %>
             </tbody>
         </table>
+        <div class="horizontal" style="justify-content:flex-end; width: 100vw; padding-right: 160px;">
+            <button class="btn-main" id="create-btn">기사 추가</button>
+        </div>
     </section>
 </body>
 

@@ -1,0 +1,17 @@
+.user-img {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 15px;
+    border-radius: 100px;
+}
+
+.sector {
+    width: 15vw;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.error-msg {
+    font-size: 10pt;
+    color: red;
+}
