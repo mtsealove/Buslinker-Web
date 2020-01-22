@@ -6,6 +6,15 @@
         $('.logo-container').click(function() {
             location.href='/';
         })
+        $('#logout-container').hide();
+        $('#user-name').click(function() {
+            $('#logout-container').slideToggle(300);
+        });
+        $('#logout-btn').click(function(){
+            if(confirm('로그아웃 하시겠습니까?')) {
+                location.href='/Logout';
+            }
+        });
     });
 </script>
 
@@ -46,10 +55,14 @@
                 </li>
             </ul>
             <div class="horizontal center">
-                <img src="/public/images/logo_512x512.png" width="40" height="40">
-                <label class="font-white">사용자명</label>
+                <img src="/<%=user.profile%>" id="user-profile">
+                <label class="font-white" id="user-name"><%=user.userName%></label>
             </div>
-            
         </div>
     </div>
 </nav>
+<div class="card" id="logout-container">
+    <div class="card-body">
+        <button class="btn-main" id="logout-btn">로그아웃</button>
+    </div>
+</div>

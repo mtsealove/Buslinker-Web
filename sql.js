@@ -34,7 +34,7 @@ exports.createAsk = (email, subject, message, callback) => {
 
 // login
 exports.login = (id, pw, callback) => {
-    const query = `select ID, Name, MemberCat from Members where ID='${id}' and Password='${crypto.Chipe(pw)}'`;
+    const query = `select ID, Name, MemberCat, ProfilePath from Members where ID='${id}' and Password='${crypto.Chipe(pw)}'`;
 
     connection.query(query, (error, results, fields) => {
         if (error) {

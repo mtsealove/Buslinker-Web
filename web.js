@@ -80,12 +80,15 @@ exports.startApp = (port) => {
                 const user = {
                     userID: results.ID,
                     userName: results.Name,
-                    userCat: results.MemberCat
+                    userCat: results.MemberCat,
+                    profile: results.ProfilePath
                 };
                 // save user info into session
                 req.session.userName = user.userName;
                 req.session.userID = user.userID;
                 req.session.userCat = user.userCat;
+                req.session.profile=user.profile;
+
                 // return to client
                 res.json(user);
             } else {
@@ -96,35 +99,59 @@ exports.startApp = (port) => {
         });
     });
 
+    // logout
+    app.get('/Logout', (req, res)=> {
+        req.session.destroy();
+        res.send(`<script>alert('로그아웃 되었습니다.');location.href='/'</script>`);
+    });
+
     // Bus
     app.get('/Bus/Status', (req, res) => {
-        res.render('./Bus/status');
+        const user=getUser(req);
+        if(user.userID) {
+            res.render('./Bus/status', {user: user});
+        } else {
+            res.redirect('/');
+        }
     });
 
     app.get('/Bus/Manage/Route', (req, res) => {
-        res.render('./Bus/manageRoute');
+        const user=getUser(req);
+        if(user.userID) {
+            res.render('./Bus/manageRoute', {user: user});
+        }else {
+            res.redirect('/');
+        }
     });
 
     app.get('/Bus/Manage/Driver', (req, res) => {
-        const corp=req.session.userID;
-        sql.getDrivers(corp, (results)=> {
-            res.render('./Bus/manageDriver', {driverList:results});
-        })       
+        const user=getUser(req);
+        if(user.userID) {
+            sql.getDrivers(user.userID, (results)=> {
+                res.render('./Bus/manageDriver', {driverList:results, user:user});
+            });
+        } else {
+            res.redirect('/');
+        }
     });
 
     // driver sign up form 
     app.get('/Bus/Manage/Create/Driver', (req, res) => {
-        const corp = req.session.userID;
-        sql.getBus(corp, null, null, (results) => {
-            res.render('./Bus/createDriver', { buslist: results });
-        })
+        const user=getUser(req);
+        const corp = user.userID;
+        if(user.userID) {
+            sql.getBus(corp, null, null, (results) => {
+                res.render('./Bus/createDriver', { buslist: results, user:user });
+            });
+        } else {
+            res.redirect('/');
+        }
     });
 
     // create driver
     const signUpDriver = upload.fields([{ name: 'profile', maxCount: 1 }, { name: 'license', maxCount: 1 }]);
     app.post('/Bus/Manage/Create/Driver', signUpDriver, (req, res) => {
         var profilePath = '', licensePath = '';
-
         // profile maybe not selected
         if (req.files['profile']) {
             profilePath = (req.files['profile'][0]).path;
@@ -165,12 +192,15 @@ exports.startApp = (port) => {
     app.get('/Bus/Manage/Bus', (req, res) => {
         var order = req.query.order;
         var asc = req.query.asc;
-        const corp = req.session.userID;
-
-        sql.getBus(corp, order, asc, (results) => {
-            res.render('./Bus/manageBus', { busList: results });
-        })
-
+        const user=getUser(req);
+        const corp = user.userID;
+        if(user.userID) {
+            sql.getBus(corp, order, asc, (results) => {
+                res.render('./Bus/manageBus', { busList: results, user:user });
+            });
+        } else {
+            res.redirect('/');
+        }
     });
 
     // create bus by ajax
@@ -203,10 +233,26 @@ exports.startApp = (port) => {
     })
 
     // Manager
+
+    // index
+    app.get('/Manager', (req, res)=> {
+        const user=getUser(req);
+        if(user.userID) {
+            res.render('./Manager/index', {user: user});
+        } else {
+            res.redirect('/');
+        }
+    });
+
     //sign up choose
     app.get('/Manager/SignUp', (req, res) => {
-        res.render('./Manager/signup');
-    })
+        const user=getUser(req);
+        if(user.userID) {
+            res.render('./Manager/signup', {user:user});
+        } else {
+            res.redirect('/');
+        }
+    });
 
     // create Member
     const cpUpload = upload.fields([{ name: 'profile', maxCount: 1 }, { name: 'biz', maxCount: 1 }]);
@@ -260,12 +306,27 @@ exports.startApp = (port) => {
 
     app.get('/Manager/SignUp/Complete', (req, res) => {
         res.render('./Manager/complete');
-    })
+    });
 
     //sign up
     app.get('/Manager/SignUp/Form', (req, res) => {
+        const user=getUser(req);
         const Cat = req.query.MemberCat;
-        res.render('./Manager/signup_form', { MemberCat: Cat });
+        if(user.userID) {
+            res.render('./Manager/signup_form', { MemberCat: Cat });
+        } else {
+            res.redirect('/');
+        }
+    });
+
+    // manage route
+    app.get('/Manager/Route', (req, res)=> {
+        const user=getUser(req);
+        if(user.userID) {
+            res.render('./Manager/route', {user: user});
+        } else {
+            res.redirect('/');
+        }
     });
 
     //id reuse check ajax
@@ -282,7 +343,7 @@ exports.startApp = (port) => {
 
     app.listen(port, () => {
         console.log('web server runings on: ' + port);
-    })
+    });
 }
 
 // get user info from session
@@ -290,15 +351,18 @@ function getUser(req) {
     var id = req.session.userID;
     var name = req.session.userName;
     var cat = req.session.userCat;
+    var profile=req.session.profile;
     if (!id) {
         id = '';
         cat = '';
         name = '';
+        profile='';
     }
     const info = {
         userID: id,
         userName: name,
-        userCat: cat
+        userCat: cat,
+        profile: profile
     }
     return info;
 }

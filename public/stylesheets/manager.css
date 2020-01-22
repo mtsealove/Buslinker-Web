@@ -42,12 +42,6 @@
     align-items: center;
 }
 
-#nav {
-    position: fixed;
-    width: 100%;
-    top: 0;
-}
-
 .logo-container {
     cursor: pointer;
 }
@@ -62,4 +56,128 @@
 .logo-img {
     width: 45px;
     height: 45px;
+}
+
+#nav {
+    background-color: #001F46;
+    position: fixed;
+    width: 100%;
+    top: 0;
+}
+
+.nav-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.nav-top {
+    margin-left: 20px;
+    margin-right: 20px;
+    font-size: 15pt;
+}
+
+#logout-container {
+    position: fixed;
+    right: 10px;
+    top: 70px;
+    z-index: 3;
+}
+
+#route-table {
+    margin-top: 20px;
+    width: 90vw;
+}
+
+.destination {
+    position: relative;
+    bottom: -46px;
+    align-items: left;
+}
+
+.destination-circle {
+    background-color: #021B46;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    line-height: 32px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.destination-left {
+    margin-left: -24px;
+}
+
+.destination-right {
+    margin-right: -24px;
+}
+
+.destination-txt {
+    margin-top: 5px;
+}
+
+.edit {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}
+
+.line {
+    top: 0px;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 32px;
+    border-bottom-left-radius: 80px;
+    border-bottom-right-radius: 80px;
+    border-top-left-radius: 180px;
+    border-top-right-radius: 180px;
+}
+
+#line-station {
+    border-bottom: 24px solid #FB2626;
+}
+
+#line-logi {
+    width: 74%;
+    transform: translateY(12px);
+    border-bottom: 24px solid #FF7900;
+    z-index: 1;
+}
+
+#line-onwer {
+    border-bottom: 24px solid #7000FF;
+    width: 50%;
+    z-index: 2;
+    transform: translateY(12px);
+}
+
+
+.sm-btn {
+    height: 36px;
+    width: 36px;
+    margin: 5px;
+}
+
+#modal {
+    position: fixed;
+    left: 78px;
+    top: 100px;
+    background-image: url('/public/images/modal.png');
+    background-size: contain;
+    padding: 15px;
+    width: 150px;
+    height: 150px;
+    background-repeat: no-repeat;
+    z-index: 3;
+}
+
+#search-addr {
+    color: white;
+    cursor: pointer;
 }

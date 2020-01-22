@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <title>노선관리</title>
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+        function searchAddr() {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    console.log(data.roadAddress);
+                }
+            }).open();
+        }
+
+        
+
+        $(function() {
+            $('#add-tr').hide();
+            $('#complete-btn').hide();
+            $('#modal').hide();
+            $('#search-addr').click(function() {
+                searchAddr();
+            });
+
+            $('#add-btn').click(function() {
+                $('#add-tr').toggle(400);
+            });
+
+            $('.edit').click(function() {
+                const left=$(this).offset().left;
+                $('#modal').css('left', left-10);
+                $('#modal').show(400);
+            })
+        })
+    </script>
+</head>
+
+<body>
+    <%- include('nav') %>
+    <section class="container-main">
+        <div id="modal">
+            <label class="font-white" id="search-addr">주소 검색</label>
+            <input class="form-control" placeholder="이름">
+        </div>
+        <table id="route-table">
+            <thead>
+                <th class="head" colspan="2">경로</th>
+            </thead>
+            <tbody>
+                <!-- add btn -->
+                <tr>
+                    <td colspan="2">
+                        <br>
+                        <div class="vertical" style="cursor: pointer;" id="add-btn">
+                            <img src="/public/images/add.png" class="add-icon">
+                            <p class="add-txt"><b>경로 추가</b></p>
+                        </div>
+                    </td>
+                </tr>
+                <!-- add line -->
+                <tr id="add-tr">
+                    <td>
+                        <!-- station -->
+                    <div id="line-station" class="line">
+                        <div class="vertical destination destination-left">
+                            
+                            <div class="destination-circle" >
+                                <img src="/public/images/edit.png" class="edit">
+                            </div>
+                            <label class="destination-txt" id="st1name">정류장 선택<br>&nbsp;</label>
+                            <input hidden name="station-addr" id="station-addr">
+                            <input hidden name="station-start" id="station-start">
+                            <input hidden name="statino-end" id="station-end">
+                        </div>
+                        
+                        <!-- logistic center -->
+                        <div class="line" id="line-logi">
+                            <div class="vertical destination destination-left">
+                                <div class="destination-circle">
+                                    <img src="/public/images/edit.png" class="edit">
+                                </div>
+                                <label class="destination-txt">물류사 선택<br>&nbsp;</label>
+                            </div>
+                            <!-- owners -->
+                            <div class="line" id="line-onwer">
+                                <div class="vertical destination destination-left">
+                                    <div class="destination-circle">
+                                        <img src="/public/images/edit.png" class="edit">
+                                    </div>
+                                    <label class="destination-txt">공터 선택<br>&nbsp;</label>
+                                </div>
+                                <div class="vertical destination">
+                                    <div class="destination-circle">
+                                        <img src="/public/images/edit.png" class="edit">
+                                    </div>
+                                    <label class="destination-txt">화주 선택<br>&nbsp;</label>
+                                </div>
+                                <div class="vertical destination destination-right">
+                                    <div class="destination-circle">
+                                        <img src="/public/images/edit.png" class="edit">
+                                    </div>
+                                    <label class="destination-txt">화주 선택<br>&nbsp;</label>
+                                </div>
+                            </div>
+                            <div class="vertical destination destination-right">
+                                <div class="destination-circle">
+                                    <img src="/public/images/edit.png" class="edit">
+                                </div>
+                                <label class="destination-txt">물류사 선택<br>&nbsp;</label>
+                            </div>
+                        </div>
+                        
+                    <div class="vertical destination destination-right">
+                        <div class="destination-circle">
+                            <img src="/public/images/edit.png" class="edit">
+                        </div>
+                        <label class="destination-txt">정류장 선택<br>&nbsp;</label>
+                    </div>
+                        
+                    </div>
+                </td>
+                <td style="width: 100px;">
+                    <div class="horizontal center" style="margin-left: 30px; margin-bottom: -5px;">
+                        <img src="/public/images/add_primary.png" class="sm-btn" >
+                        <img src="/public/images/yes.png" class="sm-btn" id="complete-btn">
+                    </div>
+                </td>
+                </tr>
+                <!-- original data -->
+            </tbody>
+        </table>
+    </section>
+</body>
+
+</html>

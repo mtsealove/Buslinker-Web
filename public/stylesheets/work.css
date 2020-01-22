@@ -11,6 +11,13 @@
     top: 0;
 }
 
+#logout-container {
+    position: fixed;
+    right: 10px;
+    top: 70px;
+    z-index: 3;
+}
+
 .full {
     width: 100vw;
     height: 100vh;
@@ -36,12 +43,6 @@
     height: 45px;
 }
 
-.horizontal {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
 .center {
     justify-content: center;
 }
@@ -62,13 +63,6 @@
 #map {
     width: 55vw;
     height: 100vh;
-}
-
-.container {
-    width: 100vw;
-    position: fixed;
-    left: 0px;
-    top: 62px;
 }
 
 #info {
@@ -152,14 +146,6 @@
     width: 99vw;
     border-spacing: 20px;
     padding: 20px;
-}
-
-th.head {
-    padding: 10px;
-    border-bottom: 1px solid #186AA5;
-    border-right: 10px solid white;
-    color: #011D46;
-    margin: 100px;
 }
 
 .search {
@@ -293,19 +279,6 @@ th.head {
 
 .hide {
     visibility: hidden;
-}
-
-/* button */
-
-.btn-main {
-    background-color: #001F46;
-    border: none;
-    color: white;
-    padding: 10px 25px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    border-radius: 4px;
 }
 
 .bus_check {

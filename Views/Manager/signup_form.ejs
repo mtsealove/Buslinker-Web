@@ -5,7 +5,17 @@
     <%- include('config') %>
     <title>회원가입</title>
     <link rel="stylesheet" href="/public/stylesheets/sign_up.css">
-    <script src="/public/js/signup_form.js" ></script>
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+        function setCenterAddr() {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    $('#input_center').val(data.roadAddress);
+                }
+            }).open();
+        }
+    </script>
+    <script src="/public/js/signup_form.js"></script>
     <script>
         $(function () {
             $('.error-msg').hide();
@@ -18,7 +28,7 @@
                 readURL(this);
             });
 
-            $('#input_email').change(function() {
+            $('#input_email').change(function () {
                 checkIdReuse();
             });
 
@@ -55,8 +65,12 @@
                 }
             });
 
-            $('#complete_btn').click(function() {
+            $('#complete_btn').click(function () {
                 checkInput();
+            });
+
+            $('#input_center').click(function () {
+                setCenterAddr();
             });
         });
 
@@ -68,13 +82,13 @@
                 }
                 reader.readAsDataURL(input.files[0]);
             }
-        }        
+        }
 
         function checkInput() {
             if (!checkEmail($('#input_email').val())) {
                 $('#input_email').focus();
                 return;
-            } else if($('#reuse_email').attr('data-check')==0){
+            } else if ($('#reuse_email').attr('data-check') == 0) {
                 $('#input_email').focus();
                 return;
             } else if (!checkPassword($('#input_pw').val())) {
@@ -89,10 +103,10 @@
             } else if ($('#input_biz').val() == '') {
                 alert('사업자등록증을 업로드하세요');
                 return;
-            } else if($('#input_garage').val()==''){
+            } else if ($('#input_garage').val() == '') {
                 alert('차고지 주소를 입력하세요');
             } else {
-                if(confirm('회원가입을 완료하시겠습니까?')) {
+                if (confirm('회원가입을 완료하시겠습니까?')) {
                     $('#signup_form').submit();
                 }
             }
@@ -103,12 +117,12 @@
                 url: "/Manager/Reuse",
                 type: "get",
                 data: {
-                    id:$('#input_email').val()
+                    id: $('#input_email').val()
                 },
                 dataType: "json",
-                success: function(data) {
+                success: function (data) {
                     //login success
-                    if(data.Result) {
+                    if (data.Result) {
                         $('#reuse_email').fadeOut();
                         $('#reuse_email').attr('data-check', '1');
                     } else {
@@ -116,7 +130,7 @@
                         $('#reuse_email').attr('data-check', '0');
                     }
                 },
-                error: function(err) {
+                error: function (err) {
                 }
             });
         }
@@ -171,17 +185,18 @@
                 onkeyup="inputPhoneNumber(this)">
             <label class="error-msg" id="err_phone">올바른 전화번호를 입력해주세요.</label><br>
             <label>물류센터 주소</label>
-            <input class="form-control" name="center" type="text" id="input_center" placeholder="Center Address"><br>
+            <input class="form-control" name="center" type="text" id="input_center" placeholder="Center Address"
+                readonly><br>
             <label>사업자등록증</label>
             <div class="custom-file">
                 <input type="file" class="custom-file-input" id="input_biz" accept="image/*" name="biz" required>
                 <label class="custom-file-label" for="input_biz">파일을 선택하세요</label>
             </div>
             <% if(MemberCat==2) { %>
-                <br><br><label>차고지 주소</label>
-                <input class="form-control" type="text" name="garage" id="input_garage" placeholder="차고지 주소">
+            <br><br><label>차고지 주소</label>
+            <input class="form-control" type="text" name="garage" id="input_garage" placeholder="차고지 주소">
             <% } else { %>
-                <input hidden name="garage" id="input_garage" value="none">
+            <input hidden name="garage" id="input_garage" value="none">
             <% } %>
         </form>
     </section>
