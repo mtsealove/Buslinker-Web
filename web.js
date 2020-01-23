@@ -87,7 +87,7 @@ exports.startApp = (port) => {
                 req.session.userName = user.userName;
                 req.session.userID = user.userID;
                 req.session.userCat = user.userCat;
-                req.session.profile=user.profile;
+                req.session.profile = user.profile;
 
                 // return to client
                 res.json(user);
@@ -100,35 +100,35 @@ exports.startApp = (port) => {
     });
 
     // logout
-    app.get('/Logout', (req, res)=> {
+    app.get('/Logout', (req, res) => {
         req.session.destroy();
         res.send(`<script>alert('로그아웃 되었습니다.');location.href='/'</script>`);
     });
 
     // Bus
     app.get('/Bus/Status', (req, res) => {
-        const user=getUser(req);
-        if(user.userID) {
-            res.render('./Bus/status', {user: user});
+        const user = getUser(req);
+        if (user.userID) {
+            res.render('./Bus/status', { user: user });
         } else {
             res.redirect('/');
         }
     });
 
     app.get('/Bus/Manage/Route', (req, res) => {
-        const user=getUser(req);
-        if(user.userID) {
-            res.render('./Bus/manageRoute', {user: user});
-        }else {
+        const user = getUser(req);
+        if (user.userID) {
+            res.render('./Bus/manageRoute', { user: user });
+        } else {
             res.redirect('/');
         }
     });
 
     app.get('/Bus/Manage/Driver', (req, res) => {
-        const user=getUser(req);
-        if(user.userID) {
-            sql.getDrivers(user.userID, (results)=> {
-                res.render('./Bus/manageDriver', {driverList:results, user:user});
+        const user = getUser(req);
+        if (user.userID) {
+            sql.getDrivers(user.userID, (results) => {
+                res.render('./Bus/manageDriver', { driverList: results, user: user });
             });
         } else {
             res.redirect('/');
@@ -137,11 +137,11 @@ exports.startApp = (port) => {
 
     // driver sign up form 
     app.get('/Bus/Manage/Create/Driver', (req, res) => {
-        const user=getUser(req);
+        const user = getUser(req);
         const corp = user.userID;
-        if(user.userID) {
+        if (user.userID) {
             sql.getBus(corp, null, null, (results) => {
-                res.render('./Bus/createDriver', { buslist: results, user:user });
+                res.render('./Bus/createDriver', { buslist: results, user: user });
             });
         } else {
             res.redirect('/');
@@ -177,26 +177,26 @@ exports.startApp = (port) => {
     });
 
     // remove driver
-    app.post('/Bus/Manage/Remove/Driver', (req, res)=> {
-        const corp=req.session.userID;
-        const id=req.body['id'];
-        sql.removeDriver(corp, id, (result)=> {
-            if(result){
+    app.post('/Bus/Manage/Remove/Driver', (req, res) => {
+        const corp = req.session.userID;
+        const id = req.body['id'];
+        sql.removeDriver(corp, id, (result) => {
+            if (result) {
                 res.json(Ok);
             } else {
                 res.json(Not);
             }
-        }); 
+        });
     });
 
     app.get('/Bus/Manage/Bus', (req, res) => {
         var order = req.query.order;
         var asc = req.query.asc;
-        const user=getUser(req);
+        const user = getUser(req);
         const corp = user.userID;
-        if(user.userID) {
+        if (user.userID) {
             sql.getBus(corp, order, asc, (results) => {
-                res.render('./Bus/manageBus', { busList: results, user:user });
+                res.render('./Bus/manageBus', { busList: results, user: user });
             });
         } else {
             res.redirect('/');
@@ -235,10 +235,10 @@ exports.startApp = (port) => {
     // Manager
 
     // index
-    app.get('/Manager', (req, res)=> {
-        const user=getUser(req);
-        if(user.userID) {
-            res.render('./Manager/index', {user: user});
+    app.get('/Manager', (req, res) => {
+        const user = getUser(req);
+        if (user.userID) {
+            res.render('./Manager/index', { user: user });
         } else {
             res.redirect('/');
         }
@@ -246,9 +246,9 @@ exports.startApp = (port) => {
 
     //sign up choose
     app.get('/Manager/SignUp', (req, res) => {
-        const user=getUser(req);
-        if(user.userID) {
-            res.render('./Manager/signup', {user:user});
+        const user = getUser(req);
+        if (user.userID) {
+            res.render('./Manager/signup', { user: user });
         } else {
             res.redirect('/');
         }
@@ -310,9 +310,9 @@ exports.startApp = (port) => {
 
     //sign up
     app.get('/Manager/SignUp/Form', (req, res) => {
-        const user=getUser(req);
+        const user = getUser(req);
         const Cat = req.query.MemberCat;
-        if(user.userID) {
+        if (user.userID) {
             res.render('./Manager/signup_form', { MemberCat: Cat });
         } else {
             res.redirect('/');
@@ -320,12 +320,67 @@ exports.startApp = (port) => {
     });
 
     // manage route
-    app.get('/Manager/Route', (req, res)=> {
-        const user=getUser(req);
-        if(user.userID) {
-            res.render('./Manager/route', {user: user});
+    app.get('/Manager/Route', (req, res) => {
+        const user = getUser(req);
+        if (user.userID) {
+            sql.getLogis((logis) => {
+                sql.getOwners((owners) => {
+                    sql.getBusList((bus) => {
+                        res.render('./Manager/route', { user: user, logis: logis, owners: owners, bus: bus });
+                    })
+                });
+            });
         } else {
             res.redirect('/');
+        }
+    });
+
+    //creat route
+    app.post('/Manager/Create/Route', (req, res) => {
+        const body = req.body;
+        console.log(body);
+        const alias = body['name'];
+        const bus = body['bus'];
+
+        const station = {
+            name: body['station-name'],
+            addr: body['station-addr'],
+            start: body['station-start'],
+            end: body['station-end']
+        };
+
+        const logi = {
+            id: (body['logi-id'].split('-'))[0],
+            start: body['logi-start'],
+            end: body['logi-end']
+        };
+
+        const empty = {
+            name: body['empty-name'],
+            addr: body['empty-addr'],
+            time: body['empty-time']
+        };
+
+        const contract = {
+            start: body['contract-start'],
+            end: body['contract-end']
+        };
+
+        const owners = [];
+
+        // is array
+        if (Array.isArray(body['owner-id'])) {
+            for (var i = 0; i < body['owner-id'].length; i++) {
+                owners.push({
+                    id: body['owner-id'][i],
+                    time: body['owner-time'][i]
+                });
+            }
+        } else {
+            owners.push({
+                id: body['owner-id'],
+                time: body['owner-time']
+            });
         }
     });
 
@@ -343,6 +398,11 @@ exports.startApp = (port) => {
 
     app.listen(port, () => {
         console.log('web server runings on: ' + port);
+        sql.createRoute({
+            name:'테스트',
+            addr:'서울시 광진구 아차산로 55길 43',
+            time: '19:00:00'
+        });
     });
 }
 
@@ -351,12 +411,12 @@ function getUser(req) {
     var id = req.session.userID;
     var name = req.session.userName;
     var cat = req.session.userCat;
-    var profile=req.session.profile;
+    var profile = req.session.profile;
     if (!id) {
         id = '';
         cat = '';
         name = '';
-        profile='';
+        profile = '';
     }
     const info = {
         userID: id,

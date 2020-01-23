@@ -6,131 +6,392 @@
     <title>노선관리</title>
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
-        function searchAddr() {
+        function searchAddr(obj) {
             new daum.Postcode({
                 oncomplete: function (data) {
-                    console.log(data.roadAddress);
+                    $(obj).val(data.roadAddress);
                 }
             }).open();
         }
 
-        
+        var level = 0;
 
-        $(function() {
+        $(function () {
             $('#add-tr').hide();
-            $('#complete-btn').hide();
+            $('#add-owner-btn').hide();
             $('#modal').hide();
-            $('#search-addr').click(function() {
-                searchAddr();
+            $('.popup').hide();
+
+            $('#line-logi').hide();
+            $('#line-owner').hide();
+
+            $('#add-btn').click(function () {
+                $(this).fadeOut(400);
+                setTimeout(() => {
+                    $('#add-tr').show(400);
+                }, 400);
             });
 
-            $('#add-btn').click(function() {
-                $('#add-tr').toggle(400);
+            $('#next-btn').click(function () {
+                next();
             });
 
-            $('.edit').click(function() {
-                const left=$(this).offset().left;
-                $('#modal').css('left', left-10);
-                $('#modal').show(400);
-            })
+            $('#station-addr').click(function () {
+                searchAddr($(this));
+            });
+
+            $('#empty-addr').click(function () {
+                searchAddr($(this));
+            });
+
+            $('#station-btn').click(function () {
+                setStation();
+            });
+
+            $('#logi-btn').click(function () {
+                setLogi();
+            });
+
+            $('#empty-btn').click(function () {
+                setEmpty();
+            });
+
+            $('#owner-btn').click(function () {
+                addOwner();
+            });
+
+            $('.edit').click(function () {
+                $('#modal').fadeIn(400);
+                const cat = $(this).data('cat');
+                console.log(cat);
+                switch (cat) {
+                    case 0:
+                        $('#popup-station').show();
+                        break;
+                    case 1:
+                        $('#popup-logi').show();
+                        break;
+                    case 2:
+                        $('#popup-empty').show();
+                        break;
+                }
+            });
+
+            $('#add-owner-btn').click(function () {
+                $('#modal').fadeIn(400);
+                $('#popup-owner').show();
+            });
+
+            $('#bus-btn').click(function() {
+                if(confirm('운행정보를 등록하시겠습니까?')) {
+                    $('#route-form').submit();
+                }
+            }); 
+
+            setDate();
         })
+
+        function setDate() {
+            var date = new Date();
+            var currentDate = date.getFullYear() + '-' + date.getMonth() + 1 + '-' + date.getDate();
+            var nextDate = (date.getFullYear() + 1) + '-' + date.getMonth() + 1 + '-' + (date.getDate() - 1);
+            $('#contract-start').val(currentDate);
+            $('#contract-end').val(nextDate);
+        }
+
+        function setStation() {
+            if ($('#station-name').val() == '') {
+                alert('이름을 입력하세요');
+                return;
+            } else if ($('#station-addr').val() == '') {
+                alert('주소를 입력하세요');
+                return;
+            } else if ($('#station-start').val() == '') {
+                alert('출발 시간을 선택하세요');
+                return;
+            } else if ($('#station-end').val() == '') {
+                alert('도착 시간을 선택하세요');
+                return;
+            } else {
+                const station1 = $('#station-name').val() + '<br>' + $('#station-start').val();
+                const station2 = $('#station-name').val() + '<br>' + $('#station-end').val();
+                $('#station1').html(station1);
+                $('#station2').html(station2);
+                $('#modal').fadeOut(400);
+                $('#popup-station').hide();
+            }
+        }
+
+        function setLogi() {
+            if ($('#logi-id').val() == '') {
+                alert('물류센터를 선택하세요');
+            } else if ($('#logi-start').val() == '') {
+                alert('출발 시간을 선택하세요');
+                return;
+            } else if ($('#logi-end').val() == '') {
+                alert('도착 시간을 선택하세요');
+                return;
+            } else {
+                const name = (($('#logi-id').val()).split('-'))[1];
+                const logi1 = name + '<br>' + $('#logi-start').val();
+                const logi2 = name + '<br>' + $('#logi-end').val();
+                $('#logi1').html(logi1);
+                $('#logi2').html(logi2);
+                $('#modal').fadeOut(400);
+                $('#popup-logi').hide();
+            }
+        }
+
+        function setEmpty() {
+            if ($('#empty-name').val() == '') {
+                alert('공터 이름을 입력하세요');
+                return;
+            } else if ($('#empty-addr').val() == '') {
+                alert('주소를 입력하세요');
+                return;
+            } else if ($('#empty-time').val() == '') {
+                alert('배송하차 시간을 입력하세요');
+                return;
+            } else {
+                const empty = $('#empty-name').val() + '<br>' + $('#empty-time').val();
+                $('#empty').html(empty);
+                $('#modal').fadeOut(400);
+                $('#popup-empty').hide();
+            }
+        }
+
+        function addOwner() {
+            if ($('#owner-id').val() == '') {
+                alert('화주를 선택하세요');
+                return;
+            } else if ($('#owner-time').val() == '') {
+                alert('시간을 선택하세요');
+            } else {
+                const id = (($('#owner-id').val()).split('-'))[1];
+                const name = (($('#owner-id').val()).split('-'))[0];
+                const time = $('#owner-time').val();
+                const data = `<div class="vertical destination">
+                                            <div class="destination-circle">
+                                                <img src="/public/images/edit.png" class="edit">
+                                            </div>
+                                            <label class="destination-txt" id="empty">${name}<br>${time}</label>
+                                            <input hidden name='owner-id' value='${id}'>
+                                            <input hidden name='owner-time' value='${time}'>
+                                        </div>`;
+                $('#line-owner').append(data);
+                $('#modal').fadeOut(400);
+                $('#popup-owner').hide();
+
+                var items = $('#line-owner').children('.destination');
+                for (var i = 0; i < items.length; i++) {
+                    $(items[i]).removeClass('destination-right');
+                    $(items[i]).removeClass('destination-left');
+                    for (var j = 0; j < i; j++) {
+                        var item1 = $(items[i]);
+                        var item2 = $(items[j]);
+                        var temp = item1;
+                        if ($(items[i]).children('input[name=owner-time]').val() < $(items[j]).children('input[name=owner-time]').val()) {
+                            item2.insertAfter(item1);
+                        }
+                    }
+                }
+                $(items[0]).addClass('destination-left');
+                $(items[items.length - 1]).addClass('destination-right');
+            }
+        }
+
+        function next() {
+            switch (level) {
+                case 0:
+                    if ($('#station-name').val() != '') {
+                        level++;
+                        $('#line-logi').fadeIn(400);
+                    } else {
+                        alert('정류장을 먼저 선택하세요.');
+                    }
+                    break;
+                case 1:
+                    if ($('#logi-start').val() != '') {
+                        level++;
+                        $('#line-owner').fadeIn(400);
+                        $('#add-owner-btn').fadeIn(400);
+                    } else {
+                        alert('물류센터를 먼저 선택하세요.');
+                    }
+                    break;
+                case 2:
+                    $('#modal').fadeIn(400);
+                    $('#popup-bus').show();
+                    break;
+            }
+        }
     </script>
 </head>
 
 <body>
     <%- include('nav') %>
     <section class="container-main">
-        <div id="modal">
-            <label class="font-white" id="search-addr">주소 검색</label>
-            <input class="form-control" placeholder="이름">
-        </div>
-        <table id="route-table">
-            <thead>
-                <th class="head" colspan="2">경로</th>
-            </thead>
-            <tbody>
-                <!-- add btn -->
-                <tr>
-                    <td colspan="2">
+        <form id="route-form" method="POST" action="/Manager/Create/Route">
+            <!-- modal popups -->
+            <div id="modal">
+                <!-- station -->
+                <div class="card popup" id="popup-station">
+                    <div class="card-body">
+                        <label>정류장 이름</label>
+                        <input class="form-control" placeholder="정류장 이름" id="station-name" name="station-name"><br>
+                        <label>정류장 주소</label>
+                        <input class="form-control" readonly placeholder="주소 검색" id="station-addr"
+                            name="station-addr"><br>
+                        <label>출근 출발 시간</label>
+                        <input class="form-control" type="time" id="station-start" name="station-start"><br>
+                        <label>퇴근 도착 시간</label>
+                        <input class="form-control" type="time" id="station-end" name="station-end"><br>
+                        <button class="btn-block btn-main" id="station-btn" type="button">확인</button>
+                    </div>
+                </div>
+                <!-- logistic -->
+                <div class="card popup" id="popup-logi">
+                    <div class="card-body">
+                        <label>물류사 이름</label>
+                        <select class="custom-select" id="logi-id" name="logi-id">
+                            <% for(var i=0; i<logis.length; i++) { %>
+                            <option value="<%=logis[i].ID+'-'+logis[i].Name%>"><%=logis[i].Name%></option>
+                            <% } %>
+                        </select><br>
+                        <label>간선상차 시작 시간</label>
+                        <input class="form-control" type="time" id="logi-start" name="logi-start"><br>
+                        <label>간선하차 시작 시간</label>
+                        <input class="form-control" type="time" id="logi-end" name="logi-end"><br>
+                        <button class="btn-block btn-main" id="logi-btn" type="button">확인</button>
+                    </div>
+                </div>
+                <!-- 공터 -->
+                <div class="card popup" id="popup-empty">
+                    <div class="card-body">
+                        <label>공터 이름</label>
+                        <input class="form-control" type="text" name="empty-name" id="empty-name"><br>
+                        <label>공터 주소</label>
+                        <input class="form-control" name="empty-addr" id="empty-addr" readonly><br>
+                        <label>간선하차 시작 시간</label>
+                        <input class="form-control" name="empty-time" id="empty-time" type="time"><br>
+                        <button type="button" class="btn-block btn-main" id="empty-btn">확인</button>
+                    </div>
+                </div>
+                <!-- owner -->
+                <div class="card popup" id="popup-owner">
+                    <div class="card-body">
+                        <label>화주 선택</label>
+                        <select class="custom-select" id="owner-id">
+                            <% for(var i=0; i<owners.length; i++) { %>
+                            <option value="<%=owners[i].Name+'-'+owners[i].ID%>"><%=owners[i].Name%></option>
+                            <% } %>
+                        </select><br>
+                        <label>수거 시작 시간</label>
+                        <input class="form-control" type="time" id="owner-time"><br>
+                        <button class="btn-block btn-main" type="button" id="owner-btn">확인</button>
+                    </div>
+                </div>
+                <!-- select bus -->
+                <div class="card popup" id="popup-bus">
+                    <div class="card-body">
+                        <label>버스사 선택</label>
+                        <select name="bus" class="custom-select">
+                            <% for(var i=0; i<bus.length; i++) { %>
+                                <option value="<%=bus[i].ID%>"><%=bus[i].Name%></option>
+                            <% } %>
+                        </select>
                         <br>
-                        <div class="vertical" style="cursor: pointer;" id="add-btn">
-                            <img src="/public/images/add.png" class="add-icon">
-                            <p class="add-txt"><b>경로 추가</b></p>
-                        </div>
-                    </td>
-                </tr>
-                <!-- add line -->
-                <tr id="add-tr">
-                    <td>
-                        <!-- station -->
-                    <div id="line-station" class="line">
-                        <div class="vertical destination destination-left">
-                            
-                            <div class="destination-circle" >
-                                <img src="/public/images/edit.png" class="edit">
+                        <button class="btn-block btn-main" id="bus-btn">확인</button>
+                    </div>
+                </div>
+            </div>
+            <table id="route-table">
+                <thead>
+                    <th class="head">이름</th>
+                    <th class="head" colspan="2">계약기간</th>
+                    <th class="head" colspan="14">경로</th>
+                </thead>
+                <tbody>
+                    <!-- add btn -->
+                    <tr>
+                        <td colspan="14">
+                            <br>
+                            <div class="vertical" style="cursor: pointer;" id="add-btn">
+                                <img src="/public/images/add.png" class="add-icon">
+                                <p class="add-txt"><b>경로 추가</b></p>
                             </div>
-                            <label class="destination-txt" id="st1name">정류장 선택<br>&nbsp;</label>
-                            <input hidden name="station-addr" id="station-addr">
-                            <input hidden name="station-start" id="station-start">
-                            <input hidden name="statino-end" id="station-end">
-                        </div>
-                        
-                        <!-- logistic center -->
-                        <div class="line" id="line-logi">
-                            <div class="vertical destination destination-left">
-                                <div class="destination-circle">
-                                    <img src="/public/images/edit.png" class="edit">
-                                </div>
-                                <label class="destination-txt">물류사 선택<br>&nbsp;</label>
-                            </div>
-                            <!-- owners -->
-                            <div class="line" id="line-onwer">
+                        </td>
+                    </tr>
+                    <!-- add line -->
+                    <tr id="add-tr">
+                        <td style="width: 120px;">
+                            <input class="form-control" placeholder="name" name="name" id="input-name">
+                        </td>
+                        <td style="width: 120px;">
+                            <input type="date" id="contract-start" class="form-control" name="contract-start">
+                        </td>
+                        <td style="width: 120px;">
+                            <input class="form-control" type="date" id="contract-end" name="contract-end">
+                        </td>
+                        <td style="width: 30px;">
+
+                        </td>
+                        <td colspan="10">
+                            <!-- station -->
+                            <div id="line-station" class="line">
                                 <div class="vertical destination destination-left">
                                     <div class="destination-circle">
-                                        <img src="/public/images/edit.png" class="edit">
+                                        <img src="/public/images/edit.png" class="edit" data-cat="0">
                                     </div>
-                                    <label class="destination-txt">공터 선택<br>&nbsp;</label>
+                                    <label class="destination-txt" id="station1">정류장 선택<br>&nbsp;</label>
                                 </div>
-                                <div class="vertical destination">
-                                    <div class="destination-circle">
-                                        <img src="/public/images/edit.png" class="edit">
+
+                                <!-- logistic center -->
+                                <div class="line" id="line-logi">
+                                    <div class="vertical destination destination-left">
+                                        <div class="destination-circle">
+                                            <img src="/public/images/edit.png" class="edit" data-cat="1">
+                                        </div>
+                                        <label class="destination-txt" id="logi1">물류사 선택<br>&nbsp;</label>
                                     </div>
-                                    <label class="destination-txt">화주 선택<br>&nbsp;</label>
+                                    <!-- owners -->
+                                    <div class="line" id="line-owner">
+                                        <!-- 공터 -->
+                                        <div class="vertical destination destination-left">
+                                            <div class="destination-circle">
+                                                <img src="/public/images/edit.png" class="edit" data-cat="2">
+                                            </div>
+                                            <label class="destination-txt" id="empty">공터 선택<br>&nbsp;</label>
+                                        </div>
+                                    </div>
+                                    <div class="vertical destination destination-right">
+                                        <div class="destination-circle">
+                                            <img src="/public/images/edit.png" class="edit" data-cat="1">
+                                        </div>
+                                        <label class="destination-txt" id="logi2">물류사 선택<br>&nbsp;</label>
+                                    </div>
                                 </div>
+
                                 <div class="vertical destination destination-right">
                                     <div class="destination-circle">
-                                        <img src="/public/images/edit.png" class="edit">
+                                        <img src="/public/images/edit.png" class="edit" data-cat="0">
                                     </div>
-                                    <label class="destination-txt">화주 선택<br>&nbsp;</label>
+                                    <label class="destination-txt" id="station2">정류장 선택<br>&nbsp;</label>
                                 </div>
+
                             </div>
-                            <div class="vertical destination destination-right">
-                                <div class="destination-circle">
-                                    <img src="/public/images/edit.png" class="edit">
-                                </div>
-                                <label class="destination-txt">물류사 선택<br>&nbsp;</label>
+                        </td>
+                        <td style="width: 100px;">
+                            <div class="horizontal center" style="margin-left: 30px; margin-bottom: -5px;">
+                                <img src="/public/images/yes.png" class="sm-btn" id="next-btn">
+                                <img src="/public/images/add_primary.png" class="sm-btn" id="add-owner-btn">
                             </div>
-                        </div>
-                        
-                    <div class="vertical destination destination-right">
-                        <div class="destination-circle">
-                            <img src="/public/images/edit.png" class="edit">
-                        </div>
-                        <label class="destination-txt">정류장 선택<br>&nbsp;</label>
-                    </div>
-                        
-                    </div>
-                </td>
-                <td style="width: 100px;">
-                    <div class="horizontal center" style="margin-left: 30px; margin-bottom: -5px;">
-                        <img src="/public/images/add_primary.png" class="sm-btn" >
-                        <img src="/public/images/yes.png" class="sm-btn" id="complete-btn">
-                    </div>
-                </td>
-                </tr>
-                <!-- original data -->
-            </tbody>
-        </table>
+                        </td>
+                    </tr>
+                    <!-- original data -->
+                </tbody>
+            </table>
+        </form>
     </section>
 </body>
 

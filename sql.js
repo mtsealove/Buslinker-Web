@@ -6,6 +6,14 @@ const connection = mysql.createConnection({
     database: 'Buslinker2'
 });
 const crypto = require('./cryto');
+const NodeGeocoder = require('node-geocoder');
+const options = {
+    provider: 'google',
+    httpAdapter: 'https', // Default
+    apiKey: 'AIzaSyB5lgCJ9HTVukxeQCEHVB1kWXPz_4bxCMs',
+    formatter: null
+};
+const geocoder = NodeGeocoder(options);
 
 connection.connect();
 
@@ -71,14 +79,6 @@ exports.createMember = (Name, ID, Password, MemberCat, Phone, ProfilePath, BizNu
 
     // if bus corp member
     if (MemberCat == 2) {
-        var NodeGeocoder = require('node-geocoder');
-        var options = {
-            provider: 'google',
-            httpAdapter: 'https', // Default
-            apiKey: 'AIzaSyB5lgCJ9HTVukxeQCEHVB1kWXPz_4bxCMs',
-            formatter: null
-        };
-        var geocoder = NodeGeocoder(options);
         geocoder.geocode(Garage, (e0, res) => {
             if (e0) {
                 console.error(e0);
@@ -203,4 +203,52 @@ exports.removeDriver = (corp, id, callback) => {
             callback(true);
         }
     })
+}
+
+exports.getLogis=(callback)=> {
+    const query=`select ID, Name from Members where MemberCat=4`;
+    connection.query(query, (error, results)=> {
+        if(error){
+            console.error(error);
+        } else {
+            callback(results);
+        }
+    })
+}
+
+exports.getOwners=(callback)=> {
+    const query='select ID, Name from Members where MemberCat=3';
+    connection.query(query, (error, results)=> {
+        if(error) {
+            console.error(error);
+        } else {
+            callback(results);
+        }
+    });
+}
+
+exports.getBusList=(callback)=> {
+    const query='select ID, Name from Members where MemberCat=2';
+    connection.query(query, (error, results)=> {
+        if(error){
+            console.error(error);
+        } else {
+            callback(results);
+        }
+    })
+}
+
+exports.createRoute=(corp, name, station, logi, empty,owner, contract, callback)=> {
+    geocoder.geocode(station.addr, (e0, res)=> {
+        const stationInsert=`insert into Location set LocName='${station.name}', LocAddr='${station.addr}',
+        Lng=${res[0].longitude}, Lat=${res[0].latitude}, RcTime='${station.time}'`;
+        connection.query(stationInsert, (e1, results)=> {
+            if(e1){
+                console.error(e1);
+            } else {
+                const stationGet=``;
+            }
+        });
+    });
+    
 }
