@@ -205,10 +205,10 @@ exports.removeDriver = (corp, id, callback) => {
     })
 }
 
-exports.getLogis=(callback)=> {
-    const query=`select ID, Name from Members where MemberCat=4`;
-    connection.query(query, (error, results)=> {
-        if(error){
+exports.getLogis = (callback) => {
+    const query = `select ID, Name from Members where MemberCat=4`;
+    connection.query(query, (error, results) => {
+        if (error) {
             console.error(error);
         } else {
             callback(results);
@@ -216,10 +216,10 @@ exports.getLogis=(callback)=> {
     })
 }
 
-exports.getOwners=(callback)=> {
-    const query='select ID, Name from Members where MemberCat=3';
-    connection.query(query, (error, results)=> {
-        if(error) {
+exports.getOwners = (callback) => {
+    const query = 'select ID, Name from Members where MemberCat=3';
+    connection.query(query, (error, results) => {
+        if (error) {
             console.error(error);
         } else {
             callback(results);
@@ -227,10 +227,10 @@ exports.getOwners=(callback)=> {
     });
 }
 
-exports.getBusList=(callback)=> {
-    const query='select ID, Name from Members where MemberCat=2';
-    connection.query(query, (error, results)=> {
-        if(error){
+exports.getBusList = (callback) => {
+    const query = 'select ID, Name from Members where MemberCat=2';
+    connection.query(query, (error, results) => {
+        if (error) {
             console.error(error);
         } else {
             callback(results);
@@ -238,17 +238,224 @@ exports.getBusList=(callback)=> {
     })
 }
 
-exports.createRoute=(corp, name, station, logi, empty,owner, contract, callback)=> {
-    geocoder.geocode(station.addr, (e0, res)=> {
-        const stationInsert=`insert into Location set LocName='${station.name}', LocAddr='${station.addr}',
-        Lng=${res[0].longitude}, Lat=${res[0].latitude}, RcTime='${station.time}'`;
-        connection.query(stationInsert, (e1, results)=> {
-            if(e1){
-                console.error(e1);
-            } else {
-                const stationGet=``;
-            }
-        });
+exports.createRoute = (corp, name, station, logi, empty, owner, contract, callback) => {
+    geocoder.geocode(station.addr, (e0, res) => {
+        // geocode station
+        if (e0) {
+            console.error('e0');
+            console.error(e0);
+        } else {
+            console.log('e0 pass');
+            // station 1 insert
+            const station1Insert = `insert into Location set LocName='${station.name}', LocAddr='${station.addr}',
+            Lng=${res[0].longitude}, Lat=${res[0].latitude}, RcTime='${station.start}'`;
+            connection.query(station1Insert, (e1) => {
+                if (e1) {
+                    console.error('e1');
+                    console.error(e1);
+                } else {
+                    console.log('e1 pass');
+                    // station 2 insert
+                    const station2Insert = `insert into Location set LocName='${station.name}', LocAddr='${station.addr}',
+                    Lng=${res[0].longitude}, Lat=${res[0].latitude}, RcTime='${station.end}'`;
+                    connection.query(station2Insert, (e2) => {
+                        if (e2) {
+                            console.error('e2');
+                            console.error(e2);
+                        } else {
+                            console.log('e2 pass');
+                            // get stationID
+                            const getId = `select LocID from Location order by LocID desc`;
+                            connection.query(getId, (e3, stationResult) => {
+                                if (e3) {
+                                    console.error('e3');
+                                    console.error(e3);
+                                } else {
+                                    console.log('e3 pass');
+                                    const station1ID = stationResult[0].LocID;
+                                    const station2ID = stationResult[1].LocID;
+                                    // geocode logistic
+                                    const logiCenterQuery = `select CenterAddr from Members where ID='${logi.id}'`;
+                                    connection.query(logiCenterQuery, (e3_1, logiCenter) => {
+                                        if (e3_1) {
+                                            console.error('e3_1');
+                                            console.error(e3_1);
+                                        } else {
+                                            console.log('e3_1 pass');
+                                            geocoder.geocode(logiCenter[0].CenterAddr, (e4, logiAddr) => {
+                                                if (e4) {
+                                                    console.error(e4);
+                                                } else {
+                                                    console.log('e4 pass');
+                                                    // logi 1 insert
+                                                    const logiName = ((logi.id).split('-'))[1];
+                                                    const logi1Insert = `insert into Location set LocName='${logiName}', 
+                                                LocAddr='${logi.addr}', Lng=${logiAddr[0].longitude}, Lat=${logiAddr[0].latitude}, RcTime='${logi.start}'`;
+                                                    connection.query(logi1Insert, (e5) => {
+                                                        if (e5) {
+                                                            console.error('e5');
+                                                            console.error(e5);
+                                                        } else {
+                                                            console.log('e5 pass');
+                                                            // logi 2 insert
+                                                            const logi2Insert = `insert into Location set LocName='${logiName}', 
+                                                        LocAddr='${logi.addr}', Lng=${logiAddr[0].longitude}, Lat=${logiAddr[0].latitude}, RcTime='${logi.end}'`;
+                                                            connection.query(logi2Insert, (e6) => {
+                                                                if (e6) {
+                                                                    console.error('e6');
+                                                                    console.error(e6);
+                                                                } else {
+                                                                    console.log('e6 pass');
+                                                                    // get logi id
+                                                                    connection.query(getId, (e7, logiResult) => {
+                                                                        if (e7) {
+                                                                            console.error('e7');
+                                                                            console.error(e7);
+                                                                        } else {
+                                                                            console.log('e7 pass');
+                                                                            const logi1ID = logiResult[0].LocID;
+                                                                            const logi2ID = logiResult[1].LocID;
+                                                                            // geocode empty place
+                                                                            geocoder.geocode(empty.addr, (e8, emptyAddr) => {
+                                                                                if (e8) {
+                                                                                    console.error('e8');
+                                                                                    console.error(e8);
+                                                                                } else {
+                                                                                    console.log('e8 pass');
+                                                                                    // insert empty place
+                                                                                    const emptyInsert = `insert into Location set LocName='${empty.name}', 
+                                                                                LocAddr='${empty.addr}', Lng=${emptyAddr[0].longitude}, Lat=${emptyAddr[0].latitude}, RcTime='${empty.time}'`;
+                                                                                    connection.query(emptyInsert, (e9) => {
+                                                                                        if (e9) {
+                                                                                            console.error('e9');
+                                                                                            console.error(e9);
+                                                                                        } else {
+                                                                                            console.log('e9 pass');
+                                                                                            // get empty id
+                                                                                            connection.query(getId, (e10, emptyResult) => {
+                                                                                                if (e10) {
+                                                                                                    console.error('e10');
+                                                                                                    console.error(e10);
+                                                                                                } else {
+                                                                                                    console.log('e10 pass');
+                                                                                                    const emptyID = emptyResult[0].LocID;
+                                                                                                    const ownerCnt = owner.length;
+                                                                                                    // get owner's center addr
+                                                                                                    var getCenter = `select Name, CenterAddr from Members where ID in (`;
+                                                                                                    for (var i = 0; i < ownerCnt; i++) {
+                                                                                                        getCenter += `'${owner[i].id}'`;
+                                                                                                        if (i != ownerCnt - 1) {
+                                                                                                            getCenter += `, `;
+                                                                                                        }
+                                                                                                    }
+                                                                                                    getCenter += `)`;
+                                                                                                    connection.query(getCenter, (e11, centers) => {
+                                                                                                        if (e11) {
+                                                                                                            console.error('e11');
+                                                                                                            console.error(e11);
+                                                                                                        } else {
+                                                                                                            console.log('e11 pass');
+                                                                                                            var cnt = 0;
+                                                                                                            var ownerInsert = [];
+                                                                                                            var batchAddr = [];
+                                                                                                            for (var i = 0; i < centers.length; i++) {
+                                                                                                                batchAddr.push(centers[i].CenterAddr);
+                                                                                                            }
+
+                                                                                                            // geocode multi
+                                                                                                            geocoder.batchGeocode(batchAddr, (error, data) => {
+                                                                                                                if (error) {
+                                                                                                                    console.error(error);
+                                                                                                                } else {
+                                                                                                                    for (var i = 0; i < data.length; i++) {
+                                                                                                                        ownerInsert.push(`insert into Location set LocName='${centers[i].Name}', 
+                                                                                                                        LocAddr='${batchAddr[i]}', Lng=${data[i].value[0].longitude}, Lat=${data[i].value[0].latitude}, RcTime='${owner[i].time}'`)
+                                                                                                                    }
+                                                                                                                    
+                                                                                                                    for (var i = 0; i < ownerInsert.length; i++) {
+                                                                                                                        connection.query(ownerInsert[i], (e12) => {
+                                                                                                                            if (e12) {
+                                                                                                                                console.error('e12');
+                                                                                                                                console.error(e12);
+                                                                                                                            } else {
+                                                                                                                                console.log('e12 pass');
+                                                                                                                                cnt++;
+                                                                                                                            }
+                                                                                                                        });
+                                                                                                                    }
+                                                                                                                }
+
+                                                                                                            });
+
+                                                                                                            setInterval(function () {
+                                                                                                                if (cnt == owner.length) {
+                                                                                                                    clearInterval(this);
+                                                                                                                    var ownerIDs = [];
+                                                                                                                    //  get ownerIDs
+                                                                                                                    connection.query(getId, (e13, onwerResult) => {
+                                                                                                                        if(e13) {
+                                                                                                                            console.error(e13);
+                                                                                                                        } else {
+                                                                                                                            console.log('e13 pass');
+                                                                                                                            for (var i = 0; i < ownerCnt; i++) {
+                                                                                                                                ownerIDs.push(onwerResult[i].LocID);
+                                                                                                                            }
+                                                                                                                            
+                                                                                                                            // insert route
+                                                                                                                            var routeQuery = `insert into Route set Name='${name}', CorpID='${corp}',
+                                                                                                                            ContractStart='${contract.start}', ContractEnd='${contract.end}',  Locations='`;
+                                                                                                                            routeQuery += station1ID + ',';
+                                                                                                                            routeQuery += logi1ID + ',';
+                                                                                                                            routeQuery += emptyID + ',';
+                                                                                                                            
+                                                                                                                            for (var i = 0; i < ownerIDs.length; i++) {
+                                                                                                                                routeQuery += ownerIDs[i] + ',';
+                                                                                                                            }
+                                                                                                                            routeQuery += logi2ID + ',';
+                                                                                                                            routeQuery += station2ID + `'`;
+                                                                                                                            connection.query(routeQuery, (e14) => {
+                                                                                                                                if (e14) {
+                                                                                                                                    console.error('e14');
+                                                                                                                                    console.error(e14);
+                                                                                                                                    callback(false);
+                                                                                                                                } else {
+                                                                                                                                    console.log('e14 pass');
+                                                                                                                                    console.log('success');
+                                                                                                                                    callback(true);
+                                                                                                                                }
+                                                                                                                            });
+                                                                                                                        }
+                                                                                                                    });
+                                                                                                                } else {
+                                                                                                                    console.log('wait');
+                                                                                                                }
+                                                                                                            }, 100);
+                                                                                                        }
+                                                                                                    });
+                                                                                                }
+                                                                                            });
+                                                                                        }
+                                                                                    });
+                                                                                }
+                                                                            });
+
+                                                                        }
+                                                                    });
+                                                                }
+                                                            });
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
     });
-    
+
 }

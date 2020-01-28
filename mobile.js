@@ -29,6 +29,7 @@ exports.startApp = (port) => {
         const id = req.body['ID'];
         const pw = req.body['Password'];
         const cat = req.body['Cat'];
+        console.log('login tried');
 
         sql.Login(id, pw, cat, (result) => {
             if (result) {

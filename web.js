@@ -382,6 +382,14 @@ exports.startApp = (port) => {
                 time: body['owner-time']
             });
         }
+
+        sql.createRoute(bus, alias, station, logi, empty, owners, contract, (result)=> {
+            if(result) {
+                res.send(`<script>alert('운행정보가 등록되었습니다.');location.href='/Manager/Route';</script>`);
+            } else {
+                res.send(`<script>alert('오류가 발생하였습니다.');</script>`);
+            }
+        }); 
     });
 
     //id reuse check ajax
@@ -398,11 +406,6 @@ exports.startApp = (port) => {
 
     app.listen(port, () => {
         console.log('web server runings on: ' + port);
-        sql.createRoute({
-            name:'테스트',
-            addr:'서울시 광진구 아차산로 55길 43',
-            time: '19:00:00'
-        });
     });
 }
 
