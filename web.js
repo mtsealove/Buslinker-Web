@@ -321,12 +321,26 @@ exports.startApp = (port) => {
 
     // manage route
     app.get('/Manager/Route', (req, res) => {
+        var order=req.query.order;
+        var currnet=req.query.current;
+        
+        if(!order) {
+            order='asc';
+        }
+
+        if(currnet==null) {
+            currnet=true;
+        } 
+
         const user = getUser(req);
         if (user.userID) {
             sql.getLogis((logis) => {
                 sql.getOwners((owners) => {
                     sql.getBusList((bus) => {
-                        res.render('./Manager/route', { user: user, logis: logis, owners: owners, bus: bus });
+                        sql.getRoute(order, currnet, (routes)=> {
+                            res.render('./Manager/route', { user: user, logis: logis, owners: owners, bus: bus, routes:routes });
+                        })
+                        
                     })
                 });
             });

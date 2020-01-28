@@ -438,7 +438,6 @@ exports.createRoute = (corp, name, station, logi, empty, owner, contract, callba
                                                                                     });
                                                                                 }
                                                                             });
-
                                                                         }
                                                                     });
                                                                 }
@@ -457,5 +456,60 @@ exports.createRoute = (corp, name, station, logi, empty, owner, contract, callba
             });
         }
     });
+}
 
+exports.getRoute=(order, current, callback)=> {
+    var date=new Date();
+    var year=date.getFullYear();
+    var month=date.getMonth()+1;
+    var day=date.getDate();
+    var dateStr=year+'-'+month+'-'+day;
+
+    var query=`select R.*, M.Name as Bus from Route R join Members M
+    on R.CorpID=M.ID where ContractEnd`;
+    if(current) {
+        query+=`>='${dateStr}'`;
+    } else {
+        query+=`<'${dateStr}'`;
+    }
+    query+=` order by Name ${order}`;
+    connection.query(query, (err, result)=> {
+        if(err) {
+            console.error(err);
+        } else {            
+            // get location info
+            var locations=[];
+            for(var i=0; i<result.length; i++) {
+                const line=(result[i].Locations).split(',');
+                result[i].Loc=[];
+                for(var j=0; j<line.length; j++) {
+                    locations.push(line[j]);
+                }
+            }
+            var inQeury=`select * from Location where LocID in (`;
+            for(var i=0; i<locations.length; i++) {
+                inQeury+=locations[i];
+                if(i!=locations.length-1) {
+                    inQeury+=', ';
+                } else {
+                    inQeury+=')';
+                }
+            }
+
+            connection.query(inQeury, (e2, result2)=> {
+                if(e2) {
+                    console.error(e2);
+                } else {
+                    for(var i=0; i<result.length; i++) {
+                        const line=(result[i].Locations).split(',');
+                        for(var j=0; j<line.length; j++) {
+                            result[i].Loc.push(result2.find(c=>c.LocID==line[j]));
+                        }
+                    }
+                    console.log(result);
+                    callback(result);
+                }
+            })
+        }
+    }); 
 }

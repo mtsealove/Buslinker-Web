@@ -389,6 +389,75 @@
                         </td>
                     </tr>
                     <!-- original data -->
+                    <% for(var i=0; i<routes.length; i++) {
+                        // formating dates
+                        var startDate=new Date(routes[i].ContractStart);
+                        var start=startDate.getFullYear()+'-'+startDate.getMonth()+1+'-'+startDate.getDate();
+                        var endDate=new Date(routes[i].ContractEnd);
+                        var end=endDate.getFullYear()+'-'+endDate.getMonth()+1+'-'+endDate.getDate();
+                        %>
+                    <tr style="height:100px;">
+                        <td style="width: 120px;"><%=routes[i].Name%></td>
+                        <td style="width: 120px;"><%=start%></td>
+                        <td style="width: 120px;"><%=end%></td>
+                        <td style="width: 30px;"></td>
+                        <td colspan="10">
+                            <!-- station -->
+                            <div id="line-station" class="line">
+                                <div class="vertical destination destination-left">
+                                    <div class="destination-circle">
+                                        
+                                    </div>
+                                    <label class="destination-txt" ><%=routes[i].Loc[0].LocName%><br><%=(routes[i].Loc[0].RcTime).substr(0, 5)%></label>
+                                </div>
+
+                                <!-- logistic center -->
+                                <div class="line" id="line-logi">
+                                    <div class="vertical destination destination-left">
+                                        <div class="destination-circle">
+                                            
+                                        </div>
+                                        <label class="destination-txt" ><%=routes[i].Loc[1].LocName%><br><%=(routes[i].Loc[1].RcTime).substr(0, 5)%></label>
+                                    </div>
+                                    <!-- owners -->
+                                    <div class="line" id="line-owner">
+                                        <!-- 공터 -->
+                                        <div class="vertical destination destination-left">
+                                            <div class="destination-circle">
+                                                
+                                            </div>
+                                            <label class="destination-txt" ><%=routes[i].Loc[2].LocName%><br><%=(routes[i].Loc[2].RcTime).substr(0, 5)%></label>
+                                        </div>
+                                        <!-- owners-->
+                                        <% for(var j=2; j<routes[i].Loc.length-2; j++) { %>
+                                            <div class="vertical destination destination-left">
+                                            <div class="destination-circle">
+                                                
+                                            </div>
+                                            <label class="destination-txt" ><%=routes[i].Loc[j].LocName%><br><%=(routes[i].Loc[j].RcTime).substr(0, 5)%></label>
+                                        </div>
+                                        <% } %>
+                                    </div>
+                                    <div class="vertical destination destination-right">
+                                        <div class="destination-circle">
+                                        </div>
+                                        <label class="destination-txt" ><%=routes[i].Loc[routes[i].Loc.length-2].LocName%><br><%=(routes[i].Loc[routes[i].Loc.length-2].RcTime).substr(0, 5)%></label>
+                                    </div>
+                                </div>
+
+                                <div class="vertical destination destination-right">
+                                    <div class="destination-circle">
+                                        
+                                    </div>
+                                    <label class="destination-txt" ><%=routes[i].Loc[routes[i].Loc.length-1].LocName%><br><%=(routes[i].Loc[routes[i].Loc.length-1].RcTime).substr(0, 5)%></label>
+                                </div>
+
+                            </div>
+                            </td>
+                            <td style="width: 100px;">
+                        </td>
+                    </tr>
+                    <% } %>
                 </tbody>
             </table>
         </form>
