@@ -288,9 +288,9 @@ exports.createRoute = (corp, name, station, logi, empty, owner, contract, callba
                                                 } else {
                                                     console.log('e4 pass');
                                                     // logi 1 insert
-                                                    const logiName = ((logi.id).split('-'))[1];
+                                                    const logiName = logi.name;
                                                     const logi1Insert = `insert into Location set LocName='${logiName}', 
-                                                LocAddr='${logi.addr}', Lng=${logiAddr[0].longitude}, Lat=${logiAddr[0].latitude}, RcTime='${logi.start}'`;
+                                                LocAddr='${logiAddr}', Lng=${logiAddr[0].longitude}, Lat=${logiAddr[0].latitude}, RcTime='${logi.start}'`;
                                                     connection.query(logi1Insert, (e5) => {
                                                         if (e5) {
                                                             console.error('e5');
@@ -467,7 +467,7 @@ exports.getRoute=(order, current, callback)=> {
 
     var query=`select R.*, M.Name as Bus from Route R join Members M
     on R.CorpID=M.ID where ContractEnd`;
-    if(current) {
+    if(current=='true') {
         query+=`>='${dateStr}'`;
     } else {
         query+=`<'${dateStr}'`;
@@ -492,13 +492,15 @@ exports.getRoute=(order, current, callback)=> {
                 if(i!=locations.length-1) {
                     inQeury+=', ';
                 } else {
-                    inQeury+=')';
+                    
                 }
             }
+            inQeury+=')';
 
             connection.query(inQeury, (e2, result2)=> {
                 if(e2) {
                     console.error(e2);
+                    callback(result);
                 } else {
                     for(var i=0; i<result.length; i++) {
                         const line=(result[i].Locations).split(',');
@@ -506,10 +508,51 @@ exports.getRoute=(order, current, callback)=> {
                             result[i].Loc.push(result2.find(c=>c.LocID==line[j]));
                         }
                     }
-                    console.log(result);
+                    for(var i=0; i<result.length; i++) {
+                        console.log('line');
+                        console.log(result[i].Loc);
+                    }
+                    
                     callback(result);
                 }
             })
         }
     }); 
+}
+
+exports.removeRoute=(id, callback)=> {
+    const getQuery=`select Locations from Route where RouteID=${id}`;
+    connection.query(getQuery, (e0, results)=> {
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            const line=((String)(results[0].Locations)).split(',');
+            var locQuery=`delete from Location where LocID in(`;
+            for(var i=0; i<line.length; i++) {
+                locQuery+=line[i];
+                if(i==line.length-1) {
+                    locQuery+=')';
+                } else {
+                    locQuery+=',';
+                }
+            }
+            connection.query(locQuery, (e1)=> {
+                if(e1) {
+                    callback(null);
+                    console.error(e1);
+                } else {
+                    const removeQuery=`delete from Route where RouteID=${id}`;
+                    connection.query(removeQuery, (e2)=> {
+                        if(e2) {
+                            callback(null);
+                            console.error(e3);
+                        } else {
+                            callback(true);
+                        }
+                    });
+                }
+            });
+        }
+    });
 }

@@ -1,22 +1,4 @@
-#nav {
-    background-color: #001F46;
-    position: fixed;
-    width: 100%;
-    top: 0;
-}
 
-#nav-signup {
-    position: fixed;
-    width: 100%;
-    top: 0;
-}
-
-#logout-container {
-    position: fixed;
-    right: 10px;
-    top: 70px;
-    z-index: 3;
-}
 
 .full {
     width: 100vw;
@@ -27,40 +9,14 @@
     align-items: center;
 }
 
-.logo-container {
-    cursor: pointer;
-}
-
-.logo-txt {
-    margin-top: 5px;
-    margin-left: 5px;
-    font-family: eurostile;
-    font-size: 20pt;
-}
-
-.logo-img {
-    width: 45px;
-    height: 45px;
-}
-
 .center {
     justify-content: center;
 }
 
-/* navigation */
-
-.nav-top {
-    margin-left: 20px;
-    margin-right: 20px;
-    font-size: 15pt;
-}
-
-.nav-container {
-    display: flex;
-    flex-direction: row;
-}
-
 #map {
+    position: fixed;
+    top: 62px;
+    left: 0px;
     width: 55vw;
     height: 100vh;
 }

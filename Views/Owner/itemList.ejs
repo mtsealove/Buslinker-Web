@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <%- include('config')%>
+        <title>물량 관리</title>
+        <script>
+        $(function(){
+            const footer_top=$('#item-footer').offset().top;
+            $('#item_detail').height(footer_top-62);
+            $('#item_sum').height(footer_top-62);
+        });
+        </script>
+    </head>
+    <body>
+        <%- include('nav') %>
+        <section class="container-main">
+            <div id="item_sum">
+                <table id="item-table">
+                    <thead>
+                        <th class="head">날짜</th>
+                        <th class="head">물량</th>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div id="item_detail">
+                <label class="font-white size-15">물량 현황</label><br>
+                <label class="font-white size-15">총 400건</label>
+                <table style="width: 100%;">
+                    <thead>
+                        <th class="head-dark">송장번호</th>
+                        <th class="head-dark">품목명</th>
+                        <th class="head-dark">받는이</th>
+                        <th class="head-dark">전화번호</th>
+                        <th class="head-dark">도착지</th>
+                    </thead>
+                </table>
+            </div>
+            <div id="item-footer">
+
+            </div>
+        </section>
+    </body>
+</html>

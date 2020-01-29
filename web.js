@@ -322,14 +322,14 @@ exports.startApp = (port) => {
     // manage route
     app.get('/Manager/Route', (req, res) => {
         var order=req.query.order;
-        var currnet=req.query.current;
+        var current=req.query.current;
         
         if(!order) {
             order='asc';
         }
 
-        if(currnet==null) {
-            currnet=true;
+        if(!current) {
+            current='true';
         } 
 
         const user = getUser(req);
@@ -337,7 +337,7 @@ exports.startApp = (port) => {
             sql.getLogis((logis) => {
                 sql.getOwners((owners) => {
                     sql.getBusList((bus) => {
-                        sql.getRoute(order, currnet, (routes)=> {
+                        sql.getRoute(order, current, (routes)=> {
                             res.render('./Manager/route', { user: user, logis: logis, owners: owners, bus: bus, routes:routes });
                         })
                         
@@ -365,6 +365,7 @@ exports.startApp = (port) => {
 
         const logi = {
             id: (body['logi-id'].split('-'))[0],
+            name:(body['logi-id'].split('-'))[1],
             start: body['logi-start'],
             end: body['logi-end']
         };
@@ -406,6 +407,18 @@ exports.startApp = (port) => {
         }); 
     });
 
+    // remove route
+    app.post('/Manager/Remove/Route', (req, res)=> {
+        const id=req.body['id'];
+        sql.removeRoute(id, (result)=>{
+            if(result) {
+                res.json(Ok);
+            } else {
+                res.json(Not);
+            }
+        });
+    }); 
+
     //id reuse check ajax
     app.get('/Manager/Reuse', (req, res) => {
         const id = req.query.id;
@@ -416,6 +429,13 @@ exports.startApp = (port) => {
                 res.json(Not);
             }
         });
+    });
+
+    // owner
+    app.get('/Owner/ItemList', (req, res)=> {
+        const user=getUser(req);
+        
+        res.render('./Owner/itemList', {user: user});
     });
 
     app.listen(port, () => {

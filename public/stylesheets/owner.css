@@ -1,0 +1,35 @@
+#item_sum {
+    position: fixed;
+    left: 0px;
+    top: 62px;
+    width: 25vw;
+    background-color: white;
+    padding-right: 50px;
+}
+
+#item_detail {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    background-color: #32373d;
+    position: fixed;
+    top: 62px;
+    width: 75vw;
+    height: 85vh;
+    padding: 20px;
+    right: 0px;
+}
+
+#item-table {
+    width: 90%;
+    margin-top: 20px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+#item-footer {
+    position: fixed;
+    bottom: 0px;
+    height: 80px;
+    width: 100vw;
+    background-color: darkgray;
+}

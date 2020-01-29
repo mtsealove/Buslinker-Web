@@ -1,0 +1,71 @@
+<script>
+    $(function() {
+        const url=$(location).attr('pathname');
+        $(`.nav-top[data-url='${url}']`).addClass('active');
+
+        $('.logo-container').click(function() {
+            location.href='/';
+        });
+
+        $('#logout-container').hide();
+
+        $('#user-name').click(function() {
+            $('#logout-container').slideToggle(300);
+        });
+
+        $('#logout-btn').click(function() {
+            if(confirm('로그아웃 하시겠습니까?')) {
+                location.href='/Logout';
+            }
+        });
+    });
+</script>
+
+<nav class="navbar navbar-expand-lg navbar-dark" id="nav">
+    <div class="logo-container">
+        <img src="/public/images/logo_black_512x512.png" class="logo-img" />
+        <span class="logo-txt font-white">Bus<b>Linker</b></span>
+    </div>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+        </ul>
+
+        <div class="nav-container">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item nav-top" data-url="/Manager">
+                    <a class="nav-link" href="">현황</a>
+                </li>
+                <li class="nav-item nav-top" data-url="/Manager/Route">
+                    <a class="nav-link" href="/Manager/Route">노선관리</a>
+                </li>
+                <li class="nav-item nav-top" data-url="/Ask">
+                    <a class="nav-link" href="">물량관리</a>
+                </li>
+                <li class="nav-item nav-top" data-url="/Bus/Manage/Driver">
+                    <a class="nav-link" href="/Bus/Manage/Driver">기사관리</a>
+                </li>
+                <li class="nav-item nav-top" >
+                    <a class="nav-link" href="/Manager/SignUp">회원가입</a>
+                </li>
+                <li class="nav-item nav-top">
+                    <a class="nav-link" href="#">정산관리</a>
+                </li>
+            </ul>
+            <div class="horizontal center">
+                <img src="/<%=user.profile%>" id="user-profile">
+                <label class="font-white" id="user-name"><%=user.userName%></label>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="card" id="logout-container">
+    <div class="card-body">
+        <button class="btn-main" id="logout-btn">로그아웃</button>
+    </div>
+</div>
