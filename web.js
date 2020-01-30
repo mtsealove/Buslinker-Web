@@ -16,8 +16,8 @@ exports.startApp = (port) => {
 
     app.set('view engine', 'ejs');
     app.set('views', './Views');
-    app.use(body_parser.json());
-    app.use(body_parser.urlencoded({ extended: true, limit: '150mb' }));
+    app.use(body_parser.json({limit: '150mb'}));
+    app.use(body_parser.urlencoded({ extended: true, limit: '150mb', parameterLimit: 2100 }));
     app.use(session({
         key: 'sid',
         secret: 'secret',
@@ -115,10 +115,14 @@ exports.startApp = (port) => {
         }
     });
 
+    // set driver and bus for route
     app.get('/Bus/Manage/Route', (req, res) => {
         const user = getUser(req);
         if (user.userID) {
-            res.render('./Bus/manageRoute', { user: user });
+            sql.getRoute('asc', 'true', user.userID, (routeList)=> {
+                console.log(routeList);
+                res.render('./Bus/manageRoute', { user: user, routes: routeList});
+            })
         } else {
             res.redirect('/');
         }
@@ -335,13 +339,16 @@ exports.startApp = (port) => {
         const user = getUser(req);
         if (user.userID) {
             sql.getLogis((logis) => {
+                console.log('1');
                 sql.getOwners((owners) => {
+                    console.log('2');
                     sql.getBusList((bus) => {
-                        sql.getRoute(order, current, (routes)=> {
+                        console.log('3');
+                        sql.getRoute(order, current, null,(routes)=> {
+                            console.log('4');
                             res.render('./Manager/route', { user: user, logis: logis, owners: owners, bus: bus, routes:routes });
-                        })
-                        
-                    })
+                        }); 
+                    });
                 });
             });
         } else {
@@ -431,12 +438,67 @@ exports.startApp = (port) => {
         });
     });
 
+    // manage item list
+    app.get('/Manager/ItemList', (req, res)=> {
+        res.render('./Manager/itemList', {user: getUser(req)});
+    });
+
     // owner
     app.get('/Owner/ItemList', (req, res)=> {
-        const user=getUser(req);
-        
-        res.render('./Owner/itemList', {user: user});
+        const user=getUser(req); 
+        var yyyymm=req.query.yymm;
+        if(!yyyymm) {
+            const date=new Date();
+            yyyymm=date.getFullYear()+'-'+date.getMonth()+1;
+        }
+        sql.getItemList(user.userID, yyyymm, (results)=>{
+            console.log(results);
+            res.render('./Owner/itemList', {user: user, itemList:results});
+        });
     });
+
+    // post item 
+    app.post('/Owner/Create/ItemList', (req, res)=> {
+        const user=getUser(req);
+        const ids=req.body['id'];
+        const phones=req.body['phone'];
+        const names=req.body['name'];
+        const item_names=req.body['item_name'];
+        const addrs=req.body['addr'];
+
+        sql.createItemList(user.userID, ids, item_names, names, phones, addrs, (result)=> {
+            if(result) {
+                console.log('success');
+                res.send(`<script>alert('물량이 등록되었습니다.');location.href='/Owner/ItemList';</script>`);
+            } else {
+                res.send(`<script>alert('오류가 발생하였습니다.');history.go(-1);</script>`);
+            }
+        })
+    });
+
+    // get item list by ajax
+    app.get('/Onwer/Get/ItemList', (req, res)=> {
+        const listID=req.query.listID;
+        const user=getUser(req);
+
+        sql.getItemListDetail(user.userID, listID, (result)=> {
+            if(result) {
+                res.json(result);
+            } 
+        }); 
+    });
+
+    const xlsx=require('xlsx');
+    app.post('/Owner/Upload/Excel', upload.single('item_file'), (req, res)=> {
+        console.log(req.file);
+        const path=__dirname+'/'+req.file.path;
+        let workbook=xlsx.readFile(path);
+        let sheetName=workbook.SheetNames[0];
+        let worksheet=workbook.Sheets[sheetName];
+        const sheetJson=xlsx.utils.sheet_to_json(worksheet);
+        console.log(sheetJson);
+        res.json(sheetJson);
+    }); 
 
     app.listen(port, () => {
         console.log('web server runings on: ' + port);

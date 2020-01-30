@@ -82,75 +82,72 @@
                     <th class="head">노선명</th>
                     <th class="head">버스기사</th>
                     <th class="head">차량번호</th>
-                    <th class="head">경로</th>
+                    <th class="head" colspan="11">경로</th>
                 </tr>
             <tbody>
+                <% for(var i=0; i<routes.length; i++) {
+                    // formating dates
+                    var startDate=new Date(routes[i].ContractStart);
+                    var start=startDate.getFullYear()+'-'+startDate.getMonth()+1+'-'+startDate.getDate();
+                    var endDate=new Date(routes[i].ContractEnd);
+                    var end=endDate.getFullYear()+'-'+endDate.getMonth()+1+'-'+endDate.getDate();
+                    %>
+                    <tr style="height: 20px;"></tr>
                 <tr class="route-tr">
-                    <td class="route-td">서초-대한통운</td>
-                    <!-- 버스 기사 검색 -->
-                    <td class="route-search-td">
-                        <div class="search">
-                            <input class="input-search search-driver" readonly>
-                            <img src="/public/images/lock.png" class="lock">
-                        </div>
-                        <!-- 버스기사 추천-->
-                        <div class="search preview" >
-                            <div class="card-body">
+                    <td class="mid"><b><%=routes[i].Name%></b><br><%=routes[i].Bus%></td>
+                    <td class="mid"><input class="box0"></td>
+                    <td class="mid"><input class="box0"></td>
+                    <td class="space"></td>
+                    <td colspan="10">
+                        <!-- station -->
+                        <div class="line line-station">
+                            <div class="vertical destination destination-left">
+                                <div class="destination-circle"></div>
+                                <label class="destination-txt" ><%=routes[i].Loc[0].LocName%><br><%=(routes[i].Loc[0].RcTime).substr(0, 5)%></label>
+                            </div>
 
-                            </div>
-                        </div>
-                    </td>
-                    <!-- 차량 검색 -->
-                    <td class="route-search-td">
-                        <div class="search">
-                            <input class="input-search search-bus" readonly>
-                            <img src="/public/images/lock.png" class="lock">
-                        </div>
-                        <!-- 차량 추천 -->
-                    </td>
-                    <td style="width: 70%;" class="route-td">
-                        <!-- 경로 -->
-                        <div class="route-conatiner">
-                            전체
-                            <div class="route-line">
-                                <div class="route">
-                                    <div class="route-circle"></div>
-                                    <div class="line line-commute"></div>
-                                    <div class="route-circle"></div>
-                                    <div class="line line-commute"></div>
-                                    <div class="route-circle"></div>
-                                    <div class="line line-collect"></div>
-                                    <div class="route-circle"></div>
-                                    <div class="line line-delivery"></div>
-                                    <div class="route-circle"></div>
-                                    <div class="line line-delivery"></div>
-                                    <div class="route-circle"></div>
-                                    <div class="line line-delivery"></div>
-                                    <div class="route-circle"></div>
-                                    <div class="line line-collect"></div>
-                                    <div class="route-circle"></div>
-                                    <div class="line line-commute"></div>
-                                    <div class="route-circle"></div>
-                                    <div class="line line-commute"></div>
-                                    <div class="route-circle"></div>
+                            <!-- logistic center -->
+                            <div class="line line-logi" >
+                                <div class="vertical destination destination-left">
+                                    <div class="destination-circle"></div>
+                                    <label class="destination-txt" ><%=routes[i].Loc[1].LocName%><br><%=(routes[i].Loc[1].RcTime).substr(0, 5)%></label>
                                 </div>
-                                
+                                <!-- owners -->
+                                <div class="line line-owner">
+                                    <!-- 공터 -->
+                                    <div class="vertical destination destination-left">
+                                        <div class="destination-circle"></div>
+                                        <label class="destination-txt" ><%=routes[i].Loc[2].LocName%><br><%=(routes[i].Loc[2].RcTime).substr(0, 5)%></label>
+                                    </div>
+                                    <!-- owners-->
+                                    <% for(var j=3; j<routes[i].Loc.length-2; j++) { 
+                                        var right='';
+                                        if(routes[i].Loc.length-3==j) {
+                                            right='destination-right';
+                                        }
+                                        %>
+                                        <div class="vertical destination <%=right%>">
+                                        <div class="destination-circle"></div>
+                                        <label class="destination-txt" ><%=routes[i].Loc[j].LocName%><br><%=(routes[i].Loc[j].RcTime).substr(0, 5)%></label>
+                                    </div>
+                                    <% } %>
+                                </div>
+                                <div class="vertical destination destination-right">
+                                    <div class="destination-circle"></div>
+                                    <label class="destination-txt" ><%=routes[i].Loc[routes[i].Loc.length-2].LocName%><br><%=(routes[i].Loc[routes[i].Loc.length-2].RcTime).substr(0, 5)%></label>
+                                </div>
+                            </div>
+
+                            <div class="vertical destination destination-right">
+                                <div class="destination-circle"></div>
+                                <label class="destination-txt" ><%=routes[i].Loc[routes[i].Loc.length-1].LocName%><br><%=(routes[i].Loc[routes[i].Loc.length-1].RcTime).substr(0, 5)%></label>
                             </div>
                         </div>
-                        <div class="route-txt">
-                            <label>차고지</label>
-                            <label>차고지</label>
-                            <label>차고지</label>
-                            <label>차고지</label>
-                            <label>차고지</label>
-                            <label>차고지</label>
-                            <label>차고지</label>
-                            <label>차고지</label>
-                            <label>차고지</label>
-                            <label>차고지</label>
-                        </div>
+                        </td>
+                        <td style="width: 100px;">
                     </td>
                 </tr>
+                <% } %>    
             </tbody>
             </thead>
         </table>

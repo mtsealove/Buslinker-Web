@@ -458,7 +458,8 @@ exports.createRoute = (corp, name, station, logi, empty, owner, contract, callba
     });
 }
 
-exports.getRoute=(order, current, callback)=> {
+
+exports.getRoute=(order, current, bus, callback)=> {
     var date=new Date();
     var year=date.getFullYear();
     var month=date.getMonth()+1;
@@ -472,11 +473,18 @@ exports.getRoute=(order, current, callback)=> {
     } else {
         query+=`<'${dateStr}'`;
     }
+    if(bus){
+        query+=` and R.CorpID='${bus}' `;
+    }
+
     query+=` order by Name ${order}`;
+    console.log('query'+query);
     connection.query(query, (err, result)=> {
         if(err) {
+            console.log('e1');
             console.error(err);
         } else {            
+            console.log('e1 pass');
             // get location info
             var locations=[];
             for(var i=0; i<result.length; i++) {
@@ -499,6 +507,7 @@ exports.getRoute=(order, current, callback)=> {
 
             connection.query(inQeury, (e2, result2)=> {
                 if(e2) {
+                    console.log('e2');
                     console.error(e2);
                     callback(result);
                 } else {
@@ -555,4 +564,101 @@ exports.removeRoute=(id, callback)=> {
             });
         }
     });
+}
+
+exports.getItemList=(userID, yyyymm, callback)=> {
+    const startDate=yyyymm+'-01';
+    const endDate=yyyymm.split('-')[0]+'-'+(parseInt(yyyymm.split('-')[1])+1)+'-01';
+
+    const query=`select L.ListID, L.SoldDate, count(I.ListID) as Count
+    from ItemList L join Item I 
+    on L.ListID=I.ListID 
+    where L.OwnerID='${userID}'
+    and L.SoldDate>='${startDate}'
+    and L.SoldDate<'${endDate}'
+    group by L.ListID
+    order by L.SoldDate desc`;
+
+    connection.query(query, (e0, results)=> {
+        if(e0) {
+            callback(null);
+            console.error(e0);
+        } else {
+            callback(results);
+        }
+    })
+}
+
+exports.createItemList=(userID, ids, item_names, names, phones, addrs, callback)=> {
+    const date=new Date();
+    const dateStr=date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
+    const listQuery=`insert into ItemList set OwnerID='${userID}', SoldDate='${dateStr}'`;
+    connection.query(listQuery, (e0)=> {
+        if(e0) {
+            console.error('e0');
+            console.error(e0);
+            callback(false);
+        } else {
+            const getList=`select ListID from ItemList where OwnerID='${userID}' order by ListID desc`;
+            connection.query(getList, (e1, listResult)=> {
+                if(e1) {
+                    console.error('e1');
+                    console.error(e1);
+                    callback(false);
+                } else {
+                    const listID=listResult[0].ListID;
+                    var itemQuery=`insert into Item(ItemID, ListID, ItemName, DesAddr, DesName, DesPhone) values `;
+                    for(var i=0; i<ids.length; i++) {
+                        itemQuery+=`('${ids[i]}',${listID}, '${item_names[i]}', '${addrs[i]})', '${names[i]}', '${phones[i]}')`;
+                        if(i!=ids.length-1) {
+                            itemQuery+=',';
+                        }
+                    }
+                    connection.query(itemQuery, (e2)=> {
+                        if(e2) {
+                            console.error('e2');
+                            console.error(e2);
+                            callback(false);
+                        } else {
+                            callback(true);
+                        }
+                    })
+                }
+            });
+        }
+     });
+}
+
+exports.getItemListDetail=(userID, ListID, callback)=> {
+    const query=`select I.* from item I join ItemList L
+    on L.ListID=I.ListID
+    where L.OwnerID='${userID}'
+    and L.ListID=${ListID}`;
+
+    connection.query(query, (e0, result)=> {
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(result);
+        }
+    })
+}
+
+// get not setted driver
+exports.getEmpyDriver=(corp, callback)=> {
+    const query=`select ID, Name from Members M where MemberCat=6 
+    and Corp='${corp}'
+    and not exists(
+    select DriverID from Route R where R.DriverID=M.ID
+    )`;
+
+    connection.query(query, (e0, result)=> {
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(result);
+        }
+    }); 
 }
