@@ -115,7 +115,7 @@ exports.startApp = (port) => {
         }
     });
 
-    // set driver and bus for route
+    // show list
     app.get('/Bus/Manage/Route', (req, res) => {
         const user = getUser(req);
         if (user.userID) {
@@ -127,6 +127,11 @@ exports.startApp = (port) => {
             res.redirect('/');
         }
     });
+
+    // set driver and bus for rouete
+    app.get('/Bus/Manage/Route/Schedule', (req, res)=> {
+        res.render('./Bus/manageSchedule', {user: getUser(req)});
+    }); 
 
     app.get('/Bus/Manage/Driver', (req, res) => {
         const user = getUser(req);

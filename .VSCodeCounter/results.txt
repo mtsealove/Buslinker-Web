@@ -1,0 +1,52 @@
+Date : 2020-01-30 19:37:07
+Directory : /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views
+Total : 25 files,  2440 codes, 54 comments, 190 blanks, all 2684 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| HTML     |         25 |      2,440 |         54 |        190 |      2,684 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                            | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                               |         25 |      2,440 |         54 |        190 |      2,684 |
+| Bus                                                                             |          7 |        874 |         15 |         65 |        954 |
+| Manager                                                                         |          8 |        870 |         19 |         75 |        964 |
+| Owner                                                                           |          3 |        253 |          4 |         18 |        275 |
++---------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                        | language | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Bus/config.ejs          | HTML     |         10 |          1 |          1 |         12 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Bus/createDriver.ejs    | HTML     |        215 |          2 |         21 |        238 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Bus/manageBus.ejs       | HTML     |        167 |          3 |          9 |        179 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Bus/manageDriver.ejs    | HTML     |        134 |          0 |          5 |        139 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Bus/manageRoute.ejs     | HTML     |        140 |          5 |         12 |        157 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Bus/nav.ejs             | HTML     |         63 |          0 |          5 |         68 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Bus/status.ejs          | HTML     |        145 |          4 |         12 |        161 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Manager/complete.ejs    | HTML     |         41 |          0 |          5 |         46 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Manager/config.ejs      | HTML     |         10 |          1 |          1 |         12 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Manager/index.ejs       | HTML     |         12 |          0 |          1 |         13 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Manager/itemList.ejs    | HTML     |         27 |          0 |          1 |         28 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Manager/nav.ejs         | HTML     |         63 |          0 |          8 |         71 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Manager/route.ejs       | HTML     |        474 |         18 |         35 |        527 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Manager/signup.ejs      | HTML     |         59 |          0 |          3 |         62 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Manager/signup_form.ejs | HTML     |        184 |          0 |         21 |        205 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Owner/config.ejs        | HTML     |         10 |          1 |          1 |         12 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Owner/itemList.ejs      | HTML     |        180 |          3 |          9 |        192 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/Owner/nav.ejs           | HTML     |         63 |          0 |          8 |         71 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/ask.ejs                 | HTML     |         76 |          0 |          7 |         83 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/config.ejs              | HTML     |          9 |          1 |          2 |         12 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/footer.ejs              | HTML     |          7 |          0 |          0 |          7 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/index.ejs               | HTML     |         89 |          7 |          6 |        102 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/intro.ejs               | HTML     |        140 |          6 |          5 |        151 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/login.ejs               | HTML     |         71 |          0 |          6 |         77 |
+| /Users/isanhae/Projects/BusLinker/BuslinkerServer/Views/nav.ejs                 | HTML     |         51 |          2 |          6 |         59 |
+| Total                                                                           |          |      2,440 |         54 |        190 |      2,684 |
++---------------------------------------------------------------------------------+----------+------------+------------+------------+------------+

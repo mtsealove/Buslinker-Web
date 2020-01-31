@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <title>스케줄 관리</title>
+    <script src="/public/js/fullcalendar/core.js"></script>
+    <script src="/public/js/fullcalendar/timegrid.js"></script>
+    <script src="/public/js/fullcalendar/daygrid.js"></script>
+    <script src="/public/js/fullcalendar/interaction.js"></script>
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/core.css" />
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/timegrid.css" />
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/daygrid.css" />
+
+    <script>
+        $(function () {
+            
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var Calendar = FullCalendar.Calendar;
+            var Draggable = FullCalendarInteraction.Draggable;
+
+            var containerEl = document.getElementById('external-events');
+            var calendarEl = document.getElementById('calendar');
+
+            // initialize the external events
+            // -----------------------------------------------------------------
+
+            new Draggable(containerEl, {
+                itemSelector: '.event',
+                eventData: function (eventEl) {
+                    return {
+                        title: eventEl.innerText
+                    };
+                }
+            });
+
+            // initialize the calendar
+            // -----------------------------------------------------------------
+
+            var calendar = new Calendar(calendarEl, {
+                plugins: ['interaction', 'dayGrid', 'timeGrid'],
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                editable: true,
+                droppable: true, // this allows things to be dropped onto the calendar
+
+                drop: function (info) {
+                    // is the "remove after drop" checkbox checked?
+                    const cat=$(info.draggedEl).data('cat');
+                    if(cat=='bus') {
+
+                    }  
+                    
+                }
+            });
+
+            calendar.render();
+        });
+
+        /*
+    <td class="fc-event-container">
+    <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end fc-draggable fc-resizable">
+        <div class="fc-content">
+             <span class="fc-title">버스</span>
+             </div>
+             <div class="fc-resizer fc-end-resizer">
+                </div>
+                </a>
+                </td>
+        */
+        function setBack() {
+            const contents=$('.fc-event-container').children('.fc-event').children('.fc-content').children('.fc-title');
+            contents.css('background-color', 'black');
+            for(var i=0; i<contents.length; i++) {
+                console.log(contents[i].innerText);      
+            }
+         }
+    </script>
+</head>
+
+<body>
+    <%- include('nav') %>
+    <section class="container-main">
+        <div class="horizontal">
+            <div id="external-events" class="horizontal">
+
+                <div>
+                    <p>
+                        <strong>버스</strong>
+                    </p>
+                    <div class="event item-bus" data-cat="bus">버스</div>
+                    <div class="event item-bus" data-cat="bus">버스</div>
+                    <div class="event item-bus" data-cat="bus">버스</div>
+                    <div class="event item-bus" data-cat="bus">버스</div>
+                    <div class="event item-bus" data-cat="bus">버스</div>
+                </div>
+
+                <div>
+                    <p>
+                        <strong>버스</strong>
+                    </p>
+
+                    <div class="event item-driver" data-cat="driver">기사</div>
+                    <div class="event item-driver" data-cat="driver">기사</div>
+                    <div class="event item-driver" data-cat="driver">기사</div>
+                    <div class="event item-driver" data-cat="driver">기사</div>
+                    <div class="event item-driver" data-cat="driver">기사</div>
+                </div>
+            </div>
+            <div id="calendar" style="width: 800px;">
+
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>
+

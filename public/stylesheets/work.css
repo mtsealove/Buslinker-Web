@@ -246,3 +246,19 @@
 .bus_checked {
     visibility: visible;
 }
+
+.item-bus {
+    padding: 5px;
+    border-radius: 5px;
+    color: white;
+    background-color: #011D46;
+    margin-bottom: 10px;
+}
+
+.item-driver {
+    padding: 5px;
+    border-radius: 5px;
+    color: black;
+    background-color: #ffcc00;
+    margin-bottom: 10px;
+}
