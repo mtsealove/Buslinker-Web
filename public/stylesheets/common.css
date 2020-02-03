@@ -41,6 +41,10 @@
     align-items: center;
 }
 
+.between {
+     justify-content: space-between;
+}
+
 .vertical {
     display: flex;
     flex-direction: column;

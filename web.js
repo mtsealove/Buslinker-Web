@@ -115,7 +115,7 @@ exports.startApp = (port) => {
         }
     });
 
-    // show list
+    // show route list
     app.get('/Bus/Manage/Route', (req, res) => {
         const user = getUser(req);
         if (user.userID) {
@@ -130,7 +130,14 @@ exports.startApp = (port) => {
 
     // set driver and bus for rouete
     app.get('/Bus/Manage/Route/Schedule', (req, res)=> {
-        res.render('./Bus/manageSchedule', {user: getUser(req)});
+        const user= getUser(req);
+        sql.getDrivers(user.userID, (drivers)=> {
+            sql.getBus(user.userID, null, null, (bus)=> {
+                console.log(drivers);
+                console.log(bus);
+                res.render('./Bus/manageSchedule', {user:user, bus:bus, drivers:drivers});        
+            });
+        })
     }); 
 
     app.get('/Bus/Manage/Driver', (req, res) => {
@@ -185,7 +192,7 @@ exports.startApp = (port) => {
         });
     });
 
-    // remove driver
+    // remove driver by ajax
     app.post('/Bus/Manage/Remove/Driver', (req, res) => {
         const corp = req.session.userID;
         const id = req.body['id'];

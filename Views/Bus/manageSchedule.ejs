@@ -14,24 +14,101 @@
 
     <script>
         $(function () {
-            
+
         });
+
+        // managae driver
+        function addDriver(date, id) {
+            // check origianl date
+            if ((String)(date).indexOf('.') != -1) {
+                date = parseDate(date);
+            }
+            date = ((String)(date)).replace(/\s/gi, "");
+            const form = $('#calendar-form');
+            // remove original
+            $(form).children(`input[name=driver][value*='${date}']`).remove();
+            // append new
+            $(form).append(`<input class="form-control" name="driver" value="${date}-${id}">`);
+        }
+
+        function removeDriver(date) {
+            if ((String)(date).indexOf('.') != -1) {
+                date = parseDate(date);
+            }
+            date = (String)(date).replace(/\s/gi, "");;
+
+            const form = $('#calendar-form');
+            $(form).children(`input[name=driver][value*='${date}']`).remove();
+        }
+
+        // manage bus
+        function addBus(date, id) {
+            // check origianl date
+            if ((String)(date).indexOf('.') != -1) {
+                date = parseDate(date);
+            }
+            date = ((String)(date)).replace(/\s/gi, "");
+            const form = $('#calendar-form');
+            // remove original
+            $(form).children(`input[name=bus][value*='${date}']`).remove();
+            // append new
+            $(form).append(`<input class="form-control" name="bus" value="${date}-${id}">`);
+        }
+
+        function removeBus(date) {
+            if ((String)(date).indexOf('.') != -1) {
+                date = parseDate(date);
+            }
+            date = (String)(date).replace(/\s/gi, "");;
+
+            const form = $('#calendar-form');
+            $(form).children(`input[name=bus][value*='${date}']`).remove();
+        }
+
+        function parseDate(date) {
+            var line = [];
+            line = (String)(date).split('.');
+            for (var i = 1; i < 3; i++) {
+                line[i] = line[i].substr(0, line[i].length - 1);
+                if (line[i].length < 2) {
+                    line[i] = '0' + line[i];
+                }
+            }
+            date = line[0] + '-' + line[1] + '-' + line[2];
+            console.log(date);
+            return date;
+        }
 
         document.addEventListener('DOMContentLoaded', function () {
             var Calendar = FullCalendar.Calendar;
             var Draggable = FullCalendarInteraction.Draggable;
 
-            var containerEl = document.getElementById('external-events');
+            var busEvent = document.getElementById('bus-event');
+            var driverEvent = document.getElementById('driver-event');
             var calendarEl = document.getElementById('calendar');
 
             // initialize the external events
             // -----------------------------------------------------------------
 
-            new Draggable(containerEl, {
+            new Draggable(busEvent, {
                 itemSelector: '.event',
                 eventData: function (eventEl) {
                     return {
-                        title: eventEl.innerText
+                        title: eventEl.innerText,
+                        color: '#011D46',
+                        textColor: '#ffffff',
+                        id: 'bus-'+$(eventEl).data('id'),
+                    };
+                }
+            });
+
+            new Draggable(driverEvent, {
+                itemSelector: '.event2',
+                eventData: function (eventEl) {
+                    return {
+                        title: eventEl.innerText,
+                        color: '#ffcc00',
+                        id:'driver-'+$(eventEl).data('id')
                     };
                 }
             });
@@ -42,44 +119,117 @@
             var calendar = new Calendar(calendarEl, {
                 plugins: ['interaction', 'dayGrid', 'timeGrid'],
                 header: {
-                    left: 'prev,next today',
+                    left: 'prev',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    right: 'next'
                 },
                 editable: true,
-                droppable: true, // this allows things to be dropped onto the calendar
+                droppable: false, // this allows things to be dropped onto the calendar
 
                 drop: function (info) {
-                    // is the "remove after drop" checkbox checked?
-                    const cat=$(info.draggedEl).data('cat');
-                    if(cat=='bus') {
-
-                    }  
+                    // check cat
+                    const cat = $(info.draggedEl).data('cat');
+                    const id = $(info.draggedEl).data('id');
+                    var line = (String)(info.dateStr).split('-');
+                    var date = line[0] + '-' + (line[1].replace('0', '')) + '-' + line[2].replace('0', '');
+                    if (cat == 'bus') {
+                        console.log('new bus');
+                        removeBus(date);
+                        addDriver(date, id);
+                    } else {
+                        console.log('new driver');
+                        removeDriver(date);
+                    addDriver(date, id);
+                    }
                     
+                },
+                eventDragStart: function (event, jsEvent, ui, view) {
+                    handleRemove(event.event);
+                },
+                eventDrop: function (event, jsEvent, ui, view) {
+                    handleAdd(event);
+                },
+                eventResize: function (event, jsEvent, ui, view) {
+                    handleAdd(event);
+                },
+                eventResizeStart: function (event, delta, revertFunc, jsEvent, ui, view) {
+                    handleRemove(event);
                 }
             });
 
             calendar.render();
         });
 
-        /*
-    <td class="fc-event-container">
-    <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end fc-draggable fc-resizable">
-        <div class="fc-content">
-             <span class="fc-title">버스</span>
-             </div>
-             <div class="fc-resizer fc-end-resizer">
-                </div>
-                </a>
-                </td>
-        */
-        function setBack() {
-            const contents=$('.fc-event-container').children('.fc-event').children('.fc-content').children('.fc-title');
-            contents.css('background-color', 'black');
-            for(var i=0; i<contents.length; i++) {
-                console.log(contents[i].innerText);      
+        function handleRemove(event) {
+            // removing all
+            var oldStart = new Date(event.start).toLocaleDateString().replace(/\s/gi, "");
+            console.log(event.id);
+            console.log('remove');
+            if (event.end) {
+                var oldEnd = new Date(event.end).toLocaleDateString();
+                var oldStartDate = parseInt(oldStart.split('.')[2]);
+                var oldEndDate = parseInt(oldEnd.split('.')[2]);
+                var oldDiff = oldEndDate - oldStartDate;
+
+
+                for (var i = 0; i < oldDiff; i++) {
+                    var line = ((String)(oldStart)).split('.');
+                    var date = line[0] + '-' + line[1] + '-' + (parseInt(line[2]) + i);
+                    console.log(date);
+                    if(event.id.indexOf('bus')!=-1) {
+                        removeBus(date);
+                    } else {
+                        removeDriver(date);
+                    }
+                }
+            } else {
+                var line = ((String)(oldStart)).split('.');
+                var date = line[0] + '-' + line[1] + '-' + (parseInt(line[2]));
+                date = (String)(date).replace(/\s/gi, "");
+                console.log(date);
+                if(event.id.indexOf('bus')!=-1) {
+                    removeBus(date);
+                } else {
+                    removeDriver(date);
+                }
             }
-         }
+        }
+
+        function handleAdd(event) {
+            console.log(event.event.id);
+            // add all
+            console.log('add');
+            var start = new Date(event.event.start).toLocaleDateString().replace(/\s/gi, "");
+            const id=(event.event.id).split('-')[1];
+            if (event.event.end) {
+                var end = new Date(event.event.end).toLocaleDateString();
+                var startDate = parseInt(start.split('.')[2]);
+                var endDate = parseInt(end.split('.')[2]);
+                var diff = endDate - startDate;
+
+                for (var i = 0; i < diff; i++) {
+                    var line = ((String)(start)).split('.');
+                    var date = line[0] + '-' + line[1] + '-' + (parseInt(line[2]) + i);
+                    console.log(date);
+                    
+                    if(event.event.id.indexOf('bus')!=-1) {
+                        addBus(date, id);
+                    } else {
+                        addDriver(date, id);
+                    }
+                }
+            } else {
+                var line = ((String)(start)).split('.');
+                var date = line[0] + '-' + line[1] + '-' + line[2];
+                console.log(date);
+                if(event.event.id.indexOf('bus')!=-1) {
+                    addBus(date, id);
+                } else {
+                    addDriver(date, id);
+                }
+            }
+        }
+
     </script>
 </head>
 
@@ -87,37 +237,38 @@
     <%- include('nav') %>
     <section class="container-main">
         <div class="horizontal">
-            <div id="external-events" class="horizontal">
 
-                <div>
-                    <p>
-                        <strong>버스</strong>
-                    </p>
-                    <div class="event item-bus" data-cat="bus">버스</div>
-                    <div class="event item-bus" data-cat="bus">버스</div>
-                    <div class="event item-bus" data-cat="bus">버스</div>
-                    <div class="event item-bus" data-cat="bus">버스</div>
-                    <div class="event item-bus" data-cat="bus">버스</div>
-                </div>
-
-                <div>
-                    <p>
-                        <strong>버스</strong>
-                    </p>
-
-                    <div class="event item-driver" data-cat="driver">기사</div>
-                    <div class="event item-driver" data-cat="driver">기사</div>
-                    <div class="event item-driver" data-cat="driver">기사</div>
-                    <div class="event item-driver" data-cat="driver">기사</div>
-                    <div class="event item-driver" data-cat="driver">기사</div>
+            <div class="card">
+                <div class="card-body">
+                    <div id="calendar" style="width: 800px;"></div>
                 </div>
             </div>
-            <div id="calendar" style="width: 800px;">
 
+            <div class="card">
+                <div class="card-body">
+                    <!-- driver list -->
+                    <div id="driver-event">
+                        <p><strong>기사</strong></p>
+                        <% for(var i=0; i<drivers.length; i++) { %>
+                            <div class="event2 item-driver" data-cat="driver" data-id="<%=drivers[i].ID%>"><%=drivers[i].Name%></div>    
+                        <% } %>
+                    </div>
+                    <!-- bus ist  -->
+                    <div id="bus-event">
+                        <p><strong>버스</strong></p>
+                        <% for(var i=0; i<bus.length; i++) { %>
+                            <div class="event item-bus" data-cat="bus" data-id="<%=bus[i].ID%>"><%=bus[i].Num%></div>    
+                        <% } %>
+                    </div>
+
+
+                </div>
             </div>
         </div>
+        <form id="calendar-form">
+
+        </form>
     </section>
 </body>
 
 </html>
-
