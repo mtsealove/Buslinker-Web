@@ -130,15 +130,47 @@ exports.startApp = (port) => {
 
     // set driver and bus for rouete
     app.get('/Bus/Manage/Route/Schedule', (req, res)=> {
+        const routeID=req.query.routeID;
         const user= getUser(req);
         sql.getDrivers(user.userID, (drivers)=> {
             sql.getBus(user.userID, null, null, (bus)=> {
-                console.log(drivers);
-                console.log(bus);
-                res.render('./Bus/manageSchedule', {user:user, bus:bus, drivers:drivers});        
+                sql.getTimeline(routeID, user.userID, (timeline)=> {
+                    res.render('./Bus/manageSchedule', {user:user, bus:bus, drivers:drivers, timeline:timeline, routeID: routeID});
+                }); 
             });
         })
     }); 
+
+    app.post('/Bus/Manage/Timeline', (req, res)=> {
+        console.log(req.body);
+        const routeID=req.body['routeID'];
+        const reqBus=req.body['bus'];
+        const reqDriver=req.body['driver'];
+        var bus=[];
+        var driver=[];
+
+        // check inputed data is array
+        if(Array.isArray(reqBus)) {
+            bus=reqBus;
+        } else {
+            bus.push(reqBus);
+        }
+
+        if(Array.isArray(reqDriver)) {
+            driver=reqDriver;
+        } else {
+            driver.push(reqDriver);
+        }
+
+        sql.updateTimeLine(routeID, driver, bus, (result)=> {
+            if(result){
+                res.json(Ok);
+            } else {
+                res.json(Not);
+            }
+        });
+        
+    });
 
     app.get('/Bus/Manage/Driver', (req, res) => {
         const user = getUser(req);

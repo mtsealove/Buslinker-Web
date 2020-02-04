@@ -253,6 +253,9 @@
     color: white;
     background-color: #011D46;
     margin-bottom: 10px;
+    width: 90px;
+    text-align: center;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
 }
 
 .item-driver {
@@ -260,5 +263,9 @@
     border-radius: 5px;
     color: black;
     background-color: #ffcc00;
+    color: white;
     margin-bottom: 10px;
+    width: 90px;
+    text-align: center;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
 }

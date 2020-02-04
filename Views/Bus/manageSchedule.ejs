@@ -14,7 +14,7 @@
 
     <script>
         $(function () {
-
+            setPost();
         });
 
         // managae driver
@@ -28,7 +28,7 @@
             // remove original
             $(form).children(`input[name=driver][value*='${date}']`).remove();
             // append new
-            $(form).append(`<input class="form-control" name="driver" value="${date}-${id}">`);
+            $(form).append(`<input name="driver" style="width:100vw;" value="${date}:${id}">`);
         }
 
         function removeDriver(date) {
@@ -52,7 +52,7 @@
             // remove original
             $(form).children(`input[name=bus][value*='${date}']`).remove();
             // append new
-            $(form).append(`<input class="form-control" name="bus" value="${date}-${id}">`);
+            $(form).append(`<input name="bus" value="${date}:${id}"  style="width:100vw;">`);
         }
 
         function removeBus(date) {
@@ -78,6 +78,7 @@
             console.log(date);
             return date;
         }
+        var num = 0;
 
         document.addEventListener('DOMContentLoaded', function () {
             var Calendar = FullCalendar.Calendar;
@@ -97,7 +98,11 @@
                         title: eventEl.innerText,
                         color: '#011D46',
                         textColor: '#ffffff',
-                        id: 'bus-'+$(eventEl).data('id'),
+                        id: 'bus-' + $(eventEl).data('id') + num++,
+                        extendedProps: {
+                            class: 'bus',
+                            id: $(eventEl).data('id')
+                        },
                     };
                 }
             });
@@ -108,7 +113,11 @@
                     return {
                         title: eventEl.innerText,
                         color: '#ffcc00',
-                        id:'driver-'+$(eventEl).data('id')
+                        id: 'driver-' + $(eventEl).data('id') + num++,
+                        extendedProps: {
+                            class: 'driver',
+                            id: $(eventEl).data('id')
+                        }
                     };
                 }
             });
@@ -125,8 +134,18 @@
                 },
                 editable: true,
                 droppable: false, // this allows things to be dropped onto the calendar
-
+                locale: 'ko',
+                eventLimit: true, // for all non-TimeGrid views
+                eventLimitText: '개 이상은 무시됩니다.',
+                views: {
+                    month: {
+                        eventLimit: 2 // adjust to 6 only for timeGridWeek/timeGridDay
+                    }
+                },
                 drop: function (info) {
+                    var originalEventObject = $(this).data('eventObject');
+                    console.log(originalEventObject);
+
                     // check cat
                     const cat = $(info.draggedEl).data('cat');
                     const id = $(info.draggedEl).data('id');
@@ -135,25 +154,44 @@
                     if (cat == 'bus') {
                         console.log('new bus');
                         removeBus(date);
-                        addDriver(date, id);
+                        addBus(date, id);
                     } else {
                         console.log('new driver');
                         removeDriver(date);
-                    addDriver(date, id);
+                        addDriver(date, id);
                     }
-                    
+
                 },
-                eventDragStart: function (event, jsEvent, ui, view) {
-                    handleRemove(event.event);
+                eventDragStop: function (event) {
+
+                    console.log(event.jsEvent);
+                    var trashEl = $('#trashCan');
+                    var ofs = trashEl.offset();
+                    var x1 = ofs.left;
+                    var x2 = ofs.left + trashEl.outerWidth(true);
+                    var y1 = ofs.top;
+                    var y2 = ofs.top + trashEl.outerHeight(true);
+
+                    if (event.jsEvent.pageX >= x1 && event.jsEvent.pageX <= x2 &&
+                        event.jsEvent.pageY >= y1 && event.jsEvent.pageY <= y2) {
+                        console.log(event.event.id);
+                        var event = calendar.getEventById(event.event.id);
+                        event.remove();
+                        handleRemove(event);
+                    }
                 },
                 eventDrop: function (event, jsEvent, ui, view) {
+                    console.log('drop');
+                    handleRemove(event.oldEvent);
                     handleAdd(event);
                 },
                 eventResize: function (event, jsEvent, ui, view) {
+                    console.log('resize');
                     handleAdd(event);
                 },
                 eventResizeStart: function (event, delta, revertFunc, jsEvent, ui, view) {
-                    handleRemove(event);
+                    console.log('resize start');
+                    handleRemove(event.event);
                 }
             });
 
@@ -163,7 +201,7 @@
         function handleRemove(event) {
             // removing all
             var oldStart = new Date(event.start).toLocaleDateString().replace(/\s/gi, "");
-            console.log(event.id);
+            console.log(event.extendedProps.class);
             console.log('remove');
             if (event.end) {
                 var oldEnd = new Date(event.end).toLocaleDateString();
@@ -176,7 +214,7 @@
                     var line = ((String)(oldStart)).split('.');
                     var date = line[0] + '-' + line[1] + '-' + (parseInt(line[2]) + i);
                     console.log(date);
-                    if(event.id.indexOf('bus')!=-1) {
+                    if (event.extendedProps.class == 'bus') {
                         removeBus(date);
                     } else {
                         removeDriver(date);
@@ -187,7 +225,7 @@
                 var date = line[0] + '-' + line[1] + '-' + (parseInt(line[2]));
                 date = (String)(date).replace(/\s/gi, "");
                 console.log(date);
-                if(event.id.indexOf('bus')!=-1) {
+                if (event.extendedProps.class == 'bus') {
                     removeBus(date);
                 } else {
                     removeDriver(date);
@@ -196,11 +234,11 @@
         }
 
         function handleAdd(event) {
-            console.log(event.event.id);
+            console.log(event.event.extendedProps);
             // add all
             console.log('add');
             var start = new Date(event.event.start).toLocaleDateString().replace(/\s/gi, "");
-            const id=(event.event.id).split('-')[1];
+            const id = (event.event.extendedProps.id);
             if (event.event.end) {
                 var end = new Date(event.event.end).toLocaleDateString();
                 var startDate = parseInt(start.split('.')[2]);
@@ -211,8 +249,8 @@
                     var line = ((String)(start)).split('.');
                     var date = line[0] + '-' + line[1] + '-' + (parseInt(line[2]) + i);
                     console.log(date);
-                    
-                    if(event.event.id.indexOf('bus')!=-1) {
+
+                    if (event.event.extendedProps.class == 'bus') {
                         addBus(date, id);
                     } else {
                         addDriver(date, id);
@@ -222,7 +260,7 @@
                 var line = ((String)(start)).split('.');
                 var date = line[0] + '-' + line[1] + '-' + line[2];
                 console.log(date);
-                if(event.event.id.indexOf('bus')!=-1) {
+                if (event.event.extendedProps.class == 'bus') {
                     addBus(date, id);
                 } else {
                     addDriver(date, id);
@@ -230,45 +268,68 @@
             }
         }
 
+        function setPost() {
+            $('#confirm-btn').click(function() {
+                if(confirm('기사 및 차량 배치를 수정하시겠습니까?')) {
+                    var formData=$('#calendar-form').serialize();
+                    formData.app
+                    $.ajax({
+                    url: '/Bus/Manage/Timeline' ,
+                    type:'POST',
+                    data: formData,
+                    success: function(data) {
+                        console.log(data);
+                    }
+                    });
+                }
+            });
+        }
     </script>
 </head>
 
+<!-- show by iframe -->
 <body>
-    <%- include('nav') %>
-    <section class="container-main">
-        <div class="horizontal">
-
-            <div class="card">
+    <div class="vertical">
+        <!-- calnedar and data -->
+        <div class="horizontal between" style="width: 95%; align-items: baseline;">
+            <div class="card" style="width: 70%;">
                 <div class="card-body">
-                    <div id="calendar" style="width: 800px;"></div>
+                    <div id="calendar"></div>
                 </div>
             </div>
 
-            <div class="card">
+            <!-- bus and driver event -->
+            <div style="width: 29%; height: 100%;">
+            <div class="card" >
                 <div class="card-body">
                     <!-- driver list -->
-                    <div id="driver-event">
+                    <div id="driver-event" style="height: 180px;">
                         <p><strong>기사</strong></p>
                         <% for(var i=0; i<drivers.length; i++) { %>
-                            <div class="event2 item-driver" data-cat="driver" data-id="<%=drivers[i].ID%>"><%=drivers[i].Name%></div>    
+                        <div class="event2 item-driver" data-cat="driver" data-id="<%=drivers[i].ID%>">
+                            <%=drivers[i].Name%></div>
                         <% } %>
                     </div>
+                    <hr>
                     <!-- bus ist  -->
-                    <div id="bus-event">
-                        <p><strong>버스</strong></p>
+                    <div id="bus-event" style="height: 180px;">
+                        <p><strong>차량</strong></p>
                         <% for(var i=0; i<bus.length; i++) { %>
-                            <div class="event item-bus" data-cat="bus" data-id="<%=bus[i].ID%>"><%=bus[i].Num%></div>    
+                        <div class="event item-bus" data-cat="bus" data-id="<%=bus[i].ID%>"><%=bus[i].Num%></div>
                         <% } %>
                     </div>
-
-
                 </div>
             </div>
+            <br>
+            <div id="trashCan" class="card" style="width: 100%; height: 150px;"></div>
+            <br>
+            <button class="btn-main" style="width: 100%;" id="confirm-btn">확인</button> 
         </div>
-        <form id="calendar-form">
-
+        </div>
+        <form id="calendar-form" hidden>
+            <input name="routeID" value="<%=routeID%>">
         </form>
-    </section>
+    </div>
 </body>
 
 </html>

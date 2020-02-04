@@ -662,3 +662,82 @@ exports.getEmpyDriver=(corp, callback)=> {
         }
     }); 
 }
+
+// get ecah route by id
+exports.getTimeline=(routeID, corp, callback)=> {
+    const query=`select R.*, T.* from Route R
+    left outer join Timeline T
+    on R.RouteID=T.RouteID
+    where R.CorpID='${corp}'
+    and R.RouteID=${routeID}`;
+
+    connection.query(query, (e0, result)=>{
+        if(e0) {
+            callback(null);
+        } else {
+            callback(result);
+        }
+    })
+}
+
+// insert timeline
+exports.updateTimeLine=(routeID, driver, bus, callback)=> {
+    const removeDriver=`delete from RouteDriver where RouteID=${routeID}`;
+    const removeBus=`delete from RouteBus where RouteID=${routeID}`;
+    var driverQuery=`insert into RouteDriver (RouteID, RunDate, DriverID) values `;
+    // create driver query
+    for(var i=0; i<driver.length; i++) {
+        const runDate=driver[i].split(':')[0];
+        const driverID=driver[i].split(':')[1];
+        driverQuery+=` (${routeID}, '${runDate}', '${driverID}') `;
+        if(i!=driver.length-1) {
+            driverQuery+=',';
+        }
+    }
+
+    // create bus query
+    var busQuery=`insert into RouteBus (RouteID, RunDate, BusID) values `;
+    for(var i=0; i<bus.length; i++) {
+        const runDate=bus[i].split(':')[0];
+        const busID=bus[i].split(':')[1];
+        busQuery+=` (${routeID}, '${runDate}', ${busID}) `;
+        if(i!=bus.length-1) {
+            busQuery+=',';
+        }
+    }
+
+    // excute query
+    connection.query(removeDriver, (e0)=> {
+        if(e0) {
+            console.error('e0');
+            console.error(e0);
+            callback(false);
+        } else {
+            connection.query(removeBus, (e1)=> {
+                if(e1) {
+                    console.error('e1');
+                    console.error(e1);
+                    callback(false);
+                } else {
+                    connection.query(driverQuery, (e2)=> {
+                        if(e2) {
+                            console.error('e2');
+                            console.error(e2);
+                            callback(false);
+                        } else {
+                            connection.query(busQuery, (e3)=> {
+                                if(e3) {
+                                    console.error(e3);
+                                    console.error('e3');   
+                                    callback(false);
+                                } else {
+                                    callback(true);
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+}

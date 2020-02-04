@@ -11,6 +11,8 @@
             searchDriver();
             $('.preview').hide();
             unlock();
+            editRoute();
+            $('#modal').hide();
         });
 
         function setLine() {
@@ -70,18 +72,51 @@
                 $(this).attr('src', '/public/images/search.png');
             })
         }
+
+        function editRoute() {
+            $('.link').click(function() {
+                const id=$(this).data('id');
+                const name=$(this).data('name');
+                const contract=$(this).data('contract');
+                
+                $('#schedule-frame').attr('src', `/Bus/Manage/Route/Schedule?routeID=${id}`);
+                $('#route-name').text(name);
+                $('#contract').text(contract);
+                $('#modal').fadeIn(300);
+            });
+
+            $('#close-btn').click(function(){
+                if(confirm('기사 및 차량 배치를 종료하시겠습니까?')) {
+                    $('#modal').fadeOut(400);
+                }
+            })
+        }
     </script>
 </head>
 
 <body>
     <%- include('nav') %>
+    <div id="modal">
+        <div class="vertical" style="background-color: white;">
+            <br>
+        <div class="horizontal between" style="width: 95%;">
+            <div>
+                <label id="route-name">마포-대한통운</label><br>
+                <label id="contract">2020-01-01 ~ 2020-06-01</label>
+            </div>
+            <h3>원하는 날짜에 기사 및 차량을 드래그하세요.</h3>
+            <img src="/public/images/remove.png" id="close-btn">
+        </div>
+        <br>
+        <iframe id="schedule-frame"  style="width: 80vw; height: 80vh; border: none;"></iframe>
+    </div>
+    </div>
     <div class="container-main">
         <table id="manage-route">
             <thead>
                 <tr>
                     <th class="head">노선명</th>
-                    <th class="head">버스기사</th>
-                    <th class="head">차량번호</th>
+                    <th class="head">일정</th>
                     <th class="head" colspan="11">경로</th>
                 </tr>
             <tbody>
@@ -93,10 +128,9 @@
                     var end=endDate.getFullYear()+'-'+endDate.getMonth()+1+'-'+endDate.getDate();
                     %>
                     <tr style="height: 20px;"></tr>
-                <tr class="route-tr">
+                    <tr class="route-tr">
                     <td class="mid"><b><%=routes[i].Name%></b><br><%=routes[i].Bus%></td>
-                    <td class="mid"><input class="box0"></td>
-                    <td class="mid"><input class="box0"></td>
+                    <td class="mid2"><%=start+' ~ '+end%><br><span class="link" data-id="<%=routes[i].RouteID%>" data-name="<%=routes[i].Name%>" data-contract="<%=start+' ~ '+end%>"><b>일정 상세보기</b></span></td>
                     <td class="space"></td>
                     <td colspan="10">
                         <!-- station -->
