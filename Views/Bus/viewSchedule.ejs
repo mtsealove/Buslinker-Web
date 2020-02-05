@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <script src="/public/js/fullcalendar/core.js"></script>
+    <script src="/public/js/fullcalendar/timegrid.js"></script>
+    <script src="/public/js/fullcalendar/daygrid.js"></script>
+    <script src="/public/js/fullcalendar/interaction.js"></script>
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/core.css" />
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/timegrid.css" />
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/daygrid.css" />
+    <script>
+        var calnedar;
+        document.addEventListener('DOMContentLoaded', function () {
+            var Calendar = FullCalendar.Calendar;
+
+            var calendarEl = document.getElementById('calendar');
+
+            // initialize the calendar
+            // -----------------------------------------------------------------
+
+            calendar = new Calendar(calendarEl, {
+                plugins: ['interaction', 'dayGrid', 'timeGrid'],
+                header: {
+                    left: 'prev',
+                    center: 'title',
+                    right: 'next'
+                },
+                editable: true,
+                droppable: false, // this allows things to be dropped onto the calendar
+                locale: 'ko',
+                eventLimit: true, // for all non-TimeGrid views
+                views: {
+                    month: {
+                        eventLimit: 2 // adjust to 6 only for timeGridWeek/timeGridDay
+                    }
+                }
+            });
+
+            calendar.render();
+        });
+    </script>
+</head>
+
+<body style="background-color: rgba(0, 0, 0, 0);">
+    <div class="vertical">
+        <div id="calendar"></div>
+    </div>
+</body>
+
+</html>

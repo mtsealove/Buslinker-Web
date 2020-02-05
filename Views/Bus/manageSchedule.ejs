@@ -15,7 +15,16 @@
     <script>
         $(function () {
             setPost();
+            getEvents();
+            console.log(calendar);
         });
+        // remove whatever date
+        function addRmove(d) {
+            const form = $('#calendar-form');
+            var date=new Date(d);
+            var dateStr=date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
+            $(form).append(`<input name='remove' value='${dateStr}'>`);
+        }
 
         // managae driver
         function addDriver(date, id) {
@@ -79,6 +88,7 @@
             return date;
         }
         var num = 0;
+        var calnedar;
 
         document.addEventListener('DOMContentLoaded', function () {
             var Calendar = FullCalendar.Calendar;
@@ -125,7 +135,7 @@
             // initialize the calendar
             // -----------------------------------------------------------------
 
-            var calendar = new Calendar(calendarEl, {
+            calendar = new Calendar(calendarEl, {
                 plugins: ['interaction', 'dayGrid', 'timeGrid'],
                 header: {
                     left: 'prev',
@@ -163,8 +173,6 @@
 
                 },
                 eventDragStop: function (event) {
-
-                    console.log(event.jsEvent);
                     var trashEl = $('#trashCan');
                     var ofs = trashEl.offset();
                     var x1 = ofs.left;
@@ -172,12 +180,14 @@
                     var y1 = ofs.top;
                     var y2 = ofs.top + trashEl.outerHeight(true);
 
+                    console.log(event.event.start);
+                    addRmove(event.event.start);
+                    // remove event fully
                     if (event.jsEvent.pageX >= x1 && event.jsEvent.pageX <= x2 &&
                         event.jsEvent.pageY >= y1 && event.jsEvent.pageY <= y2) {
-                        console.log(event.event.id);
                         var event = calendar.getEventById(event.event.id);
                         event.remove();
-                        handleRemove(event);
+                        handleRemove(event);                    
                     }
                 },
                 eventDrop: function (event, jsEvent, ui, view) {
@@ -269,62 +279,116 @@
         }
 
         function setPost() {
-            $('#confirm-btn').click(function() {
-                if(confirm('기사 및 차량 배치를 수정하시겠습니까?')) {
-                    var formData=$('#calendar-form').serialize();
+            $('#confirm-btn').click(function () {
+                if (confirm('기사 및 차량 배치를 수정하시겠습니까?')) {
+                    var formData = $('#calendar-form').serialize();
                     formData.app
                     $.ajax({
-                    url: '/Bus/Manage/Timeline' ,
-                    type:'POST',
-                    data: formData,
-                    success: function(data) {
-                        console.log(data);
-                    }
+                        url: '/Bus/Manage/Timeline',
+                        type: 'POST',
+                        data: formData,
+                        success: function (data) {
+                            if (data.Result) {
+                                alert('기사 및 차량 배치가 수정되었습니다.');
+                                location.reload();
+                            }
+                        }
                     });
                 }
             });
+        }
+
+        function getEvents() {
+            <% for (var i = 0; i < timeline.length; i++) { %>
+                var date = new Date('<%=timeline[i].RunDate%>');
+                var dateStr = date.getFullYear() + '-';
+                if (date.getMonth() <= 8) {
+                    dateStr += '0';
+                }
+                dateStr += (date.getMonth() + 1) + '-';
+                if (date.getDate() <= 9) {
+                    dateStr += '0';
+                }
+                dateStr += date.getDate();
+                console.log(dateStr);
+                // if driver exist
+                <% if (timeline[i].DriverID) { %>
+                    calendar.addEvent({
+                        title: '<%=timeline[i].DriverName%>',
+                        start: dateStr,
+                        allDay: true,
+                        id: 'driver-<%=timeline[i].DriverID%>' + num++,
+                        extendedProps: {
+                            class: 'driver',
+                            id: '<%=timeline[i].DriverID%>'
+                        }
+                    });
+                    addDriver(date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate(), '<%=timeline[i].DriverID%>');
+                    // if bus exist
+                        <% } if (timeline[i].BusID) { %>
+                            calendar.addEvent({
+                                title: '<%=timeline[i].Num%>',
+                                start: dateStr,
+                                allDay: true,
+                                color: '#011D46',
+                                textColor: '#ffffff',
+                                id: 'bus-<%=timeline[i].BusID%>' + num++,
+                                extendedProps: {
+                                    class: 'bus',
+                                    id: '<%=timeline[i].BusID%>'
+                                }
+                            });
+                            addBus(date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate(), '<%=timeline[i].BusID%>');
+                                <% }
+            } %>
+            
         }
     </script>
 </head>
 
 <!-- show by iframe -->
+
 <body>
     <div class="vertical">
         <!-- calnedar and data -->
         <div class="horizontal between" style="width: 95%; align-items: baseline;">
             <div class="card" style="width: 70%;">
                 <div class="card-body">
+                    
                     <div id="calendar"></div>
                 </div>
             </div>
 
             <!-- bus and driver event -->
             <div style="width: 29%; height: 100%;">
-            <div class="card" >
-                <div class="card-body">
-                    <!-- driver list -->
-                    <div id="driver-event" style="height: 180px;">
-                        <p><strong>기사</strong></p>
-                        <% for(var i=0; i<drivers.length; i++) { %>
-                        <div class="event2 item-driver" data-cat="driver" data-id="<%=drivers[i].ID%>">
-                            <%=drivers[i].Name%></div>
-                        <% } %>
-                    </div>
-                    <hr>
-                    <!-- bus ist  -->
-                    <div id="bus-event" style="height: 180px;">
-                        <p><strong>차량</strong></p>
-                        <% for(var i=0; i<bus.length; i++) { %>
-                        <div class="event item-bus" data-cat="bus" data-id="<%=bus[i].ID%>"><%=bus[i].Num%></div>
-                        <% } %>
+                <div class="card">
+                    <div class="card-body">
+                        <!-- driver list -->
+                        <div id="driver-event" style="height: 180px;">
+                            <p><strong>기사</strong></p>
+                            <% for(var i=0; i<drivers.length; i++) { %>
+                            <div class="event2 item-driver" data-cat="driver" data-id="<%=drivers[i].ID%>">
+                                <%=drivers[i].Name%></div>
+                            <% } %>
+                        </div>
+                        <hr>
+                        <!-- bus ist  -->
+                        <div id="bus-event" style="height: 180px;">
+                            <p><strong>차량</strong></p>
+                            <% for(var i=0; i<bus.length; i++) { %>
+                            <div class="event item-bus" data-cat="bus" data-id="<%=bus[i].ID%>"><%=bus[i].Num%></div>
+                            <% } %>
+                        </div>
                     </div>
                 </div>
+                <br>
+                <div id="trashCan">
+                    <img src="/public/images/trashcan.png">
+                    <label style="opacity: 0.7; margin-top: 10px;">삭제 스케줄을 드래그하세요.</label>
+                </div>
+                <br>
+                <button class="btn-main" style="width: 100%;" id="confirm-btn">확인</button>
             </div>
-            <br>
-            <div id="trashCan" class="card" style="width: 100%; height: 150px;"></div>
-            <br>
-            <button class="btn-main" style="width: 100%;" id="confirm-btn">확인</button> 
-        </div>
         </div>
         <form id="calendar-form" hidden>
             <input name="routeID" value="<%=routeID%>">

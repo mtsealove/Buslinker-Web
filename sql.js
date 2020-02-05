@@ -665,11 +665,13 @@ exports.getEmpyDriver=(corp, callback)=> {
 
 // get ecah route by id
 exports.getTimeline=(routeID, corp, callback)=> {
-    const query=`select R.*, T.* from Route R
-    left outer join Timeline T
-    on R.RouteID=T.RouteID
-    where R.CorpID='${corp}'
-    and R.RouteID=${routeID}`;
+    const query=`select RR.*, BB.Num from 
+    (select T.*, M.Name DriverName
+    from Timeline T 
+    left outer join Members M
+    on T.DriverID=M.ID) RR left outer join Bus BB
+    on RR.BusID=BB.ID
+    where RouteID=${routeID}`;
 
     connection.query(query, (e0, result)=>{
         if(e0) {
@@ -681,63 +683,124 @@ exports.getTimeline=(routeID, corp, callback)=> {
 }
 
 // insert timeline
-exports.updateTimeLine=(routeID, driver, bus, callback)=> {
-    const removeDriver=`delete from RouteDriver where RouteID=${routeID}`;
-    const removeBus=`delete from RouteBus where RouteID=${routeID}`;
-    var driverQuery=`insert into RouteDriver (RouteID, RunDate, DriverID) values `;
-    // create driver query
-    for(var i=0; i<driver.length; i++) {
-        const runDate=driver[i].split(':')[0];
-        const driverID=driver[i].split(':')[1];
-        driverQuery+=` (${routeID}, '${runDate}', '${driverID}') `;
-        if(i!=driver.length-1) {
-            driverQuery+=',';
-        }
-    }
-
-    // create bus query
-    var busQuery=`insert into RouteBus (RouteID, RunDate, BusID) values `;
+exports.updateTimeLine=(routeID, driver, bus, removes, callback)=> {
+    var deleteQuery=`delete from Timeline where RouteID=${routeID} and RunDate in (`;
+    var insertQuery=`insert into Timeline(RouteID, Rundate) values `;
+    var dates=[];
+    // get date by bus
     for(var i=0; i<bus.length; i++) {
-        const runDate=bus[i].split(':')[0];
-        const busID=bus[i].split(':')[1];
-        busQuery+=` (${routeID}, '${runDate}', ${busID}) `;
-        if(i!=bus.length-1) {
-            busQuery+=',';
+        const date=(bus[i].split(':'))[0];
+        dates.push(date);
+    }
+    // get date by driver
+    for(var i=0; i<driver.length; i++) {
+        const date=(driver[i].split(':'))[0];
+        dates.push(date);
+    }
+    // for full clear date, get removed date
+    for(var i=0; i<removes.length; i++) {
+        dates.push(removes[i]);
+    }
+    // get unique dates
+    for(var i=0; i<dates.length; i++) {
+        for(var j=0; j<dates.length; j++) {
+            if(i!=j && dates[i]==dates[j]) {
+                dates.splice(j, 1);
+            }
         }
     }
+    // init delete query || init insert query
+    for(var i=0; i<dates.length; i++) {
+        deleteQuery+=` '${dates[i]}' `;
+        insertQuery+=`(${routeID}, '${dates[i]}')`;
+        if(i!=dates.length-1) {
+            deleteQuery+=',';
+            insertQuery+=',';
+        }
+    }
+    deleteQuery+=')';
 
-    // excute query
-    connection.query(removeDriver, (e0)=> {
+    var updateDrivers=[];
+    for(var i=0; i<driver.length; i++) {
+        const date=driver[i].split(':')[0];
+        const driverID=driver[i].split(':')[1];
+        updateDrivers.push(`update Timeline set DriverID='${driverID}' where RunDate='${date}'`);
+    }
+
+    var updateBus=[];
+    for(var i=0; i<bus.length; i++) {
+        const date=bus[i].split(':')[0];
+        const busId=bus[i].split(':')[1];
+        updateBus.push(`update Timeline set BusID=${busId} where RunDate='${date}'`);
+    }
+
+    const total=updateBus.length+updateDrivers.length;
+    var current=0;
+
+    connection.query(deleteQuery, (e0)=> {
         if(e0) {
             console.error('e0');
             console.error(e0);
             callback(false);
         } else {
-            connection.query(removeBus, (e1)=> {
+            connection.query(insertQuery, (e1)=> {
                 if(e1) {
                     console.error('e1');
                     console.error(e1);
                     callback(false);
                 } else {
-                    connection.query(driverQuery, (e2)=> {
-                        if(e2) {
-                            console.error('e2');
-                            console.error(e2);
-                            callback(false);
-                        } else {
-                            connection.query(busQuery, (e3)=> {
-                                if(e3) {
-                                    console.error(e3);
-                                    console.error('e3');   
-                                    callback(false);
-                                } else {
-                                    callback(true);
-                                }
-                            });
-                        }
-                    });
+                    for(var i=0; i<updateDrivers.length; i++) {
+                        connection.query(updateDrivers[i], (errDriver)=> {
+                            if(errDriver) {
+                                console.error('errDriver');
+                                console.error(errDriver);
+                                callback(false);
+                            } else {
+                                current++;
+                            }
+                        });
+                    }
+                    for(var i=0; i<updateBus.length; i++) {
+                        connection.query(updateBus[i], (errBus)=> {
+                            if(errBus) {
+                                console.error('errBus');
+                                console.error(errBus);
+                                callback(false);
+                            } else {
+                                current++;
+                            }
+                        });
+                    }
                 }
             });
+        }
+    });
+
+    var interval=setInterval(()=>{
+        console.log('total: '+total);
+        console.log('current: '+current);
+        if(total==current) {
+            clearInterval(interval);
+            callback(true);
+        }
+    }, 200);
+}
+
+// get bus's event
+exports.getBusEvent=(id, callback)=> {
+    const query=`select TT.*, MM.Name from 
+    (select T.*, R.Name from 
+    (select RunDate, RouteID, DriverID from Timeline where BusID=${id}) T
+    left outer join Route R
+    on T.RouteID=R.RouteID) TT
+    left outer join Members MM
+    on TT.DriverID=MM.ID`;
+    connection.query(query, (e0, result)=> {
+        if(e0){
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(result);
         }
     });
 }

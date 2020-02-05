@@ -146,23 +146,31 @@ exports.startApp = (port) => {
         const routeID=req.body['routeID'];
         const reqBus=req.body['bus'];
         const reqDriver=req.body['driver'];
+        const reqRemove=req.body['remove'];
         var bus=[];
         var driver=[];
+        var removes=[];
 
         // check inputed data is array
         if(Array.isArray(reqBus)) {
             bus=reqBus;
-        } else {
+        } else if(reqBus) {
             bus.push(reqBus);
         }
 
         if(Array.isArray(reqDriver)) {
             driver=reqDriver;
-        } else {
+        } else if(reqDriver){
             driver.push(reqDriver);
         }
 
-        sql.updateTimeLine(routeID, driver, bus, (result)=> {
+        if(Array.isArray(reqRemove)) {
+            removes=reqRemove;
+        } else if(reqRemove) {
+            removes.push(reqRemove);
+        }
+
+        sql.updateTimeLine(routeID, driver, bus, removes, (result)=> {
             if(result){
                 res.json(Ok);
             } else {
@@ -180,6 +188,37 @@ exports.startApp = (port) => {
             });
         } else {
             res.redirect('/');
+        }
+    });
+
+    app.get('/Bus/Manage/Resource', (req, res) => {
+        var order = req.query.order;
+        var asc = req.query.asc;
+        const user = getUser(req);
+        const corp = user.userID;
+        if (user.userID) {
+            sql.getBus(corp, order, asc, (bus) => {
+                sql.getDrivers(user.userID, (drivers)=>{
+                    res.render('./Bus/manageResource', { busList: bus, user: user, driverList: drivers });
+                })
+            });
+        } else {
+            res.redirect('/');
+        }
+    });
+
+    // show each schedule
+    app.get('/Bus/View/Schedule', (req, res)=> {
+        const driver=req.query.driver;
+        const bus=req.query.bus;
+        console.log(driver);
+        console.log(bus);
+        if(driver){
+            
+        } else if(bus){
+
+        } else {
+            res.render('./Bus/viewSchedule');   
         }
     });
 
@@ -212,10 +251,10 @@ exports.startApp = (port) => {
         const id = req.body['id'];
         const pw = req.body['pw'];
         const phone = req.body['phone'];
-        const bus_id = req.body['bus_id'];
+        
         const corp = req.session.userID;
 
-        sql.createDriver(corp, name, id, pw, phone, bus_id, profilePath, licensePath, (result) => {
+        sql.createDriver(corp, name, id, pw, phone, 0, profilePath, licensePath, (result) => {
             if (result) {
                 res.send(`<script>alert('회원가입이 완료되었습니다');location.href='/Bus/Manage/Driver';</script>`);
             } else {
@@ -235,20 +274,6 @@ exports.startApp = (port) => {
                 res.json(Not);
             }
         });
-    });
-
-    app.get('/Bus/Manage/Bus', (req, res) => {
-        var order = req.query.order;
-        var asc = req.query.asc;
-        const user = getUser(req);
-        const corp = user.userID;
-        if (user.userID) {
-            sql.getBus(corp, order, asc, (results) => {
-                res.render('./Bus/manageBus', { busList: results, user: user });
-            });
-        } else {
-            res.redirect('/');
-        }
     });
 
     // create bus by ajax

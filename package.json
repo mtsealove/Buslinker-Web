@@ -1,0 +1,35 @@
+{
+  "name": "buslinkerserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "body-parser": "1.19.0",
+    "crypto": "1.0.1",
+    "ejs": "3.0.1",
+    "excel": "1.0.1",
+    "express-session": "1.17.0",
+    "express": "4.17.1",
+    "ip": "1.1.5",
+    "multer": "1.4.2",
+    "mysql": "2.18.0",
+    "node-geocoder": "3.25.0",
+    "node-rest-client": "3.1.0",
+    "request": "2.88.0",
+    "xlsx": "0.15.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mtsealove/Buslinker-Web.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mtsealove/Buslinker-Web/issues"
+  },
+  "homepage": "https://github.com/mtsealove/Buslinker-Web#readme"
+}
