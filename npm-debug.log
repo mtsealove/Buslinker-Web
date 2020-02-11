@@ -1,0 +1,104 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   'char.js',
+1 verbose cli   '--save' ]
+2 info using npm@3.8.6
+3 info using node@v6.1.0
+4 silly loadCurrentTree Starting
+5 silly install loadCurrentTree
+6 silly install readLocalPackageData
+7 silly fetchPackageMetaData char.js
+8 silly fetchNamedPackageData char.js
+9 silly mapToRegistry name char.js
+10 silly mapToRegistry using default registry
+11 silly mapToRegistry registry https://registry.npmjs.org/
+12 silly mapToRegistry data Result {
+12 silly mapToRegistry   raw: 'char.js',
+12 silly mapToRegistry   scope: null,
+12 silly mapToRegistry   name: 'char.js',
+12 silly mapToRegistry   rawSpec: '',
+12 silly mapToRegistry   spec: 'latest',
+12 silly mapToRegistry   type: 'tag' }
+13 silly mapToRegistry uri https://registry.npmjs.org/char.js
+14 verbose request uri https://registry.npmjs.org/char.js
+15 verbose request no auth needed
+16 info attempt registry request try #1 at 16:14:19
+17 verbose request id ce9a2192e4858bbe
+18 http request GET https://registry.npmjs.org/char.js
+19 http 404 https://registry.npmjs.org/char.js
+20 verbose headers { date: 'Mon, 10 Feb 2020 07:14:20 GMT',
+20 verbose headers   'content-type': 'application/json',
+20 verbose headers   'content-length': '21',
+20 verbose headers   connection: 'keep-alive',
+20 verbose headers   'set-cookie': [ '__cfduid=ddc42d3a1a964cb9d9a1b93edb04859061581318859; expires=Wed, 11-Mar-20 07:14:19 GMT; path=/; domain=.npmjs.org; HttpOnly; SameSite=Lax' ],
+20 verbose headers   'cf-ray': '562c49176883e9e8-ICN',
+20 verbose headers   vary: 'Accept-Encoding',
+20 verbose headers   'cf-cache-status': 'MISS',
+20 verbose headers   'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+20 verbose headers   server: 'cloudflare' }
+21 silly get cb [ 404,
+21 silly get   { date: 'Mon, 10 Feb 2020 07:14:20 GMT',
+21 silly get     'content-type': 'application/json',
+21 silly get     'content-length': '21',
+21 silly get     connection: 'keep-alive',
+21 silly get     'set-cookie': [ '__cfduid=ddc42d3a1a964cb9d9a1b93edb04859061581318859; expires=Wed, 11-Mar-20 07:14:19 GMT; path=/; domain=.npmjs.org; HttpOnly; SameSite=Lax' ],
+21 silly get     'cf-ray': '562c49176883e9e8-ICN',
+21 silly get     vary: 'Accept-Encoding',
+21 silly get     'cf-cache-status': 'MISS',
+21 silly get     'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+21 silly get     server: 'cloudflare' } ]
+22 silly fetchPackageMetaData Error: Not found : char.js
+22 silly fetchPackageMetaData     at makeError (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+22 silly fetchPackageMetaData     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+22 silly fetchPackageMetaData     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+22 silly fetchPackageMetaData     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:199:22)
+22 silly fetchPackageMetaData     at emitTwo (events.js:106:13)
+22 silly fetchPackageMetaData     at Request.emit (events.js:191:7)
+22 silly fetchPackageMetaData     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1036:10)
+22 silly fetchPackageMetaData     at emitOne (events.js:101:20)
+22 silly fetchPackageMetaData     at Request.emit (events.js:188:7)
+22 silly fetchPackageMetaData     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:963:12)
+22 silly fetchPackageMetaData  error for char.js { Error: Not found : char.js
+22 silly fetchPackageMetaData     at makeError (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+22 silly fetchPackageMetaData     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+22 silly fetchPackageMetaData     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+22 silly fetchPackageMetaData     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:199:22)
+22 silly fetchPackageMetaData     at emitTwo (events.js:106:13)
+22 silly fetchPackageMetaData     at Request.emit (events.js:191:7)
+22 silly fetchPackageMetaData     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1036:10)
+22 silly fetchPackageMetaData     at emitOne (events.js:101:20)
+22 silly fetchPackageMetaData     at Request.emit (events.js:188:7)
+22 silly fetchPackageMetaData     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:963:12) pkgid: 'char.js', statusCode: 404, code: 'E404' }
+23 silly rollbackFailedOptional Starting
+24 silly rollbackFailedOptional Finishing
+25 silly runTopLevelLifecycles Starting
+26 silly runTopLevelLifecycles Finishing
+27 silly install printInstalled
+28 verbose stack Error: Not found : char.js
+28 verbose stack     at makeError (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+28 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+28 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+28 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:199:22)
+28 verbose stack     at emitTwo (events.js:106:13)
+28 verbose stack     at Request.emit (events.js:191:7)
+28 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1036:10)
+28 verbose stack     at emitOne (events.js:101:20)
+28 verbose stack     at Request.emit (events.js:188:7)
+28 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:963:12)
+29 verbose statusCode 404
+30 verbose pkgid char.js
+31 verbose cwd /Users/isanhae/Projects/BusLinker/BuslinkerServer
+32 error Darwin 19.2.0
+33 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "install" "char.js" "--save"
+34 error node v6.1.0
+35 error npm  v3.8.6
+36 error code E404
+37 error 404 Not found : char.js
+38 error 404
+39 error 404 'char.js' is not in the npm registry.
+40 error 404 You should bug the author to publish it (or use the name yourself!)
+41 error 404 Note that you can also install from a
+42 error 404 tarball, folder, http url, or git url.
+43 verbose exit [ 1, true ]

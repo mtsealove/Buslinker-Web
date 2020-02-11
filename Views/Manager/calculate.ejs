@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>정산관리</title>
+    <%- include('config') %>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
+    <script>
+
+        var chart;
+        $(function () {
+            setChart();
+            setMonth();
+            setLogis();
+        });
+
+        function setChart() {
+            var options = {
+                maintainAspectRatio: false,
+                spanGaps: false,
+                elements: {
+                    line: {
+                        tension: 0.4
+                    }
+                },
+                scales: {
+                    yAxes: [{
+                        stacked: false,
+                        ticks: {
+                            beginAtZero: true
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: '금액'
+                        }
+                    }],
+                    xAxes: [{
+                        display: true,
+                        type: 'category',
+                        scaleLabel: {
+                            display: true,
+                            labelString: '월'
+                        }
+                    }],
+                },
+                tooltips: {
+                    callbacks: {
+                        title: function (tooltipItems, data) {
+                            return data.datasets[tooltipItems[0].datasetIndex].data[tooltipItems[0].index].x;
+                        }
+                    }
+                }
+
+            };
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var gradientAdd = ctx.createLinearGradient(0, 0, 0, 400);
+            gradientAdd.addColorStop(0, 'rgba(250,174,50,1)');
+            gradientAdd.addColorStop(1, 'rgba(250,174,50,0)');
+            var gradientMinus = ctx.createLinearGradient(0, 0, 0, 400);
+            gradientMinus.addColorStop(0, 'rgba(119, 100, 228, 1');
+            gradientMinus.addColorStop(1, 'rgba(119, 100, 228, 0');
+
+            var data = {
+                labels: ['2020-01', '2020-02', '2020-03', '2020-04', '2020-05', '2020-06', '2020-07', '2020-08', '2020-09', '2020-10', '2020-11', '2020-12'],
+                datasets: [{
+                    borderColor: '#FB6340',
+                    backgroundColor: gradientAdd,
+                    data: [10, 202, 302, 240, 250, 602, 720, 280, 290, 1200, 1102, 120],
+                    label: '수익',
+
+                },
+                {
+                    borderColor: '#7764E4',
+                    backgroundColor: gradientMinus,
+                    data: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120],
+                    label: '비용',
+                }]
+            };
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: options
+            });
+        }
+
+        // select month
+    function setMonth() {
+        $('#op-month').change(function() {
+            const start=$(this).val().split(':')[0];
+            const end=$(this).val().split(':')[1];
+            const corp=$('#op-logis').val();
+            location.href=`?start=${start}&end=${end}&corp=${corp}`;
+        });
+    }
+
+    function setLogis() {
+        $('#op-logis').change(function() {
+            const start=$('#op-month').val().split(':')[0];
+            const end=$('#op-month').val().split(':')[1];
+            const corp=$(this).val();
+            location.href=`?start=${start}&end=${end}&corp=${corp}`;
+        
+        })
+    }
+    </script>
+</head>
+
+<body>
+    <%- include('nav') %>
+    <section class="container-main">
+        <div style="width:95%">
+            <br>
+            <h4>손익 그래프</h4>
+            <br>
+            <div class="card" style="width: 100%; height: 200px;">
+                <canvas id="myChart" style="width: 100%; height: 200px;"></canvas>
+            </div>
+            <br>
+            <div class="horizontal between">
+                <h4>세부 내역</h4>
+                <select class="box0" id="op-month">
+                    <% 
+                    var year=new Date().getFullYear();
+                    var selected='';
+                        for(var m=1; m<13; m++) { 
+                            var data=year+'-'+m+'-01';
+                            if(data==start) {
+                                selected='selected';
+                            } else {
+                                selected='';
+                            }
+                            %>
+
+                        <option value="<%=year%>-<%=m%>-01:<%=year%>-<%=m+1%>-01" <%=selected%>><%=year%>-<%=m%></option>
+                    <% } %>
+                </select>
+            </div>
+            <br>
+            <div class="card" style="width: 100%;">
+                <div class="card-body">
+                    <div class="horizontal between">
+                        <h5>물류 수거 비용</h5>
+                        <select class="box0" id="op-logis">
+                            <% for(var i=0; i<logis.length; i++) { 
+                                var selectedL='';
+                                if(logis[i].ID==corp) {
+                                    selectedL='selected';
+                                } else {
+                                    selectedL='';
+                                }
+                                %>
+                                <option value="<%=logis[i].ID%>" <%=selectedL%>><%=logis[i].Name%></option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <table style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th class="head">화주</th>
+                                <th class="head">기본 물량</th>
+                                <th class="head">누적 물량</th>
+                                <th class="head">기본 비용</th>
+                                <th class="head">추가 단가</th>
+                                <th class="head">상태</th>
+                                <th class="head">비용</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(var i=0; i<ownerFee.length; i++)  {
+                                var ownerName=ownerFee[i].Name;
+                                var defaultCnt=ownerFee[i].DefaultCnt;
+                                var defaultFee=ownerFee[i].DefaultFee;
+                                var adFee=ownerFee[i].AdFee;
+                                // mayne not exist
+                                var stackCnt=ownerFee[i].ItemCnt;
+                                if(stackCnt) {
+                                    stackCnt=stackCnt.toLocaleString()+'개';
+                                } else {
+                                    stackCnt='누적물량 없음';
+                                }
+                                // set status
+                                var status;
+                                if(typeof(stackCnt)=='string'||defaultCnt>stackCnt) {
+                                    status='기본 물량 미만';
+                                } else if(defaultCnt==stackCnt) {
+                                    status='기본 물량';
+                                } else {
+                                    status=(stackCnt-defaultCnt)+'개 초과';
+                                }
+                                // set total fee
+                                var totalFee=defaultFee;
+                                // if fee more
+                                if(typeof(stackCnt)=='number'&&defaultCnt>stackCnt) {
+                                    totalFee=defaultFee+(stackCnt-defaultCnt)*adFee;
+                                }
+                                %>
+                                <tr>
+                                    <td><%=ownerName%></td>
+                                    <td><%=defaultCnt.toLocaleString()%>개</td>
+                                    <td><%=stackCnt%></td>
+                                    <td><%=defaultFee.toLocaleString()%></td>
+                                    <td>개당 <%=adFee.toLocaleString()%>원</td>
+                                    <td><%=status%></td>
+                                    <td><%=totalFee.toLocaleString()%>원</td>
+                                </tr>
+                        <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

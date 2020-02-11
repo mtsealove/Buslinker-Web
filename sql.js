@@ -216,8 +216,8 @@ exports.getLogis = (callback) => {
     })
 }
 
-exports.getOwners = (callback) => {
-    const query = 'select ID, Name from Members where MemberCat=3';
+exports.getOwners = (logi, callback) => {
+    const query = `select ID, Name from Members where MemberCat=3 and Corp='${logi}'`;
     connection.query(query, (error, results) => {
         if (error) {
             console.error(error);
@@ -403,7 +403,7 @@ exports.createRoute = (corp, name, station, logi, empty, owner, contract, callba
                                                                                                                             
                                                                                                                             // insert route
                                                                                                                             var routeQuery = `insert into Route set Name='${name}', CorpID='${corp}',
-                                                                                                                            ContractStart='${contract.start}', ContractEnd='${contract.end}',  Locations='`;
+                                                                                                                            ContractStart='${contract.start}', ContractEnd='${contract.end}',  Logi='${logi.id}',Locations='`;
                                                                                                                             routeQuery += station1ID + ',';
                                                                                                                             routeQuery += logi1ID + ',';
                                                                                                                             routeQuery += emptyID + ',';
@@ -478,7 +478,6 @@ exports.getRoute=(order, current, bus, callback)=> {
     }
 
     query+=` order by Name ${order}`;
-    console.log('query'+query);
     connection.query(query, (err, result)=> {
         if(err) {
             console.log('e1');
@@ -788,8 +787,8 @@ exports.updateTimeLine=(routeID, driver, bus, removes, callback)=> {
 
 // get bus's event
 exports.getBusEvent=(id, callback)=> {
-    const query=`select TT.*, MM.Name from 
-    (select T.*, R.Name from 
+    const query=`select TT.*, MM.Name DriverName from 
+    (select T.*, R.Name RouteName from 
     (select RunDate, RouteID, DriverID from Timeline where BusID=${id}) T
     left outer join Route R
     on T.RouteID=R.RouteID) TT
@@ -800,6 +799,47 @@ exports.getBusEvent=(id, callback)=> {
             console.error(e0);
             callback(null);
         } else {
+            callback(result);
+        }
+    });
+}
+
+exports.getDriverEvent=(id, callback)=> {
+    const query=`select TT.*, BB.Num from 
+    (select T.*, R.Name RouteName from
+    (select RunDate, RouteID, BusID from Timeline
+    where DriverID='${id}') T
+    left outer join  Route R
+    on T.RouteID=R.RouteID) TT
+    left outer join Bus BB
+    on TT.BusID=BB.ID`;
+    connection.query(query, (e0, result)=> {
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        }else  {
+            callback(result);
+        }
+    });
+}
+
+// get ownwer's delivery fee by manage
+exports.getOwnerFee=(start, end, corp, callback)=> {
+    const query=`select MM.*, II.ItemCnt from 
+    (select ID,Name ,AdFee, DefaultFee, DefaultCnt from Members where MemberCat=3 and Corp='${corp}') MM
+    left outer join (
+    select OwnerID, sum(ItemCnt) ItemCnt from
+    (select IL.*, count(I.ItemID) ItemCnt from ItemList IL join Item I
+    on IL.ListID=I.ListID
+    where IL.SoldDate>='${start}' and SoldDate<'${end}'
+    group by IL.ListID) O
+    group by OwnerID) II on MM.ID=II.OwnerID`;
+    connection.query(query, (err, result)=> {
+        if(err){
+            console.error(err);
+            callback(null);
+        } else {
+            console.log(result);
             callback(result);
         }
     });

@@ -95,8 +95,8 @@
 
         function setDate() {
             var date = new Date();
-            var currentDate = date.getFullYear() + '-' + date.getMonth() + 1 + '-' + date.getDate();
-            var nextDate = (date.getFullYear() + 1) + '-' + date.getMonth() + 1 + '-' + (date.getDate() - 1);
+            var currentDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+            var nextDate = (date.getFullYear() + 1) + '-' + (date.getMonth() + 1) + '-' + (date.getDate() - 1);
             $('#contract-start').val(currentDate);
             $('#contract-end').val(nextDate);
         }
@@ -227,6 +227,7 @@
                         level++;
                         $('#line-owner').fadeIn(400);
                         $('#add-owner-btn').fadeIn(400);
+                        getOwner();
                     } else {
                         alert('물류센터를 먼저 선택하세요.');
                     }
@@ -268,6 +269,17 @@
                 const id=$(this).data('menu');
                 $(`.drop-menu[id!=${id}]`).fadeOut(200);
                 $('#'+id).fadeToggle(200);
+            });
+        }
+
+        function getOwner() {
+            const logi=(($('#logi-id')).val().split('-'))[0];
+            $.get('/Manager/ajax/owners', {logi: logi}, function(data) {
+                var html='';
+                for(var i=0; i<data.length; i++) {
+                    html+=`<option value='${data[i].name}-${data[i].ID}'>${data[i].Name}</option>`;
+                }
+                $('#owner-id').html(html);
             });
         }
     </script>
@@ -327,9 +339,9 @@
                     <div class="card-body">
                         <label>화주 선택</label>
                         <select class="custom-select" id="owner-id">
-                            <% for(var i=0; i<owners.length; i++) { %>
-                            <option value="<%=owners[i].Name+'-'+owners[i].ID%>"><%=owners[i].Name%></option>
-                            <% } %>
+                            
+                            <option value="name-id">name</option>
+                            
                         </select><br>
                         <label>수거 시작 시간</label>
                         <input class="form-control" type="time" id="owner-time"><br>

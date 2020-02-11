@@ -11,7 +11,10 @@
     <link rel="stylesheet" href="/public/stylesheets/fullcalendar/timegrid.css" />
     <link rel="stylesheet" href="/public/stylesheets/fullcalendar/daygrid.css" />
     <script>
-        var calnedar;
+        var calendar;
+        $(function() {
+            addEvent();
+        });
         document.addEventListener('DOMContentLoaded', function () {
             var Calendar = FullCalendar.Calendar;
 
@@ -27,7 +30,7 @@
                     center: 'title',
                     right: 'next'
                 },
-                editable: true,
+                editable: false,
                 droppable: false, // this allows things to be dropped onto the calendar
                 locale: 'ko',
                 eventLimit: true, // for all non-TimeGrid views
@@ -40,13 +43,85 @@
 
             calendar.render();
         });
+        function addEvent() {
+            if('<%=cat%>'=='bus'){
+                <% for(var i=0; i<event.length; i++) { %>
+                    var date=new Date('<%=event[i].RunDate%>');
+                    var dateStr=date.getFullYear()+'-';
+                    if(date.getMonth()<=9) {
+                        dateStr+='0';
+                    }
+                    dateStr+=(date.getMonth()+1)+'-';
+                    if(date.getDate()<=9) {
+                        dateStr+='0';
+                    }
+                    dateStr+=date.getDate();
+                    addRoute('<%=event[i].RouteName%>', dateStr);
+                    <% if(event[i].DriverID) { %>
+                        addDriver('<%=event[i].DriverName%>', dateStr);
+                    <% }%>
+                <% } %>
+            } else if('<%=cat%>'=='driver') {
+                <% for(var i=0; i<event.length; i++) { %>
+                    var date=new Date('<%=event[i].RunDate%>');
+                    var dateStr=date.getFullYear()+'-';
+                    if(date.getMonth()<=9) {
+                        dateStr+='0';
+                    }
+                    dateStr+=(date.getMonth()+1)+'-';
+                    if(date.getDate()<=9) {
+                        dateStr+='0';
+                    }
+                    dateStr+=date.getDate();
+                    addRoute('<%=event[i].RouteName%>', dateStr);
+                    <% if(event[i].BusID) { %>
+                        addBus('<%=event[i].Num%>', dateStr);
+                    <% }%>
+                <% } %>
+            }
+            
+        }
+        
+        // add each driver
+        function addDriver(name, date) {
+            console.log('add driver: '+name+' date: '+date);
+            calendar.addEvent({
+                title: name,
+                start: date,
+                allDay: true,
+                color: '#ffcc00',
+                textColor: '#ffffff',
+            });
+        }
+
+        function addBus(num, date) {
+            console.log('add bus: '+num+' date: '+date);
+            calendar.addEvent({
+                title: num,
+                start: date,
+                allDay: true,
+                color: '#ffcc00',
+                textColor: '#ffffff',
+            });
+        }
+
+        function addRoute(name, date){
+            console.log('add route: '+name+' date: '+date);
+            calendar.addEvent({
+                title: name,
+                start: date,
+                allDay: true,
+                color: '#011D46',
+                textColor: '#ffffff',
+            });
+        }
     </script>
 </head>
 
 <body style="background-color: rgba(0, 0, 0, 0);">
-    <div class="vertical">
-        <div id="calendar"></div>
-    </div>
+
+    <div id="calendar"></div>
+
 </body>
 
 </html>
