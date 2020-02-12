@@ -568,6 +568,8 @@ exports.removeRoute=(id, callback)=> {
 exports.getItemList=(userID, yyyymm, callback)=> {
     const startDate=yyyymm+'-01';
     const endDate=yyyymm.split('-')[0]+'-'+(parseInt(yyyymm.split('-')[1])+1)+'-01';
+    console.log('start: '+startDate);
+    console.log('end: '+endDate);
 
     const query=`select L.ListID, L.SoldDate, count(I.ListID) as Count
     from ItemList L join Item I 
@@ -577,12 +579,14 @@ exports.getItemList=(userID, yyyymm, callback)=> {
     and L.SoldDate<'${endDate}'
     group by L.ListID
     order by L.SoldDate desc`;
+    console.log('query: '+query);
 
     connection.query(query, (e0, results)=> {
         if(e0) {
             callback(null);
             console.error(e0);
         } else {
+            console.log(results);
             callback(results);
         }
     })

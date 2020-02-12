@@ -1,53 +1,64 @@
 <html>
-    <head>
-        <%- include('config')%>
-        <title>물량 관리</title>
-        <script>
-        $(function(){
+
+<head>
+    <%- include('config')%>
+    <title>물량 관리</title>
+    <script>
+        $(function () {
             $('#modal').hide();
             $('#check-div').hide();
-            $('#upload-btn').click(function() {
-                if($('#item_file').val()=='') {
+            $('#upload-btn').click(function () {
+                if ($('#item_file').val() == '') {
                     alert('파일을 선택하세요.');
                     return;
                 }
-                if(confirm('파일을 업로드하시겠습니까?')) {
+                if (confirm('파일을 업로드하시겠습니까?')) {
                     uploadFile();
                 }
             })
+
+            $("#item_file").change(function () {
+                var list = $(this).val().split(`\\`);
+                var filename = list[list.length - 1];
+                $('#file-name').text(filename);
+            });
+
             setAlertSize();
 
-            $('#confirm-btn').click(function() {
-                if(confirm('상품을 등록하시겠습니까?')) {
+            $('#confirm-btn').click(function () {
+                if (confirm('상품을 등록하시겠습니까?')) {
                     $('#item-form').submit();
                 }
-            }); 
+            });
 
-            $('#upload-a').click(function() {
+            $('#upload-a').click(function () {
                 $('#modal').fadeIn(400);
             })
 
-            $('#cancel-btn').click(function() {
-                if(confirm('정말로 취소하시겠습니까?')) {
+            $('#cancel-btn').click(function () {
+                if (confirm('정말로 취소하시겠습니까?')) {
                     $('#detail-contents').html('');
                 }
             });
 
             getItemList();
+            setClose();
+            setMonth();
+            setFirst();
         });
 
         function getItemList() {
-            $('.item-sm').click(function() {
-                const listID=$(this).data('list-id');
-                if(listID!='none') {
-                    $.get('/Onwer/Get/ItemList', {listID:listID}, function(json){
+            $('.item-sm').click(function () {
+                const listID = $(this).data('list-id');
+                if (listID != 'none') {
+                    $.get('/Onwer/Get/ItemList', { listID: listID }, function (json) {
                         $("#detail-contents").html('');
                         $('#check-div').hide();
                         console.log(json);
-                        for(var i=0; i<json.length; i++) {
-                        $("#detail-contents").append(`
+                        for (var i = 0; i < json.length; i++) {
+                            $("#detail-contents").append(`
                         <tr class='item'>
-                        <td class='font-white'>${i+2}</td>
+                        <td class='font-white'>${i + 2}</td>
                         <td class='font-white'>${json[i].ItemID}</td>
                         <td class='font-white'>${json[i].ItemName}</td>
                         <td class='font-white'>${json[i].DesName}</td>
@@ -55,8 +66,8 @@
                         <td class='font-white'>${json[i].DesAddr}</td>
                         </tr>
                         `);
-                    }
-                    $('#count').text(`총 ${json.length}건`);
+                        }
+                        $('#count').text(`총 ${json.length}건`);
                     });
                 }
             })
@@ -67,18 +78,18 @@
             var formData = new FormData(form);
             formData.append("item_file", jQuery("#item_file")[0].files[0]);
             jQuery.ajax({
-              url : "/Owner/Upload/Excel"
-            , type : "POST"
-            , processData : false
-            , contentType : false
-            , data : formData
-            , success:function(json) {
-                $("#detail-contents").html('');
-                for(var i=0; i<json.length; i++) {
-                    console.log(i);
-                    $("#detail-contents").append(`
+                url: "/Owner/Upload/Excel"
+                , type: "POST"
+                , processData: false
+                , contentType: false
+                , data: formData
+                , success: function (json) {
+                    $("#detail-contents").html('');
+                    for (var i = 0; i < json.length; i++) {
+                        console.log(i);
+                        $("#detail-contents").append(`
                         <tr class='item'>
-                        <td class='font-white'>${i+2}</td>
+                        <td class='font-white'>${i + 2}</td>
                         <td class='font-white'>${json[i].송장번호}</td>
                         <td class='font-white'>${json[i].품목명}</td>
                         <td class='font-white'>${json[i].이름}</td>
@@ -86,107 +97,155 @@
                         <td class='font-white'>${json[i].도착지}</td>
                         </tr>
                         `);
-                    $('#item-form').append(`
+                        $('#item-form').append(`
                     <input hidden name='id' value='${json[i].송장번호}'>
                     <input hidden name='item_name' value='${json[i].품목명}'>
                     <input hidden name='name' value='${json[i].이름}'>
                     <input hidden name='phone' value='${json[i].전화번호}'>
                     <input hidden name='addr' value='${json[i].도착지}'>
                     `);
+                    }
+                    $('#count').text(`총 ${json.length}건`);
+                    $("#detail-contents").append(`<tr style="height:80px"></tr>`);
+                    $('#modal').hide();
+                    $('#check-div').show();
                 }
-                $('#count').text(`총 ${json.length}건`);
-                $("#detail-contents").append(`<tr style="height:80px"></tr>`);
-                $('#modal').hide();
-                $('#check-div').show();
-            }
-        });
+            });
         }
 
         function setAlertSize() {
-            const width=$('#item_sum').outerWidth()-80;
+            const width = $('#item_sum').outerWidth() - 80;
             $('#alert').width(width);
         }
-        </script>
-    </head>
-    <body>
-        <%- include('nav') %>
-        <!-- modal popup -->
-        <div id="modal">    
-            <div class="card">
-                <div class="card-body">
+
+        function setClose() {
+            $('.close').click(function () {
+                $('#modal').fadeOut(300);
+                $('#item_file').val('');
+            });
+        }
+
+        function setMonth() {
+            $('#period').change(function () {
+                var yyyymm = $(this).val();
+                location.href = `?yymm=${yyyymm}`;
+            })
+        }
+
+        function setFirst() {
+            if($($('.item-sm')[0]).data('list-id')=='none') {
+                $($('.item-sm')[1]).trigger('click');
+            } else {
+                $($('.item-sm')[0]).trigger('click');
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <%- include('nav') %>
+    <!-- modal popup -->
+    <div id="modal">
+        <div class="card">
+            <div class="card-body">
+                <div class="horizontal between">
                     <label>양식 업로드</label>
-                    <form enctype="multipart/form-data" id="ajaxFrom" method="post">
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="item_file">
-                        <label class="custom-file-label" for="item_file">물량 양식을 업로드하세요.</label>
-                      </div><br><br>
-                      <button class="btn-main" type="button" id="upload-btn">확인</button>
-                    </form>
+                    <img src="/public/images/x_icon.png" class="close">
                 </div>
+                <br>
+                <form enctype="multipart/form-data" id="ajaxFrom" method="post">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="item_file" accept=".xlsx">
+                        <label class="custom-file-label" for="item_file" id="file-name">물량 양식을 업로드하세요.</label>
+                    </div><br><br>
+                    <button class="btn-main btn-block" type="button" id="upload-btn">확인</button>
+                </form>
             </div>
         </div>
-        <section class="container-main">
-            <!-- summuary view -->
-            <div id="item_sum">
-                <select id="period">
-                    <option>2019-01</option>
-                </select>
-                <table id="item-table">
-                    <thead>
-                        <th class="head">날짜</th>
-                        <th class="head">물량</th>
-                    </thead>
-                    <tbody>
-                        <% 
-                            const today=new Date();
-                            const lastDate=new Date(itemList[0].SoldDate);
-                            if(today.getFullYear()>=lastDate.getFullYear()&&
-                            today.getMonth()>=lastDate.getMonth()&&
-                            today.getDate()>lastDate.getDate()) { 
-                                const todayStr=today.getFullYear()+'년 '+(today.getMonth()+1)+'월 '+today.getDate()+'일';
+    </div>
+    <section class="container-main">
+        <!-- summuary view -->
+        <div id="item_sum">
+            <select id="period">
+                <% var year=new Date().getFullYear();
+                    for(var i=1; i<13; i++) { 
+                        var print=year+'-';
+                        if(i<10)
+                            print+='0';
+                        print+=i;
+                        var value=year+'-'+i;
+                        var select='';
+                        if(value==yyyymm)
+                        select='selected';
+                        %>
+                <option value="<%=value%>" <%=select%>><%=print%></option>
+                <% } %>
+            </select>
+            <table id="item-table">
+                <thead>
+                    <th class="head">날짜</th>
+                    <th class="head">물량</th>
+                </thead>
+                <tbody>
+                    <% 
+                    const today=new Date();
+                    if(itemList.length==0) { 
+                        const todayStr=today.getFullYear()+'년 '+(today.getMonth()+1)+'월 '+today.getDate()+'일';
                                 %>
-                                <tr class="item-sm" data-list-id="none">
-                                    <td><%=todayStr%></td>
-                                    <td><a id="upload-a" href="#">물량 업로드</a></td>
-                                    </tr>
-                           <% }
+                    <tr class="item-sm" data-list-id="none">
+                        <td><%=todayStr%></td>
+                        <td><a id="upload-a" href="#">물량 업로드</a></td>
+                    </tr>
+                    <% } else {
+                                const lastDate=new Date(itemList[0].SoldDate);
+                               if(today.getFullYear()>=lastDate.getFullYear()&&
+                                today.getMonth()>=lastDate.getMonth()&&
+                                today.getDate()>lastDate.getDate()) { %>
+                    <tr class="item-sm" data-list-id="none">
+                        <td><%=todayStr%></td>
+                        <td><a id="upload-a" href="#">물량 업로드</a></td>
+                    </tr>
+                    <% }
+                           }
+                           
                            for(var i=0; i<itemList.length; i++) { 
                             const date=new Date(itemList[i].SoldDate);
                             const dateStr=date.getFullYear()+'년 '+(date.getMonth()+1)+'월 '+date.getDate()+'일';
                             %>
-                            <tr class="item-sm" data-list-id="<%=itemList[i].ListID%>">
-                                <td><%=dateStr%></td>
-                                <td><%=itemList[i].Count%></td>
-                            </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-                <label id="alert">1월 17일 13:55:30 물량 마감 완료</label>
-            </div>
-            <!-- each detail view -->
-            <div id="item_detail">
-                <label class="font-white size-15">물량 현황</label><br>
-                <label class="font-white size-15" id="count"></label>
-                
-                <table style="width: 100%;">
-                    <thead>
-                        <th class="head-blue">#</th>
-                        <th class="head-blue">송장번호</th>
-                        <th class="head-blue">품목명</th>
-                        <th class="head-blue">받는이</th>
-                        <th class="head-blue">전화번호</th>
-                        <th class="head-blue">도착지</th>
-                    </thead>
-                    <tbody id="detail-contents">
+                    <tr class="item-sm" data-list-id="<%=itemList[i].ListID%>">
+                        <td><%=dateStr%></td>
+                        <td><%=itemList[i].Count%></td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+            <label id="alert">1월 17일 13:55:30 물량 마감 완료</label>
+        </div>
+        <!-- each detail view -->
+        <div id="item_detail">
+            <label class="font-white size-15">물량 현황</label><br>
+            <label class="font-white size-15" id="count"></label>
 
-                    </tbody>
-                </table>
-                <form method="POST" action="/Owner/Create/ItemList" id="item-form"></form>
-                <div id="check-div">
-                    <button class="btn-sec" style="margin-right: 20px;" id="cancel-btn" type="button">취소</button>
-                    <button class="btn-main" id="confirm-btn" type="button">확인</button>
-                </div>
+            <table style="width: 100%;">
+                <thead>
+                    <th class="head-blue">#</th>
+                    <th class="head-blue">송장번호</th>
+                    <th class="head-blue">품목명</th>
+                    <th class="head-blue">받는이</th>
+                    <th class="head-blue">전화번호</th>
+                    <th class="head-blue">도착지</th>
+                </thead>
+                <tbody id="detail-contents">
+
+                </tbody>
+            </table>
+            <form method="POST" action="/Owner/Create/ItemList" id="item-form"></form>
+            <div id="check-div">
+                <button class="btn-sec" style="margin-right: 20px;" id="cancel-btn" type="button">취소</button>
+                <button class="btn-main" id="confirm-btn" type="button">확인</button>
             </div>
-        </section>
-    </body>
+        </div>
+    </section>
+</body>
+
 </html>

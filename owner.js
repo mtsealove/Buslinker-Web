@@ -15,11 +15,11 @@ exports.startOwner=(app, sql)=> {
     if(user.userID) {
         if(!yyyymm) {
             const date=new Date();
-            yyyymm=date.getFullYear()+'-'+date.getMonth()+1;
+            yyyymm=date.getFullYear()+'-'+(date.getMonth()+1);
         }
         sql.getItemList(user.userID, yyyymm, (results)=>{
             console.log(results);
-            res.render('./Owner/itemList', {user: user, itemList:results});
+            res.render('./Owner/itemList', {user: user, itemList:results, yyyymm:yyyymm});
         });    
     } else {
         res.redirect('/');

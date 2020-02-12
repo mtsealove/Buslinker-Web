@@ -12,7 +12,7 @@
         });
     })
 </script>
-<div id="nav">
+<div id="nav-main">
 <nav class="navbar navbar-expand-lg navbar-light" >
     <div class="logo-container">
         <img src="/public/images/logo_512x512.png" class="logo-img" />
@@ -45,7 +45,7 @@
                 <!-- not logined -->
                 <% if(!user.userID) { %>
                 <li class="nav-item">
-                    <button type="button" class="btn btn-outline-primary" id="start-btn">시작하기</button>
+                    <button type="button" class="btn-blue" id="start-btn">시작하기</button>
                 </li>
                 <% } else { %>
                 <!-- if logined -->
@@ -55,5 +55,5 @@
         </div>
     </div>
 </nav>
-<div id="indicator" style="background-color: navy; height: 1.5px; width: 0px;"></div>
+<div id="indicator" style="background-color: #ffcc00; height: 1.5px; width: 0px;"></div>
 </div>

@@ -85,24 +85,24 @@
         }
 
         // select month
-    function setMonth() {
-        $('#op-month').change(function() {
-            const start=$(this).val().split(':')[0];
-            const end=$(this).val().split(':')[1];
-            const corp=$('#op-logis').val();
-            location.href=`?start=${start}&end=${end}&corp=${corp}`;
-        });
-    }
+        function setMonth() {
+            $('#op-month').change(function () {
+                const start = $(this).val().split(':')[0];
+                const end = $(this).val().split(':')[1];
+                const corp = $('#op-logis').val();
+                location.href = `?start=${start}&end=${end}&corp=${corp}`;
+            });
+        }
 
-    function setLogis() {
-        $('#op-logis').change(function() {
-            const start=$('#op-month').val().split(':')[0];
-            const end=$('#op-month').val().split(':')[1];
-            const corp=$(this).val();
-            location.href=`?start=${start}&end=${end}&corp=${corp}`;
-        
-        })
-    }
+        function setLogis() {
+            $('#op-logis').change(function () {
+                const start = $('#op-month').val().split(':')[0];
+                const end = $('#op-month').val().split(':')[1];
+                const corp = $(this).val();
+                location.href = `?start=${start}&end=${end}&corp=${corp}`;
+
+            })
+        }
     </script>
 </head>
 
@@ -130,13 +130,17 @@
                             } else {
                                 selected='';
                             }
+                            var print=year+'-';
+                            if(m<10)
+                                print+='0';
+                            print+=m;
                             %>
 
-                        <option value="<%=year%>-<%=m%>-01:<%=year%>-<%=m+1%>-01" <%=selected%>><%=year%>-<%=m%></option>
+                    <option value="<%=year%>-<%=m%>-01:<%=year%>-<%=m+1%>-01" <%=selected%>><%=print%></option>
                     <% } %>
                 </select>
             </div>
-            <br>
+
             <div class="card" style="width: 100%;">
                 <div class="card-body">
                     <div class="horizontal between">
@@ -150,7 +154,7 @@
                                     selectedL='';
                                 }
                                 %>
-                                <option value="<%=logis[i].ID%>" <%=selectedL%>><%=logis[i].Name%></option>
+                            <option value="<%=logis[i].ID%>" <%=selectedL%>><%=logis[i].Name%></option>
                             <% } %>
                         </select>
                     </div>
@@ -195,18 +199,118 @@
                                     totalFee=defaultFee+(stackCnt-defaultCnt)*adFee;
                                 }
                                 %>
-                                <tr>
-                                    <td><%=ownerName%></td>
-                                    <td><%=defaultCnt.toLocaleString()%>개</td>
-                                    <td><%=stackCnt%></td>
-                                    <td><%=defaultFee.toLocaleString()%></td>
-                                    <td>개당 <%=adFee.toLocaleString()%>원</td>
-                                    <td><%=status%></td>
-                                    <td><%=totalFee.toLocaleString()%>원</td>
-                                </tr>
-                        <% } %>
+                            <tr>
+                                <td><%=ownerName%></td>
+                                <td><%=defaultCnt.toLocaleString()%>개</td>
+                                <td><%=stackCnt%></td>
+                                <td><%=defaultFee.toLocaleString()%></td>
+                                <td>개당 <%=adFee.toLocaleString()%>원</td>
+                                <td><%=status%></td>
+                                <td><%=totalFee.toLocaleString()%>원</td>
+                            </tr>
+                            <% } %>
                         </tbody>
                     </table>
+                </div>
+            </div>
+            <br>
+            <div class="horizontal between">
+                <div class="card" style="width: 49.5%;">
+                    <div class="card-body">
+                        <div class="horizontal between">
+                            <div class="horizontal" style="align-items:flex-start;">
+                                <h4 class="card-title">물류 수거 수수료</h4>
+                                <img src="/public/images/calculate_info.png" class="calculate-info">
+                            </div>
+                            <img src="/public/images/calculate_plus.png" class="calculate-icon">
+                        </div>
+                        <br>
+                        <table style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="head">물류사</th>
+                                    <th class="head">물류 수거 비용</th>
+                                    <th class="head">수수료율</th>
+                                    <th class="head">비용</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="card" style="width: 49.5%;">
+                    <div class="card-body">
+                        <div class="horizontal between">
+                            <div class="horizontal" style="align-items:flex-start;">
+                                <h4 class="card-title">물류 배송 비용</h4>
+                                <img src="/public/images/calculate_info.png" class="calculate-info">
+                            </div>
+                            <img src="/public/images/calculate_minus.png" class="calculate-icon">
+                        </div>
+                        <br>
+                        <table style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="head">물류사</th>
+                                    <th class="head">배송 물량</th>
+                                    <th class="head">단가</th>
+                                    <th class="head">비용</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="horizontal between">
+                <div class="card" style="width: 49.5%;">
+                    <div class="card-body">
+                        <div class="horizontal between">
+                            <div class="horizontal" style="align-items: flex-start;">
+                                <h4 class="card-title">물류 노선 비용</h4>
+                                <img src="/public/images/calculate_info.png" class="calculate-info">
+                            </div>
+                            <img src="/public/images/calculate_plus.png" class="calculate-icon">
+                        </div>
+                        <br>
+                        <table style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="head">버스사</th>
+                                    <th class="head">노선</th>
+                                    <th class="head">운임</th>
+                                    <th class="head">비용</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="card" style="width: 49.5%;">
+                    <div class="card-body">
+                        <div class="horizontal between">
+                            <div class="horizontal" style="align-items: flex-start;">
+                                <h4 class="card-title">통근 노선 비용</h4>
+                                <img src="/public/images/calculate_info.png" class="calculate-info">
+                            </div>
+                            <div class="horizontal">
+                                <img src="/public/images/calculate_plus.png" class="calculate-icon">
+                                <div style="width: 10px;"></div>
+                                <img src="/public/images/calculate_minus.png" class="calculate-icon">
+                            </div>
+                        </div>
+                        <br>
+                        <table style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th class="head">물류사</th>
+                                <th class="head">노선</th>
+                                <th class="head">운임</th>
+                                <th class="head">비용</th>
+                                <th class="head">중개 수수료</th>
+                                <th class="head">합계</th>
+                            </tr>
+                        </thead>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

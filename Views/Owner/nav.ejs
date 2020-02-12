@@ -47,18 +47,20 @@
                 <li class="nav-item nav-top" data-url="/Ask">
                     <a class="nav-link" href="">물량관리</a>
                 </li>
-                <li class="nav-item nav-top" data-url="/Bus/Manage/Driver">
-                    <a class="nav-link" href="/Bus/Manage/Driver">기사관리</a>
-                </li>
-                <li class="nav-item nav-top" >
-                    <a class="nav-link" href="/Manager/SignUp">회원가입</a>
-                </li>
+            
+                
                 <li class="nav-item nav-top">
                     <a class="nav-link" href="#">정산관리</a>
                 </li>
             </ul>
             <div class="horizontal center">
-                <img src="/<%=user.profile%>" id="user-profile">
+                <% var profile;
+                 if(user.profile) {
+                    profile=user.profile;
+                } else {
+                    profile='/public/images/user.png';
+                } %>
+                <img src="<%=profile%>" id="user-profile">
                 <label class="font-white" id="user-name"><%=user.userName%></label>
             </div>
         </div>

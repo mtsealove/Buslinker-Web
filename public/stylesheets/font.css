@@ -39,13 +39,25 @@
     font-size: 16pt;
 }
 
-#brand {
-    font-size: 60pt;
+@media ( min-width: 768px ) {
+    #brand {
+        font-size: 50pt;
+    }
+    
+    #brand-big {
+        font-size: 55pt;
+    }
+}
+@media( max-width: 767px) {
+    #brand {
+        font-size: 30pt;
+    }
+    
+    #brand-big {
+        font-size: 35pt;
+    }
 }
 
-#brand-big {
-    font-size: 75pt;
-}
 
 /* text */
 #philosophy {

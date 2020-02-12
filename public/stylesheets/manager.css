@@ -80,3 +80,14 @@ div.normal {
     padding-right: 30px;
     padding-top: 30px;
 }
+
+.calculate-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.calculate-info {
+    margin-left: 10px;
+    width: 16px;
+    height: 16px;
+}

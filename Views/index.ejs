@@ -13,48 +13,76 @@
     <div class="main">
         <div id="contents">
             <!-- 브랜드 네임과 소개 -->
-            <section class="centered">
-                <h1 id="brand"><b>사람</b>과 <b>화물</b>을 <b>잇다</b></h1>
-                <h2 id="brand-big"><b>People</b> X <b>Cargo</b></h2>
+            <section class="centered intro-container">
+                <div class="intro">
+                    <div>
+                        <div class="vertical">
+                            <h2 id="brand" class="font-white"><b>사람</b>과 <b>화물</b>을 <b>잇다</b></h1>
+                                <h3 id="brand-big" class="font-white"><b>People</b> X <b>Cargo</b>
+                            </h2>
+                        </div>
+                        <br>
+                        <p class="font-white">버스링커는 누구에게 A 서비스를 제공함과 동시에 </p>
+                        <p class="font-white">누구에게 B와 C서비스를 제공하는 버스 중개 플랫폼입니다.</p><br>
+                        <div class="horizontal">
+                            <button class="btn-blue">더 알아보기</button>
+                            <div style="width: 15px;"></div>
+                            <button class="btn-line-white">제휴 문의하기</button>
+                        </div>
+                    </div>
+                    <img src="/public/images/main_back.png" id="main-back">
+                </div>
+
             </section>
             <!-- What we do? -->
             <section class="centered">
-                <h1>What We Do?</h1>
+                <h1>버스링커는?</h1>
                 <div id="what-we-do-container">
-                    <div class="what-we-do">
+                    <div class="what-we-do" style="margin-left: 10%;">
                         <img src="/public/images/circle_img.png" class="what-we-do-img" />
                         <h3>통근버스 운영</h3>
-                        <pre>Lorem ipsum dolor sit amet, 
+                        <label class="what-we-do-txt">Lorem ipsum dolor sit amet, 
 consetetur sadipscing elitr, 
 sed diam nonumy eirmod tempor invidunt ut 
 labore et dolore magna aliquyam erat,
-sed diam voluptua. At vero eos</pre>
+sed diam voluptua. At vero eos</label>
                     </div>
 
                     <div class="what-we-do">
                         <img src="/public/images/circle_img.png" class="what-we-do-img" />
                         <h3>화물 입고</h3>
-                        <pre>Lorem ipsum dolor sit amet, 
+                        <label class="what-we-do-txt">Lorem ipsum dolor sit amet, 
 consetetur sadipscing elitr, 
 sed diam nonumy eirmod tempor invidunt ut 
 labore et dolore magna aliquyam erat,
-sed diam voluptua. At vero eos</pre>
+sed diam voluptua. At vero eos</label>
                     </div>
 
                     <div class="what-we-do">
                         <img src="/public/images/circle_img.png" class="what-we-do-img" />
                         <h3>화물 출고</h3>
-                        <pre>Lorem ipsum dolor sit amet, 
+                        <label class="what-we-do-txt">Lorem ipsum dolor sit amet, 
 consetetur sadipscing elitr, 
 sed diam nonumy eirmod tempor invidunt ut 
 labore et dolore magna aliquyam erat,
-sed diam voluptua. At vero eos</pre>
+sed diam voluptua. At vero eos</label>
                     </div>
+                    <div class="space10"></div>
                 </div>
+                
+            </section>
+            <!-- 목표 -->
+            <section class="centered" style="background-color: #001F46;">
+                <div class="goal">
+                <label class="font-white size-16"><b>버스링커는 여객과 물류 운송을 통합하여</b></label>
+                <label class="font-white size-16"><b>더 효율적인 자산 활용과</b></label>
+                <label class="font-white size-16"><b>버스사와 물류사의 동반성장을 목표로 하고 있습니다.</b></label><br>
+                <label class="font-white size-11">더 알아보기</label>
+            </div>
             </section>
             <!-- 웹 관리기능 간단 소개 -->
             <section class="centered">
-                <div class="horizontal right">
+                <div class="des-web-container">
                     <div id="web-des">
                         <h2>A nice section heading</h2>
                         <h1><b>goes here</b></h1>
@@ -68,35 +96,32 @@ magna aliquyam erat, sed diam voluptua. At vero eos et</pre>
             </section>
             <!-- 앱 관리기능 간단 소개 -->
             <section class="centered">
-                <h1>A nice section heading goes here</h1>
-                <label>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed</label>
+             
                 <br />
-                <div class="horizontal center">
+                <div class="des-app-container">
                     <img src="/public/images/iphones.png" id="phones" />
                     <div id="app-des">
-                        <div class="horizontal">
-                            <img src="/public/images/circle.png" class="app" />
-                            <img src="/public/images/circle.png" class="app" />
-                        </div>
-                        <br>
+                        <h1>A nice section heading</h1>
+                        <h1><b>goes here</b></h1>
+                        <label>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed</label>
                         <pre>Lorem ipsum dolor sit amet, consetetur
 sadipscing elitr, sed diam nonumy eirmod
 tempor invidunt ut labore et dolore magna
 aliquyam erat, sed diam voluptua. At vero eos et</pre>
                         <br>
+                        <!-- google play and ios download link -->
                         <div class="horizontal">
                             <a href="#"><img id="google-play" src="/public/images/google-play-badge.png"></img></a>
                             <a href="#"><img id="app-store" src="/public/images/app-store-badge.svg"></img></a>
                         </div>
                     </div>
-                    <!-- google play and ios download link -->
 
                 </div>
-        </div>
         </section>
         <!-- footer -->
         <%- include('footer') %>
     </div>
+</div>
 </body>
 
 </html>
