@@ -29,7 +29,7 @@ CREATE TABLE `ItemList` (
   PRIMARY KEY (`ListID`),
   KEY `OwnerID` (`OwnerID`),
   CONSTRAINT `itemlist_ibfk_1` FOREIGN KEY (`OwnerID`) REFERENCES `Members` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +38,7 @@ CREATE TABLE `ItemList` (
 
 LOCK TABLES `ItemList` WRITE;
 /*!40000 ALTER TABLE `ItemList` DISABLE KEYS */;
-INSERT INTO `ItemList` VALUES (3,'owner@gmail.com','2020-01-29'),(4,'owner@gmail.com','2020-01-30'),(5,'owner@gmail.com','2020-01-28');
+INSERT INTO `ItemList` VALUES (3,'owner@gmail.com','2020-01-29'),(4,'owner@gmail.com','2020-01-30'),(5,'owner@gmail.com','2020-01-28'),(6,'owner@gmail.com','2020-02-12');
 /*!40000 ALTER TABLE `ItemList` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-04 14:57:08
+-- Dump completed on 2020-02-12 19:08:43

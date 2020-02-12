@@ -24,29 +24,29 @@ DROP TABLE IF EXISTS `Timeline`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Timeline` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `RouteID` int NOT NULL,
-  `RunDate` date NOT NULL,
-  `BusID` int NOT NULL,
-  `DriverID` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `PTID` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `ListID` int NOT NULL,
-  `ActionID` int NOT NULL,
+  `RouteID` int DEFAULT NULL,
+  `RunDate` date DEFAULT NULL,
+  `BusID` int DEFAULT NULL,
+  `DriverID` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `PTID` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ListID` int DEFAULT NULL,
+  `ActionID` int DEFAULT NULL,
   `Lat` double DEFAULT NULL,
   `Lng` double DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  KEY `ListID` (`ListID`),
-  KEY `RouteID` (`RouteID`),
-  KEY `BusID` (`BusID`),
-  KEY `DriverID` (`DriverID`),
-  KEY `PTID` (`PTID`),
-  KEY `ActionID` (`ActionID`),
+  KEY `timeline_ibfk_1` (`ListID`),
+  KEY `timeline_ibfk_2` (`RouteID`),
+  KEY `timeline_ibfk_3` (`BusID`),
+  KEY `timeline_ibfk_4` (`DriverID`),
+  KEY `timeline_ibfk_5` (`PTID`),
+  KEY `timeline_ibfk_6` (`ActionID`),
   CONSTRAINT `timeline_ibfk_1` FOREIGN KEY (`ListID`) REFERENCES `ItemList` (`ListID`),
   CONSTRAINT `timeline_ibfk_2` FOREIGN KEY (`RouteID`) REFERENCES `Route` (`RouteID`),
   CONSTRAINT `timeline_ibfk_3` FOREIGN KEY (`BusID`) REFERENCES `Bus` (`ID`),
   CONSTRAINT `timeline_ibfk_4` FOREIGN KEY (`DriverID`) REFERENCES `Members` (`ID`),
   CONSTRAINT `timeline_ibfk_5` FOREIGN KEY (`PTID`) REFERENCES `Members` (`ID`),
   CONSTRAINT `timeline_ibfk_6` FOREIGN KEY (`ActionID`) REFERENCES `ActionDetail` (`ActionID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=229 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -55,6 +55,7 @@ CREATE TABLE `Timeline` (
 
 LOCK TABLES `Timeline` WRITE;
 /*!40000 ALTER TABLE `Timeline` DISABLE KEYS */;
+INSERT INTO `Timeline` VALUES (58,28,'2020-02-12',NULL,NULL,NULL,NULL,NULL,NULL,NULL),(86,28,'2020-02-05',NULL,NULL,NULL,NULL,NULL,NULL,NULL),(132,28,'2020-02-08',NULL,NULL,NULL,NULL,NULL,NULL,NULL),(198,28,'2020-02-21',NULL,NULL,NULL,NULL,NULL,NULL,NULL),(218,28,'2020-02-07',NULL,NULL,NULL,NULL,NULL,NULL,NULL),(219,28,'2020-02-15',4,NULL,NULL,NULL,NULL,NULL,NULL),(220,28,'2020-02-04',4,NULL,NULL,NULL,NULL,NULL,NULL),(221,28,'2020-02-02',4,NULL,NULL,NULL,NULL,NULL,NULL),(222,28,'2020-02-19',4,NULL,NULL,NULL,NULL,NULL,NULL),(223,28,'2020-02-06',4,'driver0@gmail.com',NULL,NULL,NULL,NULL,NULL),(224,28,'2020-02-18',4,'driver0@gmail.com',NULL,NULL,NULL,NULL,NULL),(225,28,'2020-02-11',NULL,'driver0@gmail.com',NULL,NULL,NULL,NULL,NULL),(226,28,'2020-02-14',NULL,'driver0@gmail.com',NULL,NULL,NULL,NULL,NULL),(227,28,'2020-02-13',NULL,'driver0@gmail.com',NULL,NULL,NULL,NULL,NULL),(228,28,'2020-02-20',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `Timeline` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -67,4 +68,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-04 14:57:08
+-- Dump completed on 2020-02-12 19:08:42
