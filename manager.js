@@ -32,8 +32,6 @@ exports.startManger = (app) => {
     // create Member
     const cpUpload = upload.fields([{ name: 'profile', maxCount: 1 }, { name: 'biz', maxCount: 1 }]);
     app.post('/Manager/SignUp', cpUpload, (req, res) => {
-        console.log(req.files['profile']);
-        console.log(req.files['biz']);
         var filePath = __dirname + '/' + (req.files['biz'][0]).path;
 
         const email = req.body['email'];
@@ -110,11 +108,8 @@ exports.startManger = (app) => {
         const user = auth.getUser(req);
         if (user.userID) {
             sql.getLogis((logis) => {
-                console.log('1');
                     sql.getBusList((bus) => {
-                        console.log('3');
                         sql.getRoute(order, current, null, (routes) => {
-                            console.log('4');
                             res.render('./Manager/route', { user: user, logis: logis, bus: bus, routes: routes });
                         });
                     });
@@ -128,14 +123,12 @@ exports.startManger = (app) => {
         const logi=req.query.logi;
         sql.getOwners(logi, (result)=> {
             res.json(result);
-            console.log(result);
         });
     });
 
     //creat route
     app.post('/Manager/Create/Route', (req, res) => {
         const body = req.body;
-        console.log(body);
         const alias = body['name'];
         const bus = body['bus'];
 
@@ -245,6 +238,15 @@ exports.startManger = (app) => {
                 });
             
         } else {
+            res.redirect('/');
+        }
+    });
+    // manger resource
+    app.get('/Manager/Resource', (req, res)=> {
+        const user=auth.getUser(req);
+        if(user.userID) {
+            res.render('./Manager/resource', {user:user});
+        } else {    
             res.redirect('/');
         }
     });

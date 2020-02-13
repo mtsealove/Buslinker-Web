@@ -1,5 +1,4 @@
 exports.getUser=(req)=>{
-    console.log(req.session);
     var id = req.session.userID;
     var name = req.session.userName;
     var cat = req.session.userCat;

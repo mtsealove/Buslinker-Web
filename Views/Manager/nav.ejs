@@ -47,8 +47,8 @@
                 <li class="nav-item nav-top" data-url="/Manager/ItemList">
                     <a class="nav-link" href="/Manager/ItemList">물량관리</a>
                 </li>
-                <li class="nav-item nav-top" >
-                    <a class="nav-link" href="/Manager/SignUp">회원가입</a>
+                <li class="nav-item nav-top" data-url="/Manager/Resource">
+                    <a class="nav-link" href="/Manager/Resource">자산관리</a>
                 </li>
                 <li class="nav-item nav-top" data-url="/Manager/Calculate">
                     <a class="nav-link" href="/Manager/Calculate">정산관리</a>
@@ -56,13 +56,13 @@
             </ul>
             <div class="horizontal center">
                 <% var profile;
-                 if(user.profile) {
-                    profile=user.profile;
-                } else {
-                    profile='/public/images/user.png';
-                } %>
-                <img src="<%=profile%>" id="user-profile">
-                <label class="font-white" id="user-name"><%=user.userName%></label>
+                if(user.profile) {
+                   profile='/public/uploads/'+user.profile;
+               } else {
+                   profile='/public/images/user.png';
+               } %>
+               <img src="<%=profile%>" id="user-profile">
+               <label class="font-white" id="user-name"><%=user.userName%></label>
             </div>
         </div>
     </div>

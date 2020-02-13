@@ -18,7 +18,6 @@ exports.startOwner=(app, sql)=> {
             yyyymm=date.getFullYear()+'-'+(date.getMonth()+1);
         }
         sql.getItemList(user.userID, yyyymm, (results)=>{
-            console.log(results);
             res.render('./Owner/itemList', {user: user, itemList:results, yyyymm:yyyymm});
         });    
     } else {
@@ -63,13 +62,11 @@ app.get('/Onwer/Get/ItemList', (req, res)=> {
 
 const xlsx=require('xlsx');
 app.post('/Owner/Upload/Excel', upload.single('item_file'), (req, res)=> {
-    console.log(req.file);
     const path=__dirname+'/'+req.file.path;
     let workbook=xlsx.readFile(path);
     let sheetName=workbook.SheetNames[0];
     let worksheet=workbook.Sheets[sheetName];
     const sheetJson=xlsx.utils.sheet_to_json(worksheet);
-    console.log(sheetJson);
     res.json(sheetJson);
 }); 
 }

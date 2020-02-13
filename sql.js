@@ -15,13 +15,13 @@ const options = {
 };
 const geocoder = NodeGeocoder(options);
 
-connection.connect();
+//connection.connect();
 
 // get subjects
 exports.getSubjects = function (callback) {
     connection.query('select * from AskSubject', function (error, results, fields) {
         if (error) {
-            console.log(error);
+            console.error(error);
         }
         callback(results);
     });
@@ -371,7 +371,7 @@ exports.createRoute = (corp, name, station, logi, empty, owner, contract, callba
                                                                                                                         ownerInsert.push(`insert into Location set LocName='${centers[i].Name}', 
                                                                                                                         LocAddr='${batchAddr[i]}', Lng=${data[i].value[0].longitude}, Lat=${data[i].value[0].latitude}, RcTime='${owner[i].time}'`)
                                                                                                                     }
-                                                                                                                    
+
                                                                                                                     for (var i = 0; i < ownerInsert.length; i++) {
                                                                                                                         connection.query(ownerInsert[i], (e12) => {
                                                                                                                             if (e12) {
@@ -393,26 +393,36 @@ exports.createRoute = (corp, name, station, logi, empty, owner, contract, callba
                                                                                                                     var ownerIDs = [];
                                                                                                                     //  get ownerIDs
                                                                                                                     connection.query(getId, (e13, onwerResult) => {
-                                                                                                                        if(e13) {
+                                                                                                                        if (e13) {
                                                                                                                             console.error(e13);
                                                                                                                         } else {
                                                                                                                             console.log('e13 pass');
                                                                                                                             for (var i = 0; i < ownerCnt; i++) {
                                                                                                                                 ownerIDs.push(onwerResult[i].LocID);
                                                                                                                             }
-                                                                                                                            
+
                                                                                                                             // insert route
                                                                                                                             var routeQuery = `insert into Route set Name='${name}', CorpID='${corp}',
                                                                                                                             ContractStart='${contract.start}', ContractEnd='${contract.end}',  Logi='${logi.id}',Locations='`;
+                                                                                                                            // set location ids
                                                                                                                             routeQuery += station1ID + ',';
                                                                                                                             routeQuery += logi1ID + ',';
                                                                                                                             routeQuery += emptyID + ',';
-                                                                                                                            
+
                                                                                                                             for (var i = 0; i < ownerIDs.length; i++) {
                                                                                                                                 routeQuery += ownerIDs[i] + ',';
                                                                                                                             }
                                                                                                                             routeQuery += logi2ID + ',';
-                                                                                                                            routeQuery += station2ID + `'`;
+                                                                                                                            routeQuery += station2ID + `', Owners='`;
+                                                                                                                            // set owner's id
+                                                                                                                            for (var i = 0; i < owner.length; i++) {
+                                                                                                                                routeQuery += owner[i].id;
+                                                                                                                                if (i != owner.length - 1) {
+                                                                                                                                    routeQuery += ',';
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                            routeQuery += `'`;
+
                                                                                                                             connection.query(routeQuery, (e14) => {
                                                                                                                                 if (e14) {
                                                                                                                                     console.error('e14');
@@ -459,100 +469,95 @@ exports.createRoute = (corp, name, station, logi, empty, owner, contract, callba
 }
 
 
-exports.getRoute=(order, current, bus, callback)=> {
-    var date=new Date();
-    var year=date.getFullYear();
-    var month=date.getMonth()+1;
-    var day=date.getDate();
-    var dateStr=year+'-'+month+'-'+day;
+exports.getRoute = (order, current, bus, callback) => {
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var dateStr = year + '-' + month + '-' + day;
 
-    var query=`select R.*, M.Name as Bus from Route R join Members M
+    var query = `select R.*, M.Name as Bus from Route R join Members M
     on R.CorpID=M.ID where ContractEnd`;
-    if(current=='true') {
-        query+=`>='${dateStr}'`;
+    if (current == 'true') {
+        query += `>='${dateStr}'`;
     } else {
-        query+=`<'${dateStr}'`;
+        query += `<'${dateStr}'`;
     }
-    if(bus){
-        query+=` and R.CorpID='${bus}' `;
+    if (bus) {
+        query += ` and R.CorpID='${bus}' `;
     }
 
-    query+=` order by Name ${order}`;
-    connection.query(query, (err, result)=> {
-        if(err) {
+    query += ` order by Name ${order}`;
+    connection.query(query, (err, result) => {
+        if (err) {
             console.log('e1');
             console.error(err);
-        } else {            
+        } else {
             console.log('e1 pass');
             // get location info
-            var locations=[];
-            for(var i=0; i<result.length; i++) {
-                const line=(result[i].Locations).split(',');
-                result[i].Loc=[];
-                for(var j=0; j<line.length; j++) {
+            var locations = [];
+            for (var i = 0; i < result.length; i++) {
+                const line = (result[i].Locations).split(',');
+                result[i].Loc = [];
+                for (var j = 0; j < line.length; j++) {
                     locations.push(line[j]);
                 }
             }
-            var inQeury=`select * from Location where LocID in (`;
-            for(var i=0; i<locations.length; i++) {
-                inQeury+=locations[i];
-                if(i!=locations.length-1) {
-                    inQeury+=', ';
+            var inQeury = `select * from Location where LocID in (`;
+            for (var i = 0; i < locations.length; i++) {
+                inQeury += locations[i];
+                if (i != locations.length - 1) {
+                    inQeury += ', ';
                 } else {
-                    
+
                 }
             }
-            inQeury+=')';
+            inQeury += ')';
 
-            connection.query(inQeury, (e2, result2)=> {
-                if(e2) {
+            connection.query(inQeury, (e2, result2) => {
+                if (e2) {
                     console.log('e2');
                     console.error(e2);
                     callback(result);
                 } else {
-                    for(var i=0; i<result.length; i++) {
-                        const line=(result[i].Locations).split(',');
-                        for(var j=0; j<line.length; j++) {
-                            result[i].Loc.push(result2.find(c=>c.LocID==line[j]));
+                    for (var i = 0; i < result.length; i++) {
+                        const line = (result[i].Locations).split(',');
+                        for (var j = 0; j < line.length; j++) {
+                            result[i].Loc.push(result2.find(c => c.LocID == line[j]));
                         }
                     }
-                    for(var i=0; i<result.length; i++) {
-                        console.log('line');
-                        console.log(result[i].Loc);
-                    }
-                    
                     callback(result);
                 }
             })
         }
-    }); 
+    });
 }
 
-exports.removeRoute=(id, callback)=> {
-    const getQuery=`select Locations from Route where RouteID=${id}`;
-    connection.query(getQuery, (e0, results)=> {
-        if(e0) {
+exports.removeRoute = (id, callback) => {
+    const getQuery = `select Locations from Route where RouteID=${id}`;
+    connection.query(getQuery, (e0, results) => {
+        if (e0) {
             console.error(e0);
             callback(null);
         } else {
-            const line=((String)(results[0].Locations)).split(',');
-            var locQuery=`delete from Location where LocID in(`;
-            for(var i=0; i<line.length; i++) {
-                locQuery+=line[i];
-                if(i==line.length-1) {
-                    locQuery+=')';
+            const line = ((String)(results[0].Locations)).split(',');
+            var locQuery = `delete from Location where LocID in(`;
+            for (var i = 0; i < line.length; i++) {
+                locQuery += line[i];
+                if (i == line.length - 1) {
+                    locQuery += ')';
                 } else {
-                    locQuery+=',';
+                    locQuery += ',';
                 }
             }
-            connection.query(locQuery, (e1)=> {
-                if(e1) {
+            connection.query(locQuery, (e1) => {
+                if (e1) {
                     callback(null);
                     console.error(e1);
                 } else {
-                    const removeQuery=`delete from Route where RouteID=${id}`;
-                    connection.query(removeQuery, (e2)=> {
-                        if(e2) {
+                    const removeQuery = `delete from Route where RouteID=${id}`;
+                    connection.query(removeQuery, (e2) => {
+                        if (e2) {
                             callback(null);
                             console.error(e3);
                         } else {
@@ -565,13 +570,11 @@ exports.removeRoute=(id, callback)=> {
     });
 }
 
-exports.getItemList=(userID, yyyymm, callback)=> {
-    const startDate=yyyymm+'-01';
-    const endDate=yyyymm.split('-')[0]+'-'+(parseInt(yyyymm.split('-')[1])+1)+'-01';
-    console.log('start: '+startDate);
-    console.log('end: '+endDate);
+exports.getItemList = (userID, yyyymm, callback) => {
+    const startDate = yyyymm + '-01';
+    const endDate = yyyymm.split('-')[0] + '-' + (parseInt(yyyymm.split('-')[1]) + 1) + '-01';
 
-    const query=`select L.ListID, L.SoldDate, count(I.ListID) as Count
+    const query = `select L.ListID, L.SoldDate, count(I.ListID) as Count
     from ItemList L join Item I 
     on L.ListID=I.ListID 
     where L.OwnerID='${userID}'
@@ -579,96 +582,139 @@ exports.getItemList=(userID, yyyymm, callback)=> {
     and L.SoldDate<'${endDate}'
     group by L.ListID
     order by L.SoldDate desc`;
-    console.log('query: '+query);
 
-    connection.query(query, (e0, results)=> {
-        if(e0) {
+    connection.query(query, (e0, results) => {
+        if (e0) {
             callback(null);
             console.error(e0);
         } else {
-            console.log(results);
             callback(results);
         }
     })
 }
 
-exports.createItemList=(userID, ids, item_names, names, phones, addrs, callback)=> {
-    const date=new Date();
-    const dateStr=date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
-    const listQuery=`insert into ItemList set OwnerID='${userID}', SoldDate='${dateStr}'`;
-    connection.query(listQuery, (e0)=> {
-        if(e0) {
+exports.createItemList = (userID, ids, item_names, names, phones, addrs, callback) => {
+    const date = new Date();
+    const dateStr = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+    // create item list first
+    const listQuery = `insert into ItemList set OwnerID='${userID}', SoldDate='${dateStr}'`;
+    connection.query(listQuery, (e0) => {
+        if (e0) {
             console.error('e0');
             console.error(e0);
             callback(false);
         } else {
-            const getList=`select ListID from ItemList where OwnerID='${userID}' order by ListID desc`;
-            connection.query(getList, (e1, listResult)=> {
-                if(e1) {
+            // get list's id
+            const getList = `select ListID from ItemList where OwnerID='${userID}' order by ListID desc`;
+            connection.query(getList, (e1, listResult) => {
+                if (e1) {
                     console.error('e1');
                     console.error(e1);
                     callback(false);
                 } else {
-                    const listID=listResult[0].ListID;
-                    var itemQuery=`insert into Item(ItemID, ListID, ItemName, DesAddr, DesName, DesPhone) values `;
-                    for(var i=0; i<ids.length; i++) {
-                        itemQuery+=`('${ids[i]}',${listID}, '${item_names[i]}', '${addrs[i]})', '${names[i]}', '${phones[i]}')`;
-                        if(i!=ids.length-1) {
-                            itemQuery+=',';
+                    // create ecah item that having list id
+                    const listID = listResult[0].ListID;
+                    var itemQuery = `insert into Item(ItemID, ListID, ItemName, DesAddr, DesName, DesPhone) values `;
+                    for (var i = 0; i < ids.length; i++) {
+                        itemQuery += `('${ids[i]}',${listID}, '${item_names[i]}', '${addrs[i]})', '${names[i]}', '${phones[i]}')`;
+                        if (i != ids.length - 1) {
+                            itemQuery += ',';
                         }
                     }
-                    connection.query(itemQuery, (e2)=> {
-                        if(e2) {
-                            console.error('e2');
-                            console.error(e2);
+                    // last query | user can't wait
+                    connection.query(itemQuery, (e4) => {
+                        if (e4) {
+                            console.error('e4');
+                            console.error(e4);
                             callback(false);
                         } else {
                             callback(true);
                         }
-                    })
+                    });
+
+                 setItem(addrs, ids);
                 }
             });
         }
-     });
+    });
+}
+async function setItem(addrs, ids) {
+       // set geocord item
+       var location=[];
+       for(var i=0; i<addrs.length; i++) {
+           var gc=await geocoder.geocode(addrs[i], (e2, data)=>{
+               if(e2) {
+                   console.error(e2);
+               } else {
+                   console.log('geocode: '+i);
+                   location.push([data[0].latitude, data[0].longitude]);
+               }
+           });
+       }
+       console.log(location);
+       var kmeans=require('node-kmeans');
+    //    clustering 10 sector
+      kmeans.clusterize(location, {k: 6}, (err, cluster)=> {
+            if(err) {
+                console.error(err);
+            } else {
+                console.log(cluster);
+                // update item cluster
+                for(var i=0; i<cluster.length; i++) {
+                    for(var j=0; j<cluster[j].clusterInd.length; j++) {
+                        var itemIndex=cluster[i].clusterInd[j];
+                        var itemID=ids[itemIndex];
+                        var updateItem=`update Item set Cluster=${i+1} where itemID='${itemID}'`;
+                        connection.query(updateItem, (e1)=> {
+                            if(e1) {
+                                console.error(e1);
+                            } else {
+                                console.log('item update');
+                            }
+                        });
+                    }
+                } 
+            }
+       });
 }
 
-exports.getItemListDetail=(userID, ListID, callback)=> {
-    const query=`select I.* from item I join ItemList L
+exports.getItemListDetail = (userID, ListID, callback) => {
+    const query = `select I.* from item I join ItemList L
     on L.ListID=I.ListID
     where L.OwnerID='${userID}'
     and L.ListID=${ListID}`;
 
-    connection.query(query, (e0, result)=> {
-        if(e0) {
+    connection.query(query, (e0, result) => {
+        if (e0) {
             console.error(e0);
             callback(null);
         } else {
             callback(result);
         }
-    })
+    });
 }
 
 // get not setted driver
-exports.getEmpyDriver=(corp, callback)=> {
-    const query=`select ID, Name from Members M where MemberCat=6 
+exports.getEmpyDriver = (corp, callback) => {
+    const query = `select ID, Name from Members M where MemberCat=6 
     and Corp='${corp}'
     and not exists(
     select DriverID from Route R where R.DriverID=M.ID
     )`;
 
-    connection.query(query, (e0, result)=> {
-        if(e0) {
+    connection.query(query, (e0, result) => {
+        if (e0) {
             console.error(e0);
             callback(null);
         } else {
             callback(result);
         }
-    }); 
+    });
 }
 
 // get ecah route by id
-exports.getTimeline=(routeID, corp, callback)=> {
-    const query=`select RR.*, BB.Num from 
+exports.getTimeline = (routeID, corp, callback) => {
+    const query = `select RR.*, BB.Num from 
     (select T.*, M.Name DriverName
     from Timeline T 
     left outer join Members M
@@ -676,8 +722,8 @@ exports.getTimeline=(routeID, corp, callback)=> {
     on RR.BusID=BB.ID
     where RouteID=${routeID}`;
 
-    connection.query(query, (e0, result)=>{
-        if(e0) {
+    connection.query(query, (e0, result) => {
+        if (e0) {
             callback(null);
         } else {
             callback(result);
@@ -686,75 +732,75 @@ exports.getTimeline=(routeID, corp, callback)=> {
 }
 
 // insert timeline
-exports.updateTimeLine=(routeID, driver, bus, removes, callback)=> {
-    var deleteQuery=`delete from Timeline where RouteID=${routeID} and RunDate in (`;
-    var insertQuery=`insert into Timeline(RouteID, Rundate) values `;
-    var dates=[];
+exports.updateTimeLine = (routeID, driver, bus, removes, callback) => {
+    var deleteQuery = `delete from Timeline where RouteID=${routeID} and RunDate in (`;
+    var insertQuery = `insert into Timeline(RouteID, Rundate) values `;
+    var dates = [];
     // get date by bus
-    for(var i=0; i<bus.length; i++) {
-        const date=(bus[i].split(':'))[0];
+    for (var i = 0; i < bus.length; i++) {
+        const date = (bus[i].split(':'))[0];
         dates.push(date);
     }
     // get date by driver
-    for(var i=0; i<driver.length; i++) {
-        const date=(driver[i].split(':'))[0];
+    for (var i = 0; i < driver.length; i++) {
+        const date = (driver[i].split(':'))[0];
         dates.push(date);
     }
     // for full clear date, get removed date
-    for(var i=0; i<removes.length; i++) {
+    for (var i = 0; i < removes.length; i++) {
         dates.push(removes[i]);
     }
     // get unique dates
-    for(var i=0; i<dates.length; i++) {
-        for(var j=0; j<dates.length; j++) {
-            if(i!=j && dates[i]==dates[j]) {
+    for (var i = 0; i < dates.length; i++) {
+        for (var j = 0; j < dates.length; j++) {
+            if (i != j && dates[i] == dates[j]) {
                 dates.splice(j, 1);
             }
         }
     }
     // init delete query || init insert query
-    for(var i=0; i<dates.length; i++) {
-        deleteQuery+=` '${dates[i]}' `;
-        insertQuery+=`(${routeID}, '${dates[i]}')`;
-        if(i!=dates.length-1) {
-            deleteQuery+=',';
-            insertQuery+=',';
+    for (var i = 0; i < dates.length; i++) {
+        deleteQuery += ` '${dates[i]}' `;
+        insertQuery += `(${routeID}, '${dates[i]}')`;
+        if (i != dates.length - 1) {
+            deleteQuery += ',';
+            insertQuery += ',';
         }
     }
-    deleteQuery+=')';
+    deleteQuery += ')';
 
-    var updateDrivers=[];
-    for(var i=0; i<driver.length; i++) {
-        const date=driver[i].split(':')[0];
-        const driverID=driver[i].split(':')[1];
+    var updateDrivers = [];
+    for (var i = 0; i < driver.length; i++) {
+        const date = driver[i].split(':')[0];
+        const driverID = driver[i].split(':')[1];
         updateDrivers.push(`update Timeline set DriverID='${driverID}' where RunDate='${date}'`);
     }
 
-    var updateBus=[];
-    for(var i=0; i<bus.length; i++) {
-        const date=bus[i].split(':')[0];
-        const busId=bus[i].split(':')[1];
+    var updateBus = [];
+    for (var i = 0; i < bus.length; i++) {
+        const date = bus[i].split(':')[0];
+        const busId = bus[i].split(':')[1];
         updateBus.push(`update Timeline set BusID=${busId} where RunDate='${date}'`);
     }
 
-    const total=updateBus.length+updateDrivers.length;
-    var current=0;
+    const total = updateBus.length + updateDrivers.length;
+    var current = 0;
 
-    connection.query(deleteQuery, (e0)=> {
-        if(e0) {
+    connection.query(deleteQuery, (e0) => {
+        if (e0) {
             console.error('e0');
             console.error(e0);
             callback(false);
         } else {
-            connection.query(insertQuery, (e1)=> {
-                if(e1) {
+            connection.query(insertQuery, (e1) => {
+                if (e1) {
                     console.error('e1');
                     console.error(e1);
                     callback(false);
                 } else {
-                    for(var i=0; i<updateDrivers.length; i++) {
-                        connection.query(updateDrivers[i], (errDriver)=> {
-                            if(errDriver) {
+                    for (var i = 0; i < updateDrivers.length; i++) {
+                        connection.query(updateDrivers[i], (errDriver) => {
+                            if (errDriver) {
                                 console.error('errDriver');
                                 console.error(errDriver);
                                 callback(false);
@@ -763,9 +809,9 @@ exports.updateTimeLine=(routeID, driver, bus, removes, callback)=> {
                             }
                         });
                     }
-                    for(var i=0; i<updateBus.length; i++) {
-                        connection.query(updateBus[i], (errBus)=> {
-                            if(errBus) {
+                    for (var i = 0; i < updateBus.length; i++) {
+                        connection.query(updateBus[i], (errBus) => {
+                            if (errBus) {
                                 console.error('errBus');
                                 console.error(errBus);
                                 callback(false);
@@ -779,10 +825,10 @@ exports.updateTimeLine=(routeID, driver, bus, removes, callback)=> {
         }
     });
 
-    var interval=setInterval(()=>{
-        console.log('total: '+total);
-        console.log('current: '+current);
-        if(total==current) {
+    var interval = setInterval(() => {
+        console.log('total: ' + total);
+        console.log('current: ' + current);
+        if (total == current) {
             clearInterval(interval);
             callback(true);
         }
@@ -790,16 +836,16 @@ exports.updateTimeLine=(routeID, driver, bus, removes, callback)=> {
 }
 
 // get bus's event
-exports.getBusEvent=(id, callback)=> {
-    const query=`select TT.*, MM.Name DriverName from 
+exports.getBusEvent = (id, callback) => {
+    const query = `select TT.*, MM.Name DriverName from 
     (select T.*, R.Name RouteName from 
     (select RunDate, RouteID, DriverID from Timeline where BusID=${id}) T
     left outer join Route R
     on T.RouteID=R.RouteID) TT
     left outer join Members MM
     on TT.DriverID=MM.ID`;
-    connection.query(query, (e0, result)=> {
-        if(e0){
+    connection.query(query, (e0, result) => {
+        if (e0) {
             console.error(e0);
             callback(null);
         } else {
@@ -808,8 +854,8 @@ exports.getBusEvent=(id, callback)=> {
     });
 }
 
-exports.getDriverEvent=(id, callback)=> {
-    const query=`select TT.*, BB.Num from 
+exports.getDriverEvent = (id, callback) => {
+    const query = `select TT.*, BB.Num from 
     (select T.*, R.Name RouteName from
     (select RunDate, RouteID, BusID from Timeline
     where DriverID='${id}') T
@@ -817,19 +863,19 @@ exports.getDriverEvent=(id, callback)=> {
     on T.RouteID=R.RouteID) TT
     left outer join Bus BB
     on TT.BusID=BB.ID`;
-    connection.query(query, (e0, result)=> {
-        if(e0) {
+    connection.query(query, (e0, result) => {
+        if (e0) {
             console.error(e0);
             callback(null);
-        }else  {
+        } else {
             callback(result);
         }
     });
 }
 
 // get ownwer's delivery fee by manage
-exports.getOwnerFee=(start, end, corp, callback)=> {
-    const query=`select MM.*, II.ItemCnt from 
+exports.getOwnerFee = (start, end, corp, callback) => {
+    const query = `select MM.*, II.ItemCnt from 
     (select ID,Name ,AdFee, DefaultFee, DefaultCnt from Members where MemberCat=3 and Corp='${corp}') MM
     left outer join (
     select OwnerID, sum(ItemCnt) ItemCnt from
@@ -838,12 +884,11 @@ exports.getOwnerFee=(start, end, corp, callback)=> {
     where IL.SoldDate>='${start}' and SoldDate<'${end}'
     group by IL.ListID) O
     group by OwnerID) II on MM.ID=II.OwnerID`;
-    connection.query(query, (err, result)=> {
-        if(err){
+    connection.query(query, (err, result) => {
+        if (err) {
             console.error(err);
             callback(null);
         } else {
-            console.log(result);
             callback(result);
         }
     });
