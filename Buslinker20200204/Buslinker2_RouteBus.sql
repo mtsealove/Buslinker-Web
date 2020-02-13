@@ -16,30 +16,29 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `ActionDetail`
+-- Table structure for table `RouteBus`
 --
 
-DROP TABLE IF EXISTS `ActionDetail`;
+DROP TABLE IF EXISTS `RouteBus`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `ActionDetail` (
-  `ActionID` int NOT NULL AUTO_INCREMENT,
-  `Cat` int DEFAULT NULL,
-  `ActionName` varchar(30) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  PRIMARY KEY (`ActionID`),
-  KEY `Cat` (`Cat`),
-  CONSTRAINT `actiondetail_ibfk_1` FOREIGN KEY (`Cat`) REFERENCES `ActionCat` (`CatID`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `RouteBus` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `RouteID` int DEFAULT NULL,
+  `RunDate` date DEFAULT NULL,
+  `BusID` int DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ActionDetail`
+-- Dumping data for table `RouteBus`
 --
 
-LOCK TABLES `ActionDetail` WRITE;
-/*!40000 ALTER TABLE `ActionDetail` DISABLE KEYS */;
-INSERT INTO `ActionDetail` VALUES (1,1,'운행 종료'),(2,1,'출근 운행중'),(3,1,'퇴근 운행중'),(4,2,'이동중'),(5,2,'상차 진행중'),(6,2,'하차 진행중'),(7,3,'이동중'),(8,3,'상차 진행중'),(9,3,'하차 진행중');
-/*!40000 ALTER TABLE `ActionDetail` ENABLE KEYS */;
+LOCK TABLES `RouteBus` WRITE;
+/*!40000 ALTER TABLE `RouteBus` DISABLE KEYS */;
+INSERT INTO `RouteBus` VALUES (4,28,'2020-02-06',4),(5,28,'2020-02-05',4),(6,28,'2020-02-07',4);
+/*!40000 ALTER TABLE `RouteBus` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -51,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-12 19:08:43
+-- Dump completed on 2020-02-12 19:08:41
