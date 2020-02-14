@@ -104,8 +104,6 @@ exports.startApp = (port) => {
         res.send(`<script>alert('로그아웃 되었습니다.');location.href='/'</script>`);
     });
 
-   
-
     app.listen(port, () => {
         console.log('web server runings on: ' + port);
     });

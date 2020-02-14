@@ -1,11 +1,11 @@
-const auth=require('./auth');
+const auth = require('./auth');
 const Ok = {
     Result: true
 };
 const Not = {
     Result: false
 };
-const sql=require('./sql');
+const sql = require('./sql');
 exports.startManger = (app) => {
     const multer = require('multer');
     const upload = multer({ dest: 'public/uploads/' });
@@ -108,20 +108,20 @@ exports.startManger = (app) => {
         const user = auth.getUser(req);
         if (user.userID) {
             sql.getLogis((logis) => {
-                    sql.getBusList((bus) => {
-                        sql.getRoute(order, current, null, (routes) => {
-                            res.render('./Manager/route', { user: user, logis: logis, bus: bus, routes: routes });
-                        });
+                sql.getBusList((bus) => {
+                    sql.getRoute(order, current, null, (routes) => {
+                        res.render('./Manager/route', { user: user, logis: logis, bus: bus, routes: routes });
                     });
+                });
             });
         } else {
             res.redirect('/');
         }
     });
 
-    app.get('/Manager/ajax/owners', (req, res)=> {
-        const logi=req.query.logi;
-        sql.getOwners(logi, (result)=> {
+    app.get('/Manager/ajax/owners', (req, res) => {
+        const logi = req.query.logi;
+        sql.getOwners(logi, (result) => {
             res.json(result);
         });
     });
@@ -210,43 +210,52 @@ exports.startManger = (app) => {
     // manage item list
     app.get('/Manager/ItemList', (req, res) => {
         const user = auth.getUser(req);
+        var date = req.query.date;
+        if (!date) {
+            var d = new Date();
+            date = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+        }
         if (user.userID) {
-            res.render('./Manager/itemList', { user: user });
+            sql.getRouteItem(date, (route) => {
+                res.render('./Manager/itemList', { user: user, route: route });
+            });
         } else {
             res.redirect('/');
         }
     });
 
-    app.get('/Manager/Calculate', (req, res)=> {
-        const user=auth.getUser(req);
-        var start=req.query.start;
-        var end=req.query.end;
-        var corp=req.query.corp;
-        if(!start) {
-            var date=new Date();
-            start=date.getFullYear()+'-'+(date.getMonth()+1)+'-01';
-            end=date.getFullYear()+'-'+(date.getMonth()+2)+'-01';
+    app.get('/Manager/Calculate', (req, res) => {
+        const user = auth.getUser(req);
+        var start = req.query.start;
+        var end = req.query.end;
+        var corp = req.query.corp;
+        if (!start) {
+            var date = new Date();
+            start = date.getFullYear() + '-' + (date.getMonth() + 1) + '-01';
+            end = date.getFullYear() + '-' + (date.getMonth() + 2) + '-01';
         }
-        if(user.userID) {
-                sql.getLogis((logis)=> {
-                    if(!corp) {
-                        corp=logis[0].ID;
-                    }
-                    sql.getOwnerFee(start, end, corp, (ownerFee)=>{
-                        res.render('./Manager/calculate', {user: user, ownerFee:ownerFee, start:start, logis:logis, corp:corp});
-                    })
-                });
-            
+        if (user.userID) {
+            sql.getLogis((logis) => {
+                if (!corp) {
+                    corp = logis[0].ID;
+                }
+                sql.getOwnerFee(start, end, corp, (ownerFee) => {
+                    res.render('./Manager/calculate', { user: user, ownerFee: ownerFee, start: start, logis: logis, corp: corp });
+                })
+            });
+
         } else {
             res.redirect('/');
         }
     });
     // manger resource
-    app.get('/Manager/Resource', (req, res)=> {
-        const user=auth.getUser(req);
-        if(user.userID) {
-            res.render('./Manager/resource', {user:user});
-        } else {    
+    app.get('/Manager/Resource', (req, res) => {
+        const user = auth.getUser(req);
+        if (user.userID) {
+            sql.getAllCorpResource((resource) => {
+                res.render('./Manager/resource', { user: user, res: resource });
+            });
+        } else {
             res.redirect('/');
         }
     });

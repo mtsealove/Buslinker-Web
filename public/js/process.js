@@ -5,20 +5,20 @@ $(function () {
         const filter = $(this).attr('data-filter');
         $('.tab-item').removeClass('tab-active');
         $(this).addClass('tab-active');
-        $('#logistic-div').hide(400);
-        $('#owner-div').hide(400);
-        $('#bus-div').hide(400);
+        $('#logistic-div').fadeOut(400);
+        $('#owner-div').fadeOut(400);
+        $('#bus-div').fadeOut(400);
         const top=$('.main').scrollTop();
         setTimeout(function () {
             switch (filter) {
                 case '0':
-                    $('#logistic-div').show(400);
+                    $('#logistic-div').fadeIn(400);
                     break;
                 case '1':
-                    $('#owner-div').show(400);
+                    $('#owner-div').fadeIn(400);
                     break;
                 case '2':
-                    $('#bus-div').show(400);
+                    $('#bus-div').fadeIn(400);
                     break;
             }
             fnMove(top);

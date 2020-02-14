@@ -13,12 +13,14 @@
     <div class="main">
         <div id="contents">
             <!-- 회사 철학 -->
+            <div class="not-full">
             <section class="centered">
+                
                 <div class="horizontal">
                     <img src="/public/images/logo_512x512.png" class="logo-big" />
                     <h1 class="logo-txt-big">Bus<b>Linker</b></h1>
                 </div>
-                <div style="background-color:#186AA5; width: 200px; height: 10px;"></div>
+                <div id="intro-hr"></div>
                 <h2 id="philosophy"><b>회사 철학 dolor sit amet, consetetur sadipscing elitr, diam <br>
                         nonumy eirmod tempor invidunt ut labore et dolore
                     </b></h2>
@@ -26,7 +28,9 @@
                     tempor invidunt ut labore et dolore
                 </h3>
             </section>
+        </div>
             <!-- how it works -->
+            <div class="not-full">
             <section class="centered">
                 <h1>How it works</h1>
                 <br>
@@ -59,17 +63,19 @@ magna aliquyam erat, sed diam voluptua. At vero eos</pre>
                     </div>
                 </div>
             </section>
+        </div>
             <!-- process -->
-            <section class="centered">
+            <div class="not-full">
                 <ul id="tab">
                     <li class="tab-item tab-active" data-filter="0">물류회사</li>
                     <li class="tab-item" data-filter="1">화주사</li>
                     <li class="tab-item" data-filter="2">버스회사</li>
                 </ul>
+            <section class="centered">
                 <br>
                 <!-- 물류사 -->
                 <div id="logistic-div">
-                    <div class="horizontal process-container">
+                    <div class="process-container">
                         <img src="/public/images/circle_img.png" class="process-img">
                         <div class="process-txt-right">
                             <h2>Lorem ipsum dolor sit<br>
@@ -80,7 +86,7 @@ dolore magna aliquyam erat, sed diam voluptua. At vero eos et
                             </pre>
                         </div>
                     </div>
-                    <div class="horizontal process-container">
+                    <div class="process-container">
                         <div class="process-txt-left">
                             <h2>Lorem ipsum dolor sit<br>
                                 amet, consetetur</h2><br>
@@ -94,7 +100,7 @@ dolore magna aliquyam erat, sed diam voluptua. At vero eos et
                 </div>
                 <!-- 화주사 -->
                 <div id="owner-div">
-                    <div class="horizontal process-container">
+                    <div class="process-container">
                         <img src="/public/images/circle_img.png" class="process-img">
                         <div class="process-txt-right">
                             <h2>Lorem ipsum dolor sit<br>
@@ -105,7 +111,7 @@ dolore magna aliquyam erat, sed diam voluptua. At vero eos et
                             </pre>
                         </div>
                     </div>
-                    <div class="horizontal process-container">
+                    <div class="process-container">
                         <div class="process-txt-left">
                             <h2>Lorem ipsum dolor sit<br>
                                 amet, consetetur</h2><br>
@@ -119,7 +125,7 @@ dolore magna aliquyam erat, sed diam voluptua. At vero eos et
                 </div>
                 <!-- 버스사 -->
                 <div id="bus-div">
-                    <div class="horizontal process-container">
+                    <div class="process-container">
                         <img src="/public/images/circle_img.png" class="process-img">
                         <div class="process-txt-right">
                             <h2>Lorem ipsum dolor sit<br>
@@ -130,7 +136,7 @@ dolore magna aliquyam erat, sed diam voluptua. At vero eos et
                             </pre>
                         </div>
                     </div>
-                    <div class="horizontal process-container">
+                    <div class="process-container">
                         <div class="process-txt-left">
                             <h2>Lorem ipsum dolor sit<br>
                                 amet, consetetur</h2><br>
@@ -143,6 +149,7 @@ dolore magna aliquyam erat, sed diam voluptua. At vero eos et
                     </div>
                 </div>
             </section>
+        </div>
         </div>
         <%- include('footer') %>
     </div>

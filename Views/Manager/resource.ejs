@@ -1,27 +1,163 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>자산관리</title>
-        <%- include('config') %>
-    </head>
-    <body>
-        <%- include('nav')%>
-        <section class="container-main">
-            <br>
-            <div class="horizontal between" style="width: 96vw;">
-                <!-- bus list -->
-                <div class="card" style="width: 49.5%;">
-                    <div class="card-body">
-                        
-                    </div>
-                </div>
-                <!-- driver list -->
-                <div class="card" style="width: 49.5%;">
-                    <div class="card-body">
 
+<head>
+    <title>자산관리</title>
+    <%- include('config') %>
+    <script>
+        $(function () {
+            setExtend();
+            $("#modal").hide();
+            setLink();
+            $('#close-btn').click(function() {
+                $('#modal').fadeOut(300);
+            })
+        });
+
+        function setExtend() {
+            var firstBus = $($('.extend-table[data-cat=0]')[0]).data('corp');
+            var firstDriver = $($('.extend-table[data-cat=1]')[0]).data('corp');
+            $('.common-tr').hide();
+            $(`.common-tr[data-bus=${firstBus}]`).show();
+            $(`.common-tr[data-driver=${firstDriver}]`).show();
+            $('.extend-table').click(function () {
+                var tr = $(this).data('corp');
+                if ($(this).data('cat') == 0) {
+                    $(`.common-tr[data-bus=${tr}]`).fadeToggle(400);
+                } else {
+                    $(`.common-tr[data-driver=${tr}]`).fadeToggle(400);
+                }
+            });
+        }
+
+        function setLink() {
+            $('.link').click(function(){
+                const cat=$(this).data('cat');
+                const id=$(this).data('id');
+                if(cat=='bus') {
+                    $('#iframe').attr('src', '/Bus/View/Schedule?bus='+id);
+                    $('#modal').fadeIn(300);
+                } else if(cat=='driver') {
+                    $('#iframe').attr('src', '/Bus/View/Schedule?driver='+id);
+                    $('#modal').fadeIn(300);
+                }
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <div id="modal">
+        <div class="card">
+            <div class="card-body">
+                <div class="horizontal between">
+                    <label></label>
+                    <img src="/public/images/x_icon.png" id="close-btn" style="cursor: pointer;">
+                </div>
+                <br>
+                <iframe id="iframe" style="width: 60vw; height: 90vh; border: none;">
+                </iframe>
+            </div>
+        </div>
+    </div>
+    <%- include('nav')%>
+    <section class="container-main">
+        <br><br>
+        <div class="horizontal between" style="width: 96vw; align-items: baseline;">
+            <!-- bus list -->
+            <div class="card" style="width: 49.5%;">
+                <div class="card-body" style="width: 90%; margin-left: 5%;margin-right: 5%;">
+                    <br>
+                    <div class="horizontal between">
+                        <div>
+                            <h5>차량 현황</h5>
+                            <h4 class="card-title"><b>총 <%=res.bus.length%>대</b></h4>
+                        </div>
+                        <div class="box-search horizontal between">
+                            <input placeholder="차량 번호를 검색하세요" class="transparent">
+                            <img src="/public/images/search.png" class="search">
+                        </div>
                     </div>
+                    <table>
+                        <thead>
+                            <th class="head">차량</th>
+                            <th class="head">일정</th>
+                        </thead>
+                        <tbody id="bus-table">
+                            <% for(var i=0; i<res.bus.length; i++) { %>
+                            <% if(i==0||(i!=0 && res.bus[i].Corp!=res.bus[i-1].Corp)) { %>
+                            <tr class="cat-tr">
+                                <td colspan="2">
+                                    <div class="horizontal between">
+                                        <h2 class="bus-title"><%=res.bus[i].Corp+' ('+res.bus[i].CorpCnt%>)</h2>
+                                        <img src="/public/images/down.png" class="extend-table"
+                                            data-corp="<%=res.bus[i].Corp%>" data-cat="0">
+                                    </div>
+                                </td>
+                            </tr>
+                            <% } %>
+                            <tr class="common-tr" data-bus="<%=res.bus[i].Corp%>">
+                                <td><%=res.bus[i].Num%></td>
+                                <td><span class="link" data-id="<%=res.bus[i].ID%>" data-cat="bus">일정 상세보기</span></td>
+                            </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </section>
-    </body>
+            <!-- driver list -->
+            <div class="card" style="width: 49.5%;">
+                <div class="card-body" style="width: 90%; margin-left: 5%;margin-right: 5%;">
+                    <div class="horizontal between">
+                        <div>
+                            <h5>기사 현황</h5>
+                            <h4 class="card-title"><b>총 <%=res.driver.length%>명</b></h4>
+                        </div>
+                        <div class="box-search horizontal between">
+                            <input placeholder="기사 이름을 검색하세요" class="transparent">
+                            <img src="/public/images/search.png" class="search">
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <th class="head">이름</th>
+                            <th class="head">연락처</th>
+                            <th class="head">일정</th>
+                        </thead>
+                        <tbody id="driver-table">
+                            <% for(var i=0; i<res.driver.length; i++) { %>
+                                <% if(i==0||(i!=0 && res.driver[i].Corp!=res.driver[i-1].Corp)) { %>
+                                <tr class="cat-tr">
+                                    <td colspan="3">
+                                        <div class="horizontal between">
+                                            <h2 class="bus-title"><%=res.driver[i].Corp+' ('+res.driver[i].CorpCnt%>)</h2>
+                                            <img src="/public/images/down.png" class="extend-table"
+                                                data-corp="<%=res.driver[i].Corp%>" data-cat="1">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <% } %>
+                                <tr class="common-tr" data-driver="<%=res.driver[i].Corp%>">
+                                    <td>
+                                        <div class="horizontal" style="align-items: center;">
+                                            <img src="/public/uploads/<%=res.driver[i].ProfilePath%>" class="table-img">
+                                            <div style="width: 20px;"></div>
+                                            <div>
+                                                <p style="margin-top: 10px;"><b><%=res.driver[i].Name%></b></p>
+                                            <p class="size-10" style="margin-top: -20px;"><%=res.driver[i].ID%></p>
+                                            </div>
+                                        </div>    
+                                    </td>
+                                    <td><b><%=res.driver[i].Phone%></b></td>
+                                    <td><span class="link" data-id="<%=res.driver[i].ID%>" data-cat="driver">일정 상세보기</span></td>
+                                </tr>
+                                <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
 </html>

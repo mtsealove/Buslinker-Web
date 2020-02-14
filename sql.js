@@ -622,60 +622,81 @@ exports.createItemList = (userID, ids, item_names, names, phones, addrs, callbac
                         }
                     }
                     // last query | user can't wait
-                    connection.query(itemQuery, (e4) => {
-                        if (e4) {
-                            console.error('e4');
-                            console.error(e4);
+                    connection.query(itemQuery, (e2) => {
+                        if (e2) {
+                            console.error('e2');
+                            console.error(e2);
                             callback(false);
                         } else {
-                            callback(true);
+                            // get route id for update
+                            const getRoute = `select RouteID from route where Owners like '%${userID}%'`;
+                            connection.query(getRoute, (e3, route) => {
+                                if (e3) {
+                                    console.error('e3');
+                                    console.error(e3);
+                                    callback(false);
+                                } else {
+                                    const routeID = route[0].RouteID;
+                                    //update route timeline
+                                    const udpateTimeline = `update Timeline set ListID=${listID} where RouteID=${routeID} and RunDate='${dateStr}';`
+                                    connection.query(udpateTimeline, (e4) => {
+                                        if (e4) {
+                                            console.error('e4');
+                                            console.error(e4);
+                                            callback(false);
+                                        } else {
+                                            callback(true);
+                                        }
+                                    });
+                                }
+                            });
                         }
                     });
 
-                 setItem(addrs, ids);
+                    setItem(addrs, ids);
                 }
             });
         }
     });
 }
 async function setItem(addrs, ids) {
-       // set geocord item
-       var location=[];
-       for(var i=0; i<addrs.length; i++) {
-           var gc=await geocoder.geocode(addrs[i], (e2, data)=>{
-               if(e2) {
-                   console.error(e2);
-               } else {
-                   console.log('geocode: '+i);
-                   location.push([data[0].latitude, data[0].longitude]);
-               }
-           });
-       }
-       console.log(location);
-       var kmeans=require('node-kmeans');
-    //    clustering 10 sector
-      kmeans.clusterize(location, {k: 6}, (err, cluster)=> {
-            if(err) {
-                console.error(err);
+    // set geocord item
+    var location = [];
+    for (var i = 0; i < addrs.length; i++) {
+        var gc = await geocoder.geocode(addrs[i], (e2, data) => {
+            if (e2) {
+                console.error(e2);
             } else {
-                console.log(cluster);
-                // update item cluster
-                for(var i=0; i<cluster.length; i++) {
-                    for(var j=0; j<cluster[j].clusterInd.length; j++) {
-                        var itemIndex=cluster[i].clusterInd[j];
-                        var itemID=ids[itemIndex];
-                        var updateItem=`update Item set Cluster=${i+1} where itemID='${itemID}'`;
-                        connection.query(updateItem, (e1)=> {
-                            if(e1) {
-                                console.error(e1);
-                            } else {
-                                console.log('item update');
-                            }
-                        });
-                    }
-                } 
+                console.log('geocode: ' + i);
+                location.push([data[0].latitude, data[0].longitude]);
             }
-       });
+        });
+    }
+    console.log(location);
+    var kmeans = require('node-kmeans');
+    //    clustering 10 sector
+    kmeans.clusterize(location, { k: 6 }, (err, cluster) => {
+        if (err) {
+            console.error(err);
+        } else {
+            console.log(cluster);
+            // update item cluster
+            for (var i = 0; i < cluster.length; i++) {
+                for (var j = 0; j < cluster[j].clusterInd.length; j++) {
+                    var itemIndex = cluster[i].clusterInd[j];
+                    var itemID = ids[itemIndex];
+                    var updateItem = `update Item set Cluster=${i + 1} where itemID='${itemID}'`;
+                    connection.query(updateItem, (e1) => {
+                        if (e1) {
+                            console.error(e1);
+                        } else {
+                            console.log('item update');
+                        }
+                    });
+                }
+            }
+        }
+    });
 }
 
 exports.getItemListDetail = (userID, ListID, callback) => {
@@ -890,6 +911,152 @@ exports.getOwnerFee = (start, end, corp, callback) => {
             callback(null);
         } else {
             callback(result);
+        }
+    });
+}
+
+// manages's get all resource
+exports.getAllCorpResource = (callback) => {
+    const driverQuery = `select C.Name Corp, B.Name, B.ID, B.ProfilePath, B.Phone
+    from Members B join Members C
+    on B.Corp=C.ID
+    where B.MemberCat=6
+    order by B.Corp`;
+    const busQuery = `select C.Name Corp, B.ID, B.Num from Bus B join Members C
+    on B.Corp=C.ID order by B.Corp`;
+    const busCntQuery = `select count(C.Name) CorpCnt, C.Name Corp
+    from Bus B join Members C
+    on B.Corp=C.ID
+    group by C.Name`;
+    const driverCntQuery = `select count(C.ID) Cnt, C.Name Corp
+    from Members B join Members C
+    on B.Corp=C.ID
+    where B.MemberCat=6
+    group by C.ID`;
+
+    connection.query(driverQuery, (e0, driver) => {
+        if (e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            connection.query(busQuery, (e1, bus) => {
+                if (e1) {
+                    console.error(e1);
+                    callback(null);
+                } else {
+                    connection.query(busCntQuery, (e2, busCnt) => {
+                        if (e2) {
+                            console.error(e2);
+                            callback(null);
+                        } else {
+                            for (var i = 0; i < bus.length; i++) {
+                                for (var j = 0; j < busCnt.length; j++) {
+                                    if (busCnt[j].Corp == bus[i].Corp) {
+                                        bus[i].CorpCnt = busCnt[j].CorpCnt;
+                                        break;
+                                    }
+                                }
+                            }
+                            connection.query(driverCntQuery, (e3, driverCnt) => {
+                                if (e3) {
+                                    console.error(e3);
+                                    callback(null);
+                                } else {
+                                    for (var i = 0; i < driver.length; i++) {
+                                        for (var j = 0; j < driverCnt.length; j++) {
+                                            if (driverCnt[i].Corp == driverCnt[j].Corp) {
+                                                driver[i].CorpCnt = driverCnt[j].Cnt;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    callback({
+                                        driver: driver,
+                                        bus: bus
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    })
+}
+
+exports.getRouteItem = (date, callback) => {
+    var cnt = 0;
+    const routeQuery = `select RRRR.*, LLLL.Name LogiName from
+    (select distinct TTT.*, RRR.Name RouteName, RRR.Logi, RRR.Owners from 
+    (select TT.*, BB.Num from
+    (select T.ID, T.RouteID, T.ActionID, T.BusID, T.ListID, D.Name DriverName from Timeline T
+    join Members D
+    on T.DriverID=D.ID
+    where T.RunDate='${date}') TT join Bus BB
+    on TT.BusID=BB.ID)TTT join Route RRR
+    on TTT.RouteID=RRR.RouteID) RRRR join Members LLLL
+    on RRRR.Logi=LLLL.ID`;
+
+    connection.query(routeQuery, (e0, route) => {
+        if (e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            for (var i = 0; i < route.length; i++) {
+                route[i].OwnerName = [];
+            }
+
+            // start interval
+            var total = (route.length) * 2;
+            var interval = setInterval(() => {
+                console.log('total: ' + total + ' cnt: ' + cnt);
+                if (total == cnt) {
+                    //console.log(route);
+                    callback(route);
+                    clearInterval(interval);
+                }
+            }, 100);
+
+            // get owners name
+            for (var i = 0; i < route.length; i++) {
+                var ownerQuery = `select Name from Members where ID in (`;
+                var owners = (route[i].Owners).split(',');
+                // make query by split
+                for (var j = 0; j < owners.length; j++) {
+                    ownerQuery += `'${owners[j]}'`;
+                    if (i != owners.length - 1) {
+                        ownerQuery += ',';
+                    }
+                }
+                ownerQuery += ')';
+                var index=i;
+                connection.query(ownerQuery, (e1, ownerResult) => {
+                    if (e1) {
+                        console.error(e1);
+                        callback(null);
+                    } else {
+                        for (var j = 0; j < ownerResult.length; j++) {
+                            route[index].OwnerName[j]=(ownerResult[j].Name);
+                            //console.log(ownerResult[j].Name);
+                        }
+                        cnt++;
+                    }
+                });
+                // get item count
+                var listID = route[i].ListID;
+                var cntQuery = `select count(*) ItemCnt from Item where ListID=${listID}`;
+                connection.query(cntQuery, (e2, cntResult) => {
+                    if (e2) {
+                        console.error(e2);
+                        callback(null);
+                    } else {
+                        for (var j = 0; j < cntResult.length; j++) {
+                            route[index].ItemCnt=cntResult[j].ItemCnt;
+                        }
+                        cnt++;
+                    }
+                });
+            }
         }
     });
 }

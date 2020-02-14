@@ -191,6 +191,14 @@ li.drop-item:hover {
     color: #7B7B7B;
     width: 165px;
 }
+.box-search {
+    border: 2px solid #011D46;
+    background-color: #F7F7F7;
+    border-radius: 5px;
+    padding: 7px;
+    color: #7B7B7B;
+    width: 200px;
+}
 
 .destination {
     position: relative;
@@ -262,10 +270,25 @@ li.drop-item:hover {
     transform: translateY(12px);
 }
 
+table {
+    width: 100%;
+}
+
 tr.route-tr {
     height: 100px;
     border-bottom: 1px solid #1C69A5;
     vertical-align: top;
+}
+
+tr.cat-tr {
+    height: 80px;
+    vertical-align: middle;
+}
+
+tr.common-tr {
+    height: 50px;
+    border-bottom: 1px solid #E0E4EA;
+    vertical-align: middle;
 }
 
 td.mid {
@@ -280,6 +303,16 @@ td.mid2 {
 
 td.space {
     width: 30px;
+}
+
+img.extend-table {
+    cursor: pointer;
+}
+
+.table-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
 }
 
 #modal {
@@ -380,4 +413,14 @@ td.space {
     text-decoration: none;
     display: inline-block;
     border-radius: 4px;
+}
+
+input.transparent {
+    background-color: transparent;
+    width: 90%;
+    border: none;
+}
+
+img.search {
+    
 }

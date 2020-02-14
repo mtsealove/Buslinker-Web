@@ -3,6 +3,22 @@
     <head>
         <%- include('config')%>
         <title>물량관리</title>
+        <script>
+            $(function() {
+
+                setTotal();
+            });
+
+            function setTotal() {
+                const cnts=$('.cnt');
+                var total=0;
+                for(var i=0; i<cnts.length; i++) {
+                    total+=(Number)($(cnts[i]).text());
+                }
+                var ogTxt=$('#total-cnt').text()
+                $('#total-cnt').text(ogTxt+total+'상자');
+            }
+        </script>
     </head>
     <body>
         <%- include('nav')%>
@@ -11,7 +27,7 @@
                 <div class="horizontal between">
                     <div>
                         <label>물량 현황</label>
-                        <h3>배송 6000상자</h3>
+                        <h3 id="total-cnt">배송 </h3>
                     </div>
                     <div class="horizontal">
                         <!-- select date -->
@@ -22,11 +38,10 @@
                         <div style="width: 20px;"></div>
                         <!-- 배송 / 수거 선택 -->
                         <select class="box0">
-                             <option>배송</option>
-                             <option>수거</option>
+                             <option value="delivery">배송</option>
+                             <option value="take">수거</option>
                         </select>
                     </div>
-                    
                 </div>
                 
                 <table style="width: 100%; margin-top: 30px;">
@@ -37,8 +52,43 @@
                         <th class="head">상태</th>
                         <th class="head">물량</th>
                         <th class="head">화주</th>
-                        <th class="head">비고</th>
+                        <th class="head">배치</th>
                     </thead>
+                    <tbody>
+                        <% for(var i=0; i<route.length; i++) { %>
+                            <!-- logi title -->
+                            <% if(i==0||(i!=0&&route[i].LogiName!=route[i-1].LogiName)) { %>
+                                <tr class="cat-tr">
+                                    <td><h5><b><%=route[i].LogiName%></b></h5></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>마감 완료</td>
+                                    <td>1600</td>
+                                    <td>화주...</td>
+                                    <td><div class="horizontal between">
+                                        <label></label>
+                                        <img class="extend-table" src="/public/images/down.png">
+                                    </div></td>
+                                </tr>
+                            <% } %>
+                            <tr >
+                                <td><%=route[i].RouteName%></td>
+                                <td><%=route[i].DriverName%> 기사</td>
+                                <td><%=route[i].Num%></td>
+                                <td></td>
+                                <td class="cnt"><%=route[i].ItemCnt%></td>
+                                <% var owner=''; %>
+                                <% for(var j=0; j<route[i].OwnerName.length; j++) 
+                                    owner+=route[i].OwnerName[j];
+                                    if(j=route[i].OwnerName.length-1) {
+                                        owner+=', ';
+                                    }
+                                %>
+                                <td><%=owner%></td>
+                                <td><span class="link">배치 확인</span></td>
+                            </tr>
+                        <% } %>
+                    </tbody>
                 </table>
             </div>
             
