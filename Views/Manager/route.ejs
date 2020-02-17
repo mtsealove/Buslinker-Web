@@ -100,6 +100,22 @@
                         <button class="btn-block btn-main" id="bus-btn" type="button">확인</button>
                     </div>
                 </div>
+                <!-- maange part time member -->
+                <div id="manage-pt" class="popup">
+                    <div class="vertical" style="background-color: white;">
+                        <br>
+                    <div class="horizontal between" style="width: 95%;">
+                        <div>
+                            <label id="route-name">마포-대한통운</label><br>
+                            <label id="contract">2020-01-01 ~ 2020-06-01</label>
+                        </div>
+                        <h3>원하는 날짜에 기사 및 차량을 드래그하세요.</h3>
+                        <img src="/public/images/x_icon.png" id="close-btn">
+                    </div>
+                    <br>
+                    <iframe id="schedule-frame"  style="width: 80vw; height: 85vh; border: none;"></iframe>
+                </div>
+                </div>
             </div>
             
             <div class="drop-menu" id="drop-name">
@@ -117,11 +133,11 @@
             <table id="route-table">
                 <thead>
                     <th class="remove"></th>
-                    <th class="head"><div class="sort">
+                    <th class="head" style="width: 15 0px;"><div class="sort">
                         <label>이름</label>
                         <img src="/public/images/down.png" class="drop" data-menu="drop-name">
                     </div></th>
-                    <th class="head" colspan="2"><div class="sort"><label>계약 기간</label>
+                    <th class="head" colspan="2" style="width: 300px;"><div class="sort"><label>계약 기간</label>
                         <img src="/public/images/down.png" class="drop" data-menu="drop-contract"></div></th>
                     <th class="head" colspan="14">경로</th>
                 </thead>
@@ -139,11 +155,11 @@
                     <!-- add line -->
                     <tr id="add-tr" class="route-tr">
                         <td class="remove"></td>
-                        <td class="mid">
+                        <td class="mid"> 
                             <input class="box0" placeholder="name" name="name" id="input-name">
                         </td>
                         
-                        <td class="mid2">
+                        <td class="mid2" style="width: 400px;">
                             <input type="date" id="contract-start" class="box0" name="contract-start">
                             &nbsp;~&nbsp;
                             <input class="box0" type="date" id="contract-end" name="contract-end">
@@ -215,8 +231,8 @@
                         <td class="remove">
                             <img src="/public/images/remove.png" class="sm-btn remove-btn" data-id="<%=routes[i].RouteID%>" data-name="<%=routes[i].Name%>">
                             </td>
-                        <td class="mid"><b><%=routes[i].Name%></b><br><%=routes[i].Bus%></td>
-                        <td class="mid" style="width: 350px;"><b><%=start+' ~ '+end%></b></td>
+                        <td class="mid" style="width: 150px;"><b><%=routes[i].Name%></b><br><%=routes[i].Bus%></td>
+                        <td class="mid" style="width: 300px;"><b><%=start+' ~ '+end%><br><span class="link" data-id="<%=routes[i].RouteID%>">일정 상세보기</span></b></td>
                         <td class="space"></td>
                         <td colspan="10">
                             <!-- station -->

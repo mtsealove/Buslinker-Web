@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <script>
+        $(function () {
+            const centroid = $('.centroid');
+            for (var i = 0; i < centroid.length; i++) {
+                setAddr();
+            }
+            setSectorHeight();
+            $('#item-table').hide();
+            showList();
+            $('.close').click(function() {
+                $('#item-table').fadeOut(300);
+                setTimeout(()=>{
+                    $('#sector-table').fadeIn(300);    
+                }, 300);
+                
+            });
+        });
+        function setSectorHeight() {
+            const sector = $('.bus-sector');
+            for (var i = 0; i < sector.length; i++) {
+                const cnt = $(sector[i]).children().length;
+                console.log(cnt);
+                $(sector[i]).css('height', (cnt / 2) * 50);
+                if (i == 2) {
+                    const frontCnt = $(sector[0]).children().length / 2;
+                    const sideCnt = $(sector[1]).children().length / 2;
+                    if (frontCnt < sideCnt) {
+                        $(sector[i]).css('margin-top', `-${(sideCnt - frontCnt) * 50}px`);
+                    }
+                }
+
+                if (i == 3) {
+                    const frontCnt = $(sector[1]).children().length / 2;
+                    const sideCnt = $(sector[0]).children().length / 2;
+                    if (frontCnt < sideCnt) {
+                        $(sector[i]).css('margin-top', `-${(sideCnt - frontCnt) * 50}px`);
+                    }
+                }
+            }
+        }
+
+        async function setAddr() {
+            const centroid = $('.centroid');
+
+            for (var i = 0; i < centroid.length; i++) {
+                var lat = $(centroid[i]).data('lat');
+                var lng = $(centroid[i]).data('lng');
+                var geocode = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyB5lgCJ9HTVukxeQCEHVB1kWXPz_4bxCMs`;
+                await jQuery.ajax({
+                    url: geocode,
+                    type: 'POST',
+                    success: function (json) {
+                        if (json.status == 'OK') {
+                            var addrLine = (json.results[0].formatted_address).split(' ');
+                            var addr = addrLine[1] + ' ' + addrLine[2] + ' ' + addrLine[3];
+                            $(centroid[i]).text(addr);
+                            console.log(addr);
+                        }
+                    }
+                });
+            }
+        }
+
+        function showList() {
+            $('.bus-sector').click(function () {
+                const cluster=$(this).data('cluster');
+                $('.item-tr').hide();
+                $(`.item-tr[data-cluster='${cluster}']`).show();
+                $('#sector-table').fadeOut(300);
+                setTimeout(()=> {
+                    $('#item-table').fadeIn(300);
+                },300);
+            });
+        }
+    </script>
+</head>
+
+<body style="padding: 15px;">
+    <% var total=0;
+        for(var i=0; i<4; i++) {
+            total+=sector.cluster[i].ClusterCnt;    
+        } 
+        var sectorList=[];
+        var sectorTotal=0;
+        for(var i=0; i<4; i++) {
+            sectorList.push(Math.round((sector.cluster[i].ClusterCnt/total)*20)); %>
+    <% }
+        while(sectorList[0]+sectorList[2]!=10) {
+            // higher
+            if(sectorList[0]+sectorList[2]>10) {
+                if(sectorList[0]>sectorList[2])
+                    sectorList[0]--;
+                else 
+                    sectorList[2]--;
+            }
+            // lower
+            if(sectorList[0]+sectorList[2]<10) {
+                if(sectorList[0]<sectorList[2])
+                    sectorList[0]++;
+                else 
+                    sectorList[2]++;
+            }
+        }
+        while(sectorList[1]+sectorList[3]!=10) {
+            // higher
+            if(sectorList[1]+sectorList[3]>10) {
+                if(sectorList[1]>sectorList[3])
+                    sectorList[1]--;
+                else 
+                    sectorList[3]--;
+            }
+            // lower
+            if(sectorList[1]+sectorList[3]<10) {
+                if(sectorList[1]<sectorList[3])
+                    sectorList[1]++;
+                else 
+                    sectorList[3]++;
+            }
+        }
+        
+        var sectionList=[];
+        for(var i=0; i<sector.itemList.length; i++) {
+            if(i==0||(i!=0&&sector.itemList[i].Cluster!=sector.itemList[i-1].Cluster)) {
+               var lat=sector.itemList[i].CentLat;
+               var lng=sector.itemList[i].CentLng;
+                sectionList.push({lat: lat, lng:lng});
+            }
+        }
+         %>
+    <div class="horizontal between" style="align-items: baseline;">
+        <div id="bus-top">
+            <% for(var i=0; i<sectorList.length; i++) { %>
+            <% var color='';
+                    var seat;
+                    var save0;
+                    var save1;
+                    switch (i) {
+                        case 0:
+                            color='#E06262';
+                            seat=5;
+                            break;
+                        case 1:
+                            color='#908DD9';
+                            seat=7;
+                            break;
+                        case 2:
+                            color='#6CAADE';
+                            seat=save0;
+                            break;
+                        default:
+                            color='#7FC9CC';
+                            seat=save1;
+                            break;
+                    }
+                    %>
+            <div class="bus-sector" data-cluster="<%=sector.cluster[i].Cluster%>">
+                <% for(var j=0; j<(sectorList[i]); j++) {
+                        if(seat==43) seat++;
+                         %>
+                <div class="sector" style="background-color: <%=color%>;">
+                    <label><%=seat%></label>
+                </div>
+                <% seat++%>
+                <div class="sector" style="background-color: <%=color%>;">
+                    <label><%=seat%></label>
+                </div>
+                <% seat+=3%>
+                <%} %>
+                <% if(i==0) {
+                        save0=seat;
+                     } else if(i==1) { save1=seat;}%>
+            </div>
+            <% } %>
+        </div>
+        <table style="width: 60%;" id="sector-table">
+            <thead>
+                <th class="head size-14">구분</th>
+                <th class="head size-14">구역</th>
+                <th class="head size-14">물량</th>
+            </thead>
+            <tbody>
+                <%  for(var i=0; i<4; i++) {%>
+                <% var color='';
+                        switch (i) {
+                            case 0:
+                                color='#E06262';
+                                break;
+                            case 1:
+                                color='#908DD9';
+                                break;
+                            case 2:
+                                color='#6CAADE';
+                                break;
+                            default:
+                                color='#7FC9CC';
+                                break;
+                        }
+                        %>
+                <tr class="sector-tr">
+                    <td>
+                        <div class="sector" style="background-color: <%=color%>;"></div>
+                    </td>
+                    <td><b class="centroid size-13" data-lng="<%=sectionList[i].lng%>"
+                            data-lat="<%=sectionList[i].lat%>"></b></td>
+                    <td><b class="size-13"><%=sector.cluster[i].ClusterCnt%></b></td>
+                </tr>
+                <% }%>
+            </tbody>
+        </table>
+        <div  style="width: 64%; height: 500px; overflow: auto;" id="item-table">
+            <div class="horizontal between">
+                <h3>상품 목록</h3>
+                <img src="/public/images/x_icon.png" class="close">
+            </div>
+            <br>
+        <table>
+            <thead>
+                <th class="head">송장번호</th>
+                <th class="head">주소</th>
+            </thead>
+            <tbody>
+                <% for(var i=0; i<sector.itemList.length; i++) { %>
+                    <tr class="item-tr" data-cluster="<%=sector.itemList[i].Cluster%>">
+                        <td class="size-11"><%=sector.itemList[i].ItemID%></td>                 
+                        <td class="size-11"><%=sector.itemList[i].DesAddr%></td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</body>
+
+</html>

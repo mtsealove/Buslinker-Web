@@ -213,11 +213,32 @@ exports.startManger = (app) => {
         var date = req.query.date;
         if (!date) {
             var d = new Date();
-            date = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+            date=d.getFullYear()+'-';
+            if(d.getMonth()<9) {
+                date+='0';
+            }
+            date+=(d.getMonth()+1)+'-';
+            if(d.getDate()<10){
+                date+='0';
+            }
+            date+=d.getDate();
         }
+        console.log(date);
         if (user.userID) {
             sql.getRouteItem(date, (route) => {
-                res.render('./Manager/itemList', { user: user, route: route });
+                res.render('./Manager/itemList', { user: user, route: route, current:date });
+            });
+        } else {
+            res.redirect('/');
+        }
+    });
+
+    app.get('/Manager/Sector', (req, res)=> {
+        const user=auth.getUser(req);
+        const listID=req.query.ListID;
+        if(user.userID) {
+            sql.getItemSector(listID, (sector)=> {
+              res.render('./Manager/sector', {sector: sector});
             });
         } else {
             res.redirect('/');

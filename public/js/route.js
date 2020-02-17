@@ -91,6 +91,7 @@ $(function () {
     removeRoute();
     setDrop();
     lastConfirm();
+    setPartTime();
 })
 
 function setDate() {
@@ -293,5 +294,12 @@ function getOwner() {
             html+=`<option value='${data[i].Name+'-'+data[i].ID}'>${data[i].Name}</option>`;
         }
         $('#owner-id').html(html);
+    });
+}
+
+function setPartTime() {
+    $('.link').click(function() {
+        const id=$(this).data('id');
+        $('#modal').fadeIn(400);
     });
 }

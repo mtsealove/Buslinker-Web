@@ -616,7 +616,7 @@ exports.createItemList = (userID, ids, item_names, names, phones, addrs, callbac
                     const listID = listResult[0].ListID;
                     var itemQuery = `insert into Item(ItemID, ListID, ItemName, DesAddr, DesName, DesPhone) values `;
                     for (var i = 0; i < ids.length; i++) {
-                        itemQuery += `('${ids[i]}',${listID}, '${item_names[i]}', '${addrs[i]})', '${names[i]}', '${phones[i]}')`;
+                        itemQuery += `('${ids[i]}',${listID}, '${item_names[i]}', '${addrs[i]}', '${names[i]}', '${phones[i]}')`;
                         if (i != ids.length - 1) {
                             itemQuery += ',';
                         }
@@ -652,7 +652,7 @@ exports.createItemList = (userID, ids, item_names, names, phones, addrs, callbac
                             });
                         }
                     });
-
+                    console.log(ids);
                     setItem(addrs, ids);
                 }
             });
@@ -672,31 +672,38 @@ async function setItem(addrs, ids) {
             }
         });
     }
-    console.log(location);
     var kmeans = require('node-kmeans');
     //    clustering 10 sector
-    kmeans.clusterize(location, { k: 6 }, (err, cluster) => {
+    kmeans.clusterize(location, { k: 6 }, (err, cluster)=>  {
         if (err) {
             console.error(err);
         } else {
-            console.log(cluster);
             // update item cluster
-            for (var i = 0; i < cluster.length; i++) {
-                for (var j = 0; j < cluster[j].clusterInd.length; j++) {
-                    var itemIndex = cluster[i].clusterInd[j];
-                    var itemID = ids[itemIndex];
-                    var updateItem = `update Item set Cluster=${i + 1} where itemID='${itemID}'`;
-                    connection.query(updateItem, (e1) => {
-                        if (e1) {
-                            console.error(e1);
-                        } else {
-                            console.log('item update');
-                        }
-                    });
-                }
-            }
+            console.log(cluster);
+            UpdateItemCluster(cluster, ids);
         }
     });
+}
+async function UpdateItemCluster(cluster, ids) {
+    var cnt=0;
+    for (var i = 0; i < cluster.length; i++) {
+        for (var j = 0; j < cluster[i].clusterInd.length; j++) {
+            var itemIndex = cluster[i].clusterInd[j];
+            var itemID = ids[itemIndex];
+            var updateItem = `update Item set Cluster=${i + 1}, 
+            CentLat=${cluster[i].centroid[0]}, CentLng=${cluster[i].centroid[1]}
+             where itemID='${itemID}'`;
+            
+            var cn=await connection.query(updateItem, (e1) => {
+                if (e1) {
+                    console.error(e1);
+                } else {
+                    cnt++;
+                    console.log('item update: '+cnt);
+                }
+            });
+        }
+    }
 }
 
 exports.getItemListDetail = (userID, ListID, callback) => {
@@ -1005,7 +1012,6 @@ exports.getRouteItem = (date, callback) => {
             for (var i = 0; i < route.length; i++) {
                 route[i].OwnerName = [];
             }
-
             // start interval
             var total = (route.length) * 2;
             var interval = setInterval(() => {
@@ -1057,6 +1063,29 @@ exports.getRouteItem = (date, callback) => {
                     }
                 });
             }
+        }
+    });
+}
+
+exports.getItemSector=(listID, callback)=>{
+    const itemQuery=`select * from Item where ListID=${listID} order by Cluster`;
+    const clusterQuery=`select Cluster, count(ItemID) ClusterCnt from Item where ListID=${listID} group by Cluster order by Cluster`;
+    connection.query(itemQuery, (e0, itemList)=> {
+        if(e0){
+            console.error(e0);
+            callback(null);
+        } else {
+            connection.query(clusterQuery, (e1, cluster)=> {
+                if(e1) {
+                    console.error(e1);
+                    callback(null);
+                } else{
+                    callback({
+                        itemList:itemList,
+                        cluster: cluster
+                    });
+                }
+            });
         }
     });
 }

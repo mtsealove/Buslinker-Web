@@ -1,97 +1,169 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <%- include('config')%>
-        <title>물량관리</title>
-        <script>
-            $(function() {
 
-                setTotal();
-            });
+<head>
+    <%- include('config')%>
+    <title>물량관리</title>
+    <script>
+        $(function () {
+            setTotal();
+            setDate();
+            showDate();
+            setToggle();
+            $('#modal').hide();
+            $('.close').click(function() {
+                $('#modal').fadeOut(300);
+            }); 
+            setLink();
+        });
 
-            function setTotal() {
-                const cnts=$('.cnt');
-                var total=0;
-                for(var i=0; i<cnts.length; i++) {
-                    total+=(Number)($(cnts[i]).text());
-                }
-                var ogTxt=$('#total-cnt').text()
-                $('#total-cnt').text(ogTxt+total+'상자');
+        function setTotal() {
+            const cnts = $('.cnt');
+            var total = 0;
+            for (var i = 0; i < cnts.length; i++) {
+                total += (Number)($(cnts[i]).text());
             }
-        </script>
-    </head>
-    <body>
-        <%- include('nav')%>
-        <section class="container-main">
-            <div class="normal">
-                <div class="horizontal between">
-                    <div>
-                        <label>물량 현황</label>
-                        <h3 id="total-cnt">배송 </h3>
-                    </div>
-                    <div class="horizontal">
-                        <!-- select date -->
-                        <select class="box0">
-                            <option>2020-01-18</option>
-                            <option>2020-01-18</option>
-                        </select>
-                        <div style="width: 20px;"></div>
-                        <!-- 배송 / 수거 선택 -->
-                        <select class="box0">
-                             <option value="delivery">배송</option>
-                             <option value="take">수거</option>
-                        </select>
-                    </div>
+            var ogTxt = $('#total-cnt').text()
+            $('#total-cnt').text(ogTxt + total + '상자');
+        }
+
+        function setDate() {
+            $('#select-date').change(function () {
+                var date = $(this).val();
+                location.href = `?date=${date}`;
+            });
+        }
+        function showDate() {
+            $('#select-date').children('option[value=<%=current%>]').attr('selected', 'selected');
+        }
+        function setToggle() {
+            $('.extend-table').click(function () {
+                var logi = $(this).data('logi');
+                $(`tr[data-logi='${logi}']`).fadeToggle(300);
+            });
+        }
+        function setLink() {
+            $('.link').click(function() {
+                const listID=$(this).data('list');
+                const url=`/Manager/Sector?ListID=${listID}`;
+                $('#iframe').attr('src', url);
+                $('#modal').fadeIn(300);
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <div id="modal">
+        <div style="width: 50vw; background-color: #EFEFEF;">
+            <div class="horizontal between">
+                <div class="single-tab">
+                    <p>상단화물</p>
                 </div>
-                
-                <table style="width: 100%; margin-top: 30px;">
-                    <thead>
-                        <th class="head">회사</th>
-                        <th class="head">기사</th>
-                        <th class="head">차량</th>
-                        <th class="head">상태</th>
-                        <th class="head">물량</th>
-                        <th class="head">화주</th>
-                        <th class="head">배치</th>
-                    </thead>
-                    <tbody>
-                        <% for(var i=0; i<route.length; i++) { %>
-                            <!-- logi title -->
-                            <% if(i==0||(i!=0&&route[i].LogiName!=route[i-1].LogiName)) { %>
-                                <tr class="cat-tr">
-                                    <td><h5><b><%=route[i].LogiName%></b></h5></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>마감 완료</td>
-                                    <td>1600</td>
-                                    <td>화주...</td>
-                                    <td><div class="horizontal between">
-                                        <label></label>
-                                        <img class="extend-table" src="/public/images/down.png">
-                                    </div></td>
-                                </tr>
-                            <% } %>
-                            <tr >
-                                <td><%=route[i].RouteName%></td>
-                                <td><%=route[i].DriverName%> 기사</td>
-                                <td><%=route[i].Num%></td>
-                                <td></td>
-                                <td class="cnt"><%=route[i].ItemCnt%></td>
-                                <% var owner=''; %>
-                                <% for(var j=0; j<route[i].OwnerName.length; j++) 
+                <img src="/public/images/x_icon.png" class="close" >
+            </div>
+            <iframe style="width: 100%; height: 65vh;" id="iframe"></iframe>
+        </div>
+    </div>
+    <%- include('nav')%>
+    <section class="container-main">
+        <div class="normal">
+            <div class="horizontal between">
+                <div>
+                    <label>물량 현황</label>
+                    <h3 id="total-cnt">배송 </h3>
+                </div>
+                <div class="horizontal">
+                    <!-- select date -->
+                    <select class="box0" id="select-date">
+                        <% var d=new Date(); 
+                                var length=d.getDate()+1;
+                                var month=d.getMonth()+1;
+                                if(month<10) {
+                                    month='0'+month;
+                                }
+                                var year=d.getFullYear();
+                            %>
+                        <% for(var i=1; i<length; i++) { %>
+                        <% var dd;%>
+                        <% if(i<10) {
+                                    dd='0'+i;
+                                } else {
+                                    dd=i;
+                                } 
+                                var str=year+'-'+month+'-'+dd;
+                                %>
+
+                        <option value="<%=str%>" selected><%=str%></option>
+                        <% } %>
+                    </select>
+                    <div style="width: 20px;"></div>
+                    <!-- 배송 / 수거 선택 -->
+                    <select class="box0">
+                        <option value="delivery">배송</option>
+                        <option value="take">수거</option>
+                    </select>
+                </div>
+            </div>
+
+            <table style="width: 100%; margin-top: 30px;">
+                <thead>
+                    <th class="head">회사</th>
+                    <th class="head">기사</th>
+                    <th class="head">차량</th>
+                    <th class="head">상태</th>
+                    <th class="head">물량</th>
+                    <th class="head">화주</th>
+                    <th class="head">배치</th>
+                </thead>
+                <tbody>
+                    <% for(var i=0; i<route.length; i++) { %>
+                    <!-- logi title -->
+                    <% if(i==0||(i!=0&&route[i].LogiName!=route[i-1].LogiName)) { %>
+                    <tr class="cat-tr">
+                        <td>
+                            <h5><b><%=route[i].LogiName%></b></h5>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td>마감 완료</td>
+                        <td>1600</td>
+                        <td>화주...</td>
+                        <td>
+                            <div class="horizontal between">
+                                <label></label>
+                                <img class="extend-table" src="/public/images/down.png" data-logi="<%=route[i].Logi%>">
+                            </div>
+                        </td>
+                    </tr>
+                    <% } %>
+                    <tr data-logi="<%=route[i].Logi%>">
+                        <td><%=route[i].RouteName%></td>
+                        <td><%=route[i].DriverName%> 기사</td>
+                        <td><%=route[i].Num%></td>
+                        <% var status;
+                                if(route[i].ItemCnt)
+                                    status='마감 완료';
+                                else
+                                    status='상품 미배정'; %>
+                        <td><%=status%></td>
+                        <td class="cnt"><%=route[i].ItemCnt%></td>
+                        <% var owner=''; %>
+                        <% for(var j=0; j<route[i].OwnerName.length; j++) 
                                     owner+=route[i].OwnerName[j];
                                     if(j=route[i].OwnerName.length-1) {
                                         owner+=', ';
                                     }
                                 %>
-                                <td><%=owner%></td>
-                                <td><span class="link">배치 확인</span></td>
-                            </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-            </div>
-            
-        </section>
-    </body>
+                        <td><%=owner%></td>
+                        <td><span class="link" data-list="<%=route[i].ListID%>">배치 확인</span></td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+</body>
+
 </html>
