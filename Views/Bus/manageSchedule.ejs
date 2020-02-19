@@ -19,7 +19,7 @@
             console.log(calendar);
         });
         // remove whatever date
-        function addRmove(d) {
+        function addRemove(d) {
             const form = $('#calendar-form');
             var date=new Date(d);
             var dateStr=date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
@@ -181,7 +181,7 @@
                     var y2 = ofs.top + trashEl.outerHeight(true);
 
                     console.log(event.event.start);
-                    addRmove(event.event.start);
+                    addRemove(event.event.start);
                     // remove event fully
                     if (event.jsEvent.pageX >= x1 && event.jsEvent.pageX <= x2 &&
                         event.jsEvent.pageY >= y1 && event.jsEvent.pageY <= y2) {
@@ -354,7 +354,6 @@
         <div class="horizontal between" style="width: 95%; align-items: baseline;">
             <div class="card" style="width: 70%;">
                 <div class="card-body">
-                    
                     <div id="calendar"></div>
                 </div>
             </div>

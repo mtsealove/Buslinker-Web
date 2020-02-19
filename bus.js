@@ -1,4 +1,4 @@
-const auth=require('./auth');
+const auth = require('./auth');
 const Ok = {
     Result: true
 };
@@ -7,9 +7,9 @@ const Not = {
 };
 const multer = require('multer');
 const upload = multer({ dest: 'public/uploads/' });
-exports.startBus=(app, sql)=> {
-     // Bus
-     app.get('/Bus/Status', (req, res) => {
+exports.startBus = (app, sql) => {
+    // Bus
+    app.get('/Bus/Status', (req, res) => {
         const user = auth.getUser(req);
         if (user.userID) {
             res.render('./Bus/status', { user: user });
@@ -22,9 +22,9 @@ exports.startBus=(app, sql)=> {
     app.get('/Bus/Manage/Route', (req, res) => {
         const user = auth.getUser(req);
         if (user.userID) {
-            sql.getRoute('asc', 'true', user.userID, (routeList)=> {
+            sql.getRoute('asc', 'true', user.userID, (routeList) => {
                 console.log(routeList);
-                res.render('./Bus/manageRoute', { user: user, routes: routeList});
+                res.render('./Bus/manageRoute', { user: user, routes: routeList });
             })
         } else {
             res.redirect('/');
@@ -32,58 +32,59 @@ exports.startBus=(app, sql)=> {
     });
 
     // set driver and bus for rouete
-    app.get('/Bus/Manage/Route/Schedule', (req, res)=> {
-        const routeID=req.query.routeID;
-        const user= auth.getUser(req);
-        if(user.userID){
-                sql.getDrivers(user.userID, (drivers)=> {
-            sql.getBus(user.userID, null, null, (bus)=> {
-                sql.getTimeline(routeID, user.userID, (timeline)=> {
-                    res.render('./Bus/manageSchedule', {user:user, bus:bus, drivers:drivers, timeline:timeline, routeID: routeID});
-                }); 
-            });
-        })} else {
+    app.get('/Bus/Manage/Route/Schedule', (req, res) => {
+        const routeID = req.query.routeID;
+        const user = auth.getUser(req);
+        if (user.userID) {
+            sql.getDrivers(user.userID, (drivers) => {
+                sql.getBus(user.userID, null, null, (bus) => {
+                    sql.getTimeline(routeID, user.userID, (timeline) => {
+                        res.render('./Bus/manageSchedule', { user: user, bus: bus, drivers: drivers, timeline: timeline, routeID: routeID });
+                    });
+                });
+            })
+        } else {
             res.redirect('/');
         }
-    }); 
+    });
 
-    app.post('/Bus/Manage/Timeline', (req, res)=> {
+    app.post('/Bus/Manage/Timeline', (req, res) => {
         console.log(req.body);
-        const routeID=req.body['routeID'];
-        const reqBus=req.body['bus'];
-        const reqDriver=req.body['driver'];
-        const reqRemove=req.body['remove'];
-        var bus=[];
-        var driver=[];
-        var removes=[];
+        const routeID = req.body['routeID'];
+        const reqBus = req.body['bus'];
+        const reqDriver = req.body['driver'];
+        const reqRemove = req.body['remove'];
+        var bus = [];
+        var driver = [];
+        var removes = [];
 
         // check inputed data is array
-        if(Array.isArray(reqBus)) {
-            bus=reqBus;
-        } else if(reqBus) {
+        if (Array.isArray(reqBus)) {
+            bus = reqBus;
+        } else if (reqBus) {
             bus.push(reqBus);
         }
 
-        if(Array.isArray(reqDriver)) {
-            driver=reqDriver;
-        } else if(reqDriver){
+        if (Array.isArray(reqDriver)) {
+            driver = reqDriver;
+        } else if (reqDriver) {
             driver.push(reqDriver);
         }
 
-        if(Array.isArray(reqRemove)) {
-            removes=reqRemove;
-        } else if(reqRemove) {
+        if (Array.isArray(reqRemove)) {
+            removes = reqRemove;
+        } else if (reqRemove) {
             removes.push(reqRemove);
         }
 
-        sql.updateTimeLine(routeID, driver, bus, removes, (result)=> {
-            if(result){
+        sql.updateTimeLine(routeID, driver, bus, removes, (result) => {
+            if (result) {
                 res.json(Ok);
             } else {
                 res.json(Not);
             }
         });
-        
+
     });
 
     app.get('/Bus/Manage/Driver', (req, res) => {
@@ -104,7 +105,7 @@ exports.startBus=(app, sql)=> {
         const corp = user.userID;
         if (user.userID) {
             sql.getBus(corp, order, asc, (bus) => {
-                sql.getDrivers(user.userID, (drivers)=>{
+                sql.getDrivers(user.userID, (drivers) => {
                     res.render('./Bus/manageResource', { busList: bus, user: user, driverList: drivers });
                 })
             });
@@ -114,24 +115,28 @@ exports.startBus=(app, sql)=> {
     });
 
     // show each schedule
-    app.get('/Bus/View/Schedule', (req, res)=> {
-        if(req.session.userID) {
-        const driver=req.query.driver;
-        const bus=req.query.bus;
-        if(driver){
-            sql.getDriverEvent(driver, (event)=>{
-                console.log(event);
-                res.render('./Bus/viewSchedule', {event: event, cat:'driver'});  
-            })
-        } else if(bus){
-            sql.getBusEvent(bus, (event)=> {
-                console.log(event);
-                res.render('./Bus/viewSchedule', {event: event, cat: 'bus'});   
-            })
-        } else {
-            res.render('./Bus/viewSchedule');   
-        }} else {
-            res.redirect('/');
+    app.get('/Bus/View/Schedule', (req, res) => {
+        if (req.session.userID) {
+            const driver = req.query.driver;
+            const bus = req.query.bus;
+            const part = req.query.part;
+            if (driver) {
+                sql.getDriverEvent(driver, (event) => {
+                    console.log(event);
+                    res.render('./Bus/viewSchedule', { event: event, cat: 'driver' });
+                });
+            } else if (bus) {
+                sql.getBusEvent(bus, (event) => {
+                    console.log(event);
+                    res.render('./Bus/viewSchedule', { event: event, cat: 'bus' });
+                });
+            } else if (part) {
+                sql.getPartTimeEvent(part, (event)=> {
+                    res.render('./Bus/viewSchedule', { event: event, cat: 'part' });
+                });
+            } else {
+                res.redirect('/');
+            }
         }
     });
 
@@ -164,7 +169,7 @@ exports.startBus=(app, sql)=> {
         const id = req.body['id'];
         const pw = req.body['pw'];
         const phone = req.body['phone'];
-        
+
         const corp = req.session.userID;
 
         sql.createDriver(corp, name, id, pw, phone, 0, profilePath, licensePath, (result) => {

@@ -300,6 +300,13 @@ function getOwner() {
 function setPartTime() {
     $('.link').click(function() {
         const id=$(this).data('id');
+        const url=`/Manager/Timeline?RouteID=${id}`;
+        const name=$(this).data('name');
+        const contract=$(this).data('contract');
+        $('#route-name').text(name);
+        $('#contract').text(contract);
+        $('#manage-pt').show();
+        $('#schedule-frame').attr('src', url);
         $('#modal').fadeIn(400);
     });
 }

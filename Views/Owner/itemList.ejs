@@ -45,6 +45,7 @@
             setClose();
             setMonth();
             setFirst();
+            setContentHeight();
         });
 
         function getItemList() {
@@ -133,13 +134,20 @@
         }
 
         function setFirst() {
-            if($($('.item-sm')[0]).data('list-id')=='none') {
+            if ($($('.item-sm')[0]).data('list-id') == 'none') {
                 $($('.item-sm')[1]).trigger('click');
             } else {
                 $($('.item-sm')[0]).trigger('click');
             }
         }
+
+        function setContentHeight() {
+            const height = $(window).outerHeight() - 62;
+
+            $('#item_detail').height(height);
+        }
     </script>
+
 </head>
 
 <body>
@@ -218,7 +226,17 @@
                     <% } %>
                 </tbody>
             </table>
-            <label id="alert">1월 17일 13:55:30 물량 마감 완료</label>
+            <%  var deadStr='';
+            if(itemList[0].Deadline) {
+                var dDate=new Date(itemList[0].Deadline);
+                var currentDate=new Date();
+                if(dDate.getDate()==currentDate.getDate()) {
+                    deadStr=(dDate.getMonth()+1)+'월 '+dDate.getDate()+'일 '+dDate.getHours()+'시 '+dDate.getMinutes()+'초 물량 마감 완료';    
+                } else {
+                    
+                }
+            } %>
+            <label id="alert"><%=deadStr%></label>
         </div>
         <!-- each detail view -->
         <div id="item_detail">

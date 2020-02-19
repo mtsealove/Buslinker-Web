@@ -92,7 +92,7 @@
                         </div>
                         <select name="bus" class="custom-select">
                             <% for(var i=0; i<bus.length; i++) { %>
-                                <option value="<%=bus[i].ID%>"><%=bus[i].Name%></option>
+                            <option value="<%=bus[i].ID%>"><%=bus[i].Name%></option>
                             <% } %>
                         </select>
                         <br>
@@ -101,23 +101,23 @@
                     </div>
                 </div>
                 <!-- maange part time member -->
-                <div id="manage-pt" class="popup">
+                <div id="manage-pt" class="popup" style="width: 70vw;">
                     <div class="vertical" style="background-color: white;">
                         <br>
-                    <div class="horizontal between" style="width: 95%;">
-                        <div>
-                            <label id="route-name">마포-대한통운</label><br>
-                            <label id="contract">2020-01-01 ~ 2020-06-01</label>
+                        <div class="horizontal between" style="width: 95%;">
+                            <div>
+                                <label id="route-name">마포-대한통운</label><br>
+                                <label id="contract">2020-01-01 ~ 2020-06-01</label>
+                            </div>
+                            <h3>원하는 날짜에 물류관리 직원을 드래그하세요.</h3>
+                            <img src="/public/images/x_icon.png" class="close">
                         </div>
-                        <h3>원하는 날짜에 기사 및 차량을 드래그하세요.</h3>
-                        <img src="/public/images/x_icon.png" id="close-btn">
+                        <br>
+                        <iframe id="schedule-frame" style="width: 100%; height: 70vh; border: none;"></iframe>
                     </div>
-                    <br>
-                    <iframe id="schedule-frame"  style="width: 80vw; height: 85vh; border: none;"></iframe>
-                </div>
                 </div>
             </div>
-            
+
             <div class="drop-menu" id="drop-name">
                 <ul class="drop-list">
                     <li class="drop-item"><a href="?order=asc">물류사 오름차순</a></li>
@@ -133,15 +133,19 @@
             <table id="route-table">
                 <thead>
                     <th class="remove"></th>
-                    <th class="head" style="width: 15 0px;"><div class="sort">
-                        <label>이름</label>
-                        <img src="/public/images/down.png" class="drop" data-menu="drop-name">
-                    </div></th>
-                    <th class="head" colspan="2" style="width: 300px;"><div class="sort"><label>계약 기간</label>
-                        <img src="/public/images/down.png" class="drop" data-menu="drop-contract"></div></th>
+                    <th class="head" style="width: 15 0px;">
+                        <div class="sort">
+                            <label>이름</label>
+                            <img src="/public/images/down.png" class="drop" data-menu="drop-name">
+                        </div>
+                    </th>
+                    <th class="head" colspan="2" style="width: 300px;">
+                        <div class="sort"><label>계약 기간</label>
+                            <img src="/public/images/down.png" class="drop" data-menu="drop-contract"></div>
+                    </th>
                     <th class="head" colspan="14">경로</th>
                 </thead>
-                <tbody> 
+                <tbody>
                     <!-- add btn -->
                     <tr>
                         <td colspan="14">
@@ -155,10 +159,10 @@
                     <!-- add line -->
                     <tr id="add-tr" class="route-tr">
                         <td class="remove"></td>
-                        <td class="mid"> 
+                        <td class="mid">
                             <input class="box0" placeholder="name" name="name" id="input-name">
                         </td>
-                        
+
                         <td class="mid2" style="width: 400px;">
                             <input type="date" id="contract-start" class="box0" name="contract-start">
                             &nbsp;~&nbsp;
@@ -226,34 +230,40 @@
                         var endDate=new Date(routes[i].ContractEnd);
                         var end=endDate.getFullYear()+'-'+(endDate.getMonth()+1)+'-'+endDate.getDate();
                         %>
-                        <tr style="height: 20px;"></tr>
+                    <tr style="height: 20px;"></tr>
                     <tr class="route-tr">
                         <td class="remove">
-                            <img src="/public/images/remove.png" class="sm-btn remove-btn" data-id="<%=routes[i].RouteID%>" data-name="<%=routes[i].Name%>">
-                            </td>
+                            <img src="/public/images/remove.png" class="sm-btn remove-btn"
+                                data-id="<%=routes[i].RouteID%>" data-name="<%=routes[i].Name%>">
+                        </td>
                         <td class="mid" style="width: 150px;"><b><%=routes[i].Name%></b><br><%=routes[i].Bus%></td>
-                        <td class="mid" style="width: 300px;"><b><%=start+' ~ '+end%><br><span class="link" data-id="<%=routes[i].RouteID%>">일정 상세보기</span></b></td>
+                        <td class="mid" style="width: 300px;"><b><%=start+' ~ '+end%><br>
+                                <span class="link" data-id="<%=routes[i].RouteID%>" data-name="<%=routes[i].Name%>" data-contract="<%=start+' ~ '+end%>">일정 상세보기</span></b>
+                        </td>
                         <td class="space"></td>
                         <td colspan="10">
                             <!-- station -->
                             <div class="line line-station">
                                 <div class="vertical destination destination-left">
                                     <div class="destination-circle"></div>
-                                    <label class="destination-txt" ><%=routes[i].Loc[0].LocName%><br><%=(routes[i].Loc[0].RcTime).substr(0, 5)%></label>
+                                    <label
+                                        class="destination-txt"><%=routes[i].Loc[0].LocName%><br><%=(routes[i].Loc[0].RcTime).substr(0, 5)%></label>
                                 </div>
 
                                 <!-- logistic center -->
-                                <div class="line line-logi" >
+                                <div class="line line-logi">
                                     <div class="vertical destination destination-left">
                                         <div class="destination-circle"></div>
-                                        <label class="destination-txt" ><%=routes[i].Loc[1].LocName%><br><%=(routes[i].Loc[1].RcTime).substr(0, 5)%></label>
+                                        <label
+                                            class="destination-txt"><%=routes[i].Loc[1].LocName%><br><%=(routes[i].Loc[1].RcTime).substr(0, 5)%></label>
                                     </div>
                                     <!-- owners -->
                                     <div class="line line-owner">
                                         <!-- 공터 -->
                                         <div class="vertical destination destination-left">
                                             <div class="destination-circle"></div>
-                                            <label class="destination-txt" ><%=routes[i].Loc[2].LocName%><br><%=(routes[i].Loc[2].RcTime).substr(0, 5)%></label>
+                                            <label
+                                                class="destination-txt"><%=routes[i].Loc[2].LocName%><br><%=(routes[i].Loc[2].RcTime).substr(0, 5)%></label>
                                         </div>
                                         <!-- owners-->
                                         <% for(var j=3; j<routes[i].Loc.length-2; j++) { 
@@ -262,25 +272,28 @@
                                                 right='destination-right';
                                             }
                                             %>
-                                            <div class="vertical destination <%=right%>">
+                                        <div class="vertical destination <%=right%>">
                                             <div class="destination-circle"></div>
-                                            <label class="destination-txt" ><%=routes[i].Loc[j].LocName%><br><%=(routes[i].Loc[j].RcTime).substr(0, 5)%></label>
+                                            <label
+                                                class="destination-txt"><%=routes[i].Loc[j].LocName%><br><%=(routes[i].Loc[j].RcTime).substr(0, 5)%></label>
                                         </div>
                                         <% } %>
                                     </div>
                                     <div class="vertical destination destination-right">
                                         <div class="destination-circle"></div>
-                                        <label class="destination-txt" ><%=routes[i].Loc[routes[i].Loc.length-2].LocName%><br><%=(routes[i].Loc[routes[i].Loc.length-2].RcTime).substr(0, 5)%></label>
+                                        <label
+                                            class="destination-txt"><%=routes[i].Loc[routes[i].Loc.length-2].LocName%><br><%=(routes[i].Loc[routes[i].Loc.length-2].RcTime).substr(0, 5)%></label>
                                     </div>
                                 </div>
 
                                 <div class="vertical destination destination-right">
                                     <div class="destination-circle"></div>
-                                    <label class="destination-txt" ><%=routes[i].Loc[routes[i].Loc.length-1].LocName%><br><%=(routes[i].Loc[routes[i].Loc.length-1].RcTime).substr(0, 5)%></label>
+                                    <label
+                                        class="destination-txt"><%=routes[i].Loc[routes[i].Loc.length-1].LocName%><br><%=(routes[i].Loc[routes[i].Loc.length-1].RcTime).substr(0, 5)%></label>
                                 </div>
                             </div>
-                            </td>
-                            <td style="width: 100px;">
+                        </td>
+                        <td style="width: 100px;">
                         </td>
                     </tr>
                     <% } %>

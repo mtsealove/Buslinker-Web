@@ -119,6 +119,48 @@ exports.startManger = (app) => {
         }
     });
 
+    app.get('/Manager/Timeline', (req, res)=>{
+        const routeID=req.query.RouteID;
+        sql.getTimelineShort(routeID, (timeline)=>{
+            sql.getPartTimeMembers((part)=>{
+                res.render('./Manager/timeline', {timeline:timeline, part: part, routeID: routeID});
+            });
+        });
+    });
+
+    app.post('/Manager/Timeline', (req, res)=> {
+        const routeID=req.body['routeID'];
+        var remove=req.body['remove'];
+        console.log('remove');
+        console.log(remove);
+        var part=req.body['part'];
+        var removeList=[];
+        var partList=[];
+        if(Array.isArray(remove)) {
+            removeList=remove;
+        } else {
+            if(remove){
+                removeList.push(remove);
+            }
+        }
+
+        if(Array.isArray(part)) {
+            partList=part;
+        } else {
+            if(part){
+                partList.push(part);
+            }
+        }
+        sql.updateTimeLinePt(routeID, removeList, partList, (result)=>{
+            if(result) {
+                res.send(`<script>alert('정보가 등록되었습니다');location.href='/Manager/TimeLine?RouteID=${routeID}';</script>`);
+            } else {
+                res.send(`<script>alert('오류가 발생하였습니다.');history.go(-1);</script>`);
+            }
+        });
+
+    });
+
     app.get('/Manager/ajax/owners', (req, res) => {
         const logi = req.query.logi;
         sql.getOwners(logi, (result) => {

@@ -574,7 +574,7 @@ exports.getItemList = (userID, yyyymm, callback) => {
     const startDate = yyyymm + '-01';
     const endDate = yyyymm.split('-')[0] + '-' + (parseInt(yyyymm.split('-')[1]) + 1) + '-01';
 
-    const query = `select L.ListID, L.SoldDate, count(I.ListID) as Count
+    const query = `select L.ListID, L.SoldDate, count(I.ListID) as Count, L.Deadline
     from ItemList L join Item I 
     on L.ListID=I.ListID 
     where L.OwnerID='${userID}'
@@ -595,9 +595,27 @@ exports.getItemList = (userID, yyyymm, callback) => {
 
 exports.createItemList = (userID, ids, item_names, names, phones, addrs, callback) => {
     const date = new Date();
-    const dateStr = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+    var dateStr = date.getFullYear() + '-';
+    if(date.getMonth()<9) {
+        dateStr+='0';
+    }
+    dateStr+=(date.getMonth()+1)+'-';
+    if(date.getDate()<10) {
+        dateStr+='0';
+    }
+    dateStr+=date.getDate();
+    var dateTime=dateStr+' ';
+    if(date.getHours()<10) {
+        dateTime+='0';
+    }
+    dateTime+=date.getHours()+':';
+    if(date.getMinutes()<10) {
+        dateTime+='0'
+    }
+    dateTime+=date.getMinutes();
+    
     // create item list first
-    const listQuery = `insert into ItemList set OwnerID='${userID}', SoldDate='${dateStr}'`;
+    const listQuery = `insert into ItemList set OwnerID='${userID}', SoldDate='${dateStr}', Deadline='${dateTime}'`;
     connection.query(listQuery, (e0) => {
         if (e0) {
             console.error('e0');
@@ -674,7 +692,7 @@ async function setItem(addrs, ids) {
     }
     var kmeans = require('node-kmeans');
     //    clustering 10 sector
-    kmeans.clusterize(location, { k: 6 }, (err, cluster)=>  {
+    kmeans.clusterize(location, { k: 6 }, (err, cluster) => {
         if (err) {
             console.error(err);
         } else {
@@ -685,7 +703,7 @@ async function setItem(addrs, ids) {
     });
 }
 async function UpdateItemCluster(cluster, ids) {
-    var cnt=0;
+    var cnt = 0;
     for (var i = 0; i < cluster.length; i++) {
         for (var j = 0; j < cluster[i].clusterInd.length; j++) {
             var itemIndex = cluster[i].clusterInd[j];
@@ -693,13 +711,13 @@ async function UpdateItemCluster(cluster, ids) {
             var updateItem = `update Item set Cluster=${i + 1}, 
             CentLat=${cluster[i].centroid[0]}, CentLng=${cluster[i].centroid[1]}
              where itemID='${itemID}'`;
-            
-            var cn=await connection.query(updateItem, (e1) => {
+
+            var cn = await connection.query(updateItem, (e1) => {
                 if (e1) {
                     console.error(e1);
                 } else {
                     cnt++;
-                    console.log('item update: '+cnt);
+                    console.log('item update: ' + cnt);
                 }
             });
         }
@@ -707,12 +725,12 @@ async function UpdateItemCluster(cluster, ids) {
 }
 
 exports.getItemListDetail = (userID, ListID, callback) => {
-    const query = `select I.* from item I join ItemList L
+    const listQuery = `select I.* from item I join ItemList L
     on L.ListID=I.ListID
     where L.OwnerID='${userID}'
     and L.ListID=${ListID}`;
 
-    connection.query(query, (e0, result) => {
+    connection.query(listQuery, (e0, result) => {
         if (e0) {
             console.error(e0);
             callback(null);
@@ -901,6 +919,22 @@ exports.getDriverEvent = (id, callback) => {
     });
 }
 
+exports.getPartTimeEvent=(id, callback)=> {
+    const query=`select T.*, R.Name RouteName from
+    (select RunDate, RouteID from Timeline
+    where PTID='${id}') T
+    left outer join  Route R
+    on T.RouteID=R.RouteID`;
+    connection.query(query, (e0, part)=> {
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(part);
+        }
+    });
+}
+
 // get ownwer's delivery fee by manage
 exports.getOwnerFee = (start, end, corp, callback) => {
     const query = `select MM.*, II.ItemCnt from 
@@ -940,6 +974,7 @@ exports.getAllCorpResource = (callback) => {
     on B.Corp=C.ID
     where B.MemberCat=6
     group by C.ID`;
+    const partTimeQuery=`select Name, ID, ProfilePath, Phone from Members where MemberCat=5`;
 
     connection.query(driverQuery, (e0, driver) => {
         if (e0) {
@@ -977,10 +1012,18 @@ exports.getAllCorpResource = (callback) => {
                                             }
                                         }
                                     }
-                                    callback({
-                                        driver: driver,
-                                        bus: bus
-                                    });
+                                    connection.query(partTimeQuery, (e4, partTime)=>{
+                                        if(e4) {
+                                            console.error(e4);
+                                            callback(null);
+                                        } else {
+                                            callback({
+                                                driver: driver,
+                                                bus: bus,
+                                                part: partTime
+                                            });
+                                        }
+                                    })
                                 }
                             });
                         }
@@ -1035,14 +1078,14 @@ exports.getRouteItem = (date, callback) => {
                     }
                 }
                 ownerQuery += ')';
-                var index=i;
+                var index = i;
                 connection.query(ownerQuery, (e1, ownerResult) => {
                     if (e1) {
                         console.error(e1);
                         callback(null);
                     } else {
                         for (var j = 0; j < ownerResult.length; j++) {
-                            route[index].OwnerName[j]=(ownerResult[j].Name);
+                            route[index].OwnerName[j] = (ownerResult[j].Name);
                             //console.log(ownerResult[j].Name);
                         }
                         cnt++;
@@ -1057,7 +1100,7 @@ exports.getRouteItem = (date, callback) => {
                         callback(null);
                     } else {
                         for (var j = 0; j < cntResult.length; j++) {
-                            route[index].ItemCnt=cntResult[j].ItemCnt;
+                            route[index].ItemCnt = cntResult[j].ItemCnt;
                         }
                         cnt++;
                     }
@@ -1067,25 +1110,121 @@ exports.getRouteItem = (date, callback) => {
     });
 }
 
-exports.getItemSector=(listID, callback)=>{
-    const itemQuery=`select * from Item where ListID=${listID} order by Cluster`;
-    const clusterQuery=`select Cluster, count(ItemID) ClusterCnt from Item where ListID=${listID} group by Cluster order by Cluster`;
-    connection.query(itemQuery, (e0, itemList)=> {
-        if(e0){
+exports.getItemSector = (listID, callback) => {
+    const itemQuery = `select * from Item where ListID=${listID} order by Cluster`;
+    const clusterQuery = `select Cluster, count(ItemID) ClusterCnt from Item where ListID=${listID} group by Cluster order by Cluster`;
+    connection.query(itemQuery, (e0, itemList) => {
+        if (e0) {
             console.error(e0);
             callback(null);
         } else {
-            connection.query(clusterQuery, (e1, cluster)=> {
-                if(e1) {
+            connection.query(clusterQuery, (e1, cluster) => {
+                if (e1) {
                     console.error(e1);
                     callback(null);
-                } else{
+                } else {
                     callback({
-                        itemList:itemList,
+                        itemList: itemList,
                         cluster: cluster
                     });
                 }
             });
         }
     });
+}
+
+
+exports.getTimelineShort = (routeID, callback) => {
+    const query = `select TTT.RunDate, Num, DriverName, MMM.Name PtName, MMM.ID PTID from
+    (select TT.*, MM.Name DriverName from
+    (select T.*, B.Num from 
+    (select RunDate, BusID, DriverID, PTID from Timeline where RouteID=${routeID}) T
+    left outer join Bus B
+    on T.BusID=B.ID) TT
+    left outer join Members MM
+    on TT.DriverID=MM.ID) TTT 
+    left outer join Members MMM
+    on MMM.ID=TTT.PTID`;
+
+    connection.query(query, (err, timeline) => {
+        if (err) {
+            console.error(err);
+            callback(null);
+        } else {
+            callback(timeline);
+        }
+    });
+}
+
+exports.getPartTimeMembers = (callback) => {
+    const query = `select Name, ID, BizAddr from Members where MemberCat=5`;
+    connection.query(query, (err, members) => {
+        if (err) {
+            console.error(err);
+            callback(null);
+        } else {
+            callback(members);
+        }
+    });
+}
+
+exports.updateTimeLinePt = (routeID, remove, part, callback) => {
+    var removeQuery = `update Timeline set PTID=null where RouteID=${routeID} and RunDate in ('1970-01-01'`;
+    for (var i = 0; i < remove.length; i++) {
+        if(i==0) {
+            removeQuery+=',';
+        }
+        removeQuery += `'${remove[i]}'`;
+        if (i != remove.length - 1) {
+            removeQuery += ',';
+        }
+    }
+    removeQuery += ')';
+    connection.query(removeQuery, (e0) => {
+        if (e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            // delete all empty data;
+            var clearQuery=`delete from Timeline where BusID is null and DriverID is null and PTID is null`;
+            connection.query(clearQuery, (e1)=>{
+                if(e1) {
+                    console.error(e1);
+                    callback(false);
+                } else {
+                 updatePartTime(routeID, part, callback);
+                }
+            });  
+        }
+    });
+}
+async function updatePartTime(routeID, part, callback ) {
+    var insertList=[];
+    var index=0;
+    for (var i = 0; i < part.length; i++) {   
+        var id = ((String)(part[i])).split(':')[0];
+        var date = ((String)(part[i])).split(':')[1];
+        console.log(id);
+        console.log(date);
+        var insertQuery= `insert into TimeLine set RouteID=${routeID}, RunDate='${date}', PTID='${id}'`;
+        insertList.push(insertQuery);
+        var updateQuery = `update Timeline set PTID='${id}' where RouteID=${routeID} and RunDate='${date}'`;
+        console.log(updateQuery);
+        connection.query(updateQuery, (e0, result)=> {
+            if(e0) {
+                console.error(e0);
+                callback(false);
+            } else {
+                console.log(insertList[index++]);
+                if(result.affectedRows==0) {
+                    connection.query(insertList[index-1], (e1)=>{
+                        if(e1) {
+                            console.error(e1);
+                        }
+                    });
+                }
+            }
+        });
+    }
+    callback(true);
 }

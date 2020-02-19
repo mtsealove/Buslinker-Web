@@ -20,10 +20,12 @@
             $('.common-tr').hide();
             $(`.common-tr[data-bus=${firstBus}]`).show();
             $(`.common-tr[data-driver=${firstDriver}]`).show();
+            $('.part-tr').show();
             $('.extend-table').click(function () {
                 var tr = $(this).data('corp');
                 if ($(this).data('cat') == 0) {
                     $(`.common-tr[data-bus=${tr}]`).fadeToggle(400);
+
                 } else {
                     $(`.common-tr[data-driver=${tr}]`).fadeToggle(400);
                 }
@@ -39,6 +41,9 @@
                     $('#modal').fadeIn(300);
                 } else if(cat=='driver') {
                     $('#iframe').attr('src', '/Bus/View/Schedule?driver='+id);
+                    $('#modal').fadeIn(300);
+                } else if(cat=='part') {
+                    $('#iframe').attr('src', '/Bus/View/Schedule?part='+id);
                     $('#modal').fadeIn(300);
                 }
             });
@@ -65,7 +70,7 @@
         <br><br>
         <div class="horizontal between" style="width: 96vw; align-items: baseline;">
             <!-- bus list -->
-            <div class="card" style="width: 49.5%;">
+            <div class="card" style="width: 32%;">
                 <div class="card-body" style="width: 90%; margin-left: 5%;margin-right: 5%;">
                     <br>
                     <div class="horizontal between">
@@ -106,8 +111,9 @@
                 </div>
             </div>
             <!-- driver list -->
-            <div class="card" style="width: 49.5%;">
-                <div class="card-body" style="width: 90%; margin-left: 5%;margin-right: 5%;">
+            <div class="card" style="width: 32%;">
+                <div class="card-body" >
+                    <br>
                     <div class="horizontal between">
                         <div>
                             <h5>기사 현황</h5>
@@ -138,7 +144,7 @@
                                 </tr>
                                 <% } %>
                                 <tr class="common-tr" data-driver="<%=res.driver[i].Corp%>">
-                                    <td>
+                                    <td style="width: 45%;">
                                         <div class="horizontal" style="align-items: center;">
                                             <img src="/public/uploads/<%=res.driver[i].ProfilePath%>" class="table-img">
                                             <div style="width: 20px;"></div>
@@ -152,6 +158,47 @@
                                     <td><span class="link" data-id="<%=res.driver[i].ID%>" data-cat="driver">일정 상세보기</span></td>
                                 </tr>
                                 <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- part time list -->
+            <div class="card" style="width: 32%;">
+                <div class="card-body">
+                    <br>
+                    <div class="horizontal between">
+                        <div>
+                            <h5>물류관리 직원 현황</h5>
+                            <h4 class="card-title"><b>총 <%=res.part.length%>명</b></h4>
+                        </div>
+                        <div class="box-search horizontal between">
+                            <input placeholder="물류관리 직원을 검색하세요" class="transparent">
+                            <img src="/public/images/search.png" class="search">
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <th class="head">이름</th>
+                            <th class="head">연락처</th>
+                            <th class="head">일정</th>
+                        </thead>
+                        <tbody>
+                            <% for(var i=0; i<res.part.length; i++) { %>
+                                <tr class="common-tr part-tr">
+                                    <td style="width: 45%;">
+                                        <div class="horizontal" style="align-items: center;">
+                                            <img src="/public/uploads/<%=res.part[i].ProfilePath%>" class="table-img">
+                                            <div style="width: 20px;"></div>
+                                            <div>
+                                                <p style="margin-top: 10px;"><b><%=res.part[i].Name%></b></p>
+                                            <p class="size-10" style="margin-top: -20px;"><%=res.part[i].ID%></p>
+                                            </div>
+                                        </div>    
+                                    </td>
+                                    <td><b><%=res.part[i].Phone%></b></td>
+                                    <td><span class="link" data-id="<%=res.part[i].ID%>" data-cat="part">일정 상세보기</span></td>
+                                </tr>
+                            <% } %>
                         </tbody>
                     </table>
                 </div>

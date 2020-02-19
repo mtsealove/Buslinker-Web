@@ -135,3 +135,14 @@ div.normal {
     height: 40px;
     border-bottom: 0.5px solid #8E8E8E;
 }
+
+.item-part {
+    padding: 5px;
+    border-radius: 5px;
+    color: white;
+    background-color: #46C3CF;
+    margin-bottom: 10px;
+    width: 90px;
+    text-align: center;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+}

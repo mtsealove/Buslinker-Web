@@ -18,6 +18,9 @@
                 location.href='/Logout';
             }
         });
+        $('#sign-up-btn').click(function() {
+            location.href='/Manager/SignUp';
+        }); 
     });
 </script>
 
@@ -69,6 +72,8 @@
 </nav>
 <div class="card" id="logout-container">
     <div class="card-body">
-        <button class="btn-main" id="logout-btn">로그아웃</button>
+        <button class="btn-sec" id="sign-up-btn">업체 회원가입</button>
+        <br>
+        <button class="btn-sec" id="logout-btn">로그아웃</button>
     </div>
 </div>

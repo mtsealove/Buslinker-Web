@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('config')%>
+        <script src="/public/js/fullcalendar/core.js"></script>
+    <script src="/public/js/fullcalendar/timegrid.js"></script>
+    <script src="/public/js/fullcalendar/daygrid.js"></script>
+    <script src="/public/js/fullcalendar/interaction.js"></script>
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/core.css" />
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/timegrid.css" />
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/daygrid.css" />
+    <script>
+        $(function() {
+            addEvent();
+            $('#confirm-btn').click(function() {
+                if(confirm('정보를 등록하시겠습니까?')) {
+                    $('#calendar-form').submit();
+                }
+            });
+        });
+        var num=0;
+                document.addEventListener('DOMContentLoaded', function () {
+            var Calendar = FullCalendar.Calendar;
+
+            var calendarEl = document.getElementById('calendar');      
+            var Event = document.getElementById('part-event');
+            var Draggable = FullCalendarInteraction.Draggable;
+            new Draggable(Event, {
+                itemSelector: '.item-part',
+                eventData: function (eventEl) {
+                    return {
+                        title: eventEl.innerText,
+                        color: '#46C3CF',
+                        textColor:'#FFFFFF',
+                        id: $(eventEl).data('id') + num++,
+                        extendedProps: {
+                            class: 'pt',
+                            id: $(eventEl).data('id')
+                        }
+                    };
+                }
+            });
+            // initialize the calendar
+            // -----------------------------------------------------------------
+
+            calendar = new Calendar(calendarEl, {
+                plugins: ['interaction', 'dayGrid', 'timeGrid'],
+                header: {
+                    left: 'prev',
+                    center: 'title',
+                    right: 'next'
+                },
+                editable: true,
+                droppable: true, // this allows things to be dropped onto the calendar
+                locale: 'ko',
+                eventLimit: true, // for all non-TimeGrid views
+                views: {
+                    month: {
+                        eventLimit: 3 // adjust to 6 only for timeGridWeek/timeGridDay
+                    }
+                },
+                drop: function (info) {
+                    const id = $(info.draggedEl).data('id');
+                    console.log(info.dateStr);
+                    addRemove(info.dateStr, null);
+                    addPt(id, info.dateStr);
+                },
+                eventDrop: function (event, jsEvent, ui, view) {
+                    console.log('drop');
+                    removePt(event.oldEvent.start, event.oldEvent.end);
+                    addPt(event.event.extendedProps.id, event.event.start, event.event.end);
+                },
+                eventResize: function (event, jsEvent, ui, view) {
+                    console.log('resize');
+                    addPt(event.event.extendedProps.id, event.event.start, event.event.end);
+                },
+                eventResizeStart: function (event, delta, revertFunc, jsEvent, ui, view) {
+                    console.log('resize start');
+                    removePt(event.event.start, event.event.end);
+                },
+                eventDragStop: function (event) {
+                    var trashEl = $('#trashCan');
+                    var ofs = trashEl.offset();
+                    var x1 = ofs.left;
+                    var x2 = ofs.left + trashEl.outerWidth(true);
+                    var y1 = ofs.top;
+                    var y2 = ofs.top + trashEl.outerHeight(true);
+                    
+                    addRemove(parseDate(event.event.start));
+                    // remove event fully
+                    if (event.jsEvent.pageX >= x1 && event.jsEvent.pageX <= x2 &&
+                        event.jsEvent.pageY >= y1 && event.jsEvent.pageY <= y2) {
+                        var event = calendar.getEventById(event.event.id);
+                        event.remove();
+                        const startDate=new Date(event.start);
+                        console.log(parseDate(startDate));
+                        removePt(event.start, event.end);
+                    }
+                },
+            });
+
+            calendar.render();
+        });
+        function addEvent() {
+            <% for(var i=0; i<timeline.length; i++) { 
+                var date=new Date(timeline[i].RunDate); 
+                var DriverName=timeline[i].DriverName;
+                var Num=timeline[i].Num;
+                var PtName=timeline[i].PtName;
+                var PtId=timeline[i].PTID;
+                var dateStr=date.getFullYear()+'-';
+                if(date.getMonth()<9) {
+                    dateStr+='0';
+                }
+                dateStr+=(date.getMonth()+1)+'-';
+                if(date.getDate()<10) {
+                    dateStr+='0';
+                }
+                dateStr+=date.getDate();
+                if(DriverName) { %>
+                    addDriver('<%=DriverName%>', '<%=dateStr%>');
+                <% } %>
+                <% if(Num) { %>
+                    addBus('<%=Num%>', '<%=dateStr%>');
+                <% } %>
+                <% if(PtName) { %>
+                    addPartTime('<%=PtName%>', '<%=dateStr%>', '<%=PtId%>');
+                <% } %>
+
+        <% } %>
+        }
+
+        // add each driver
+        function addDriver(name, date) {
+            calendar.addEvent({
+                title: name,
+                start: date,
+                allDay: true,
+                color: '#ffcc00',
+                textColor: '#ffffff',
+                editable: false,
+            });
+        }
+
+        function addBus(num, date) {
+            calendar.addEvent({
+                title: num,
+                start: date,
+                allDay: true,
+                color: '#011D46',
+                textColor: '#ffffff',
+                editable: false,
+            });
+        }
+
+        var index=0;
+        function addPartTime(name, date, id) {
+            calendar.addEvent({
+                title: name,
+                start: date,
+                allDay: true,
+                color: '#46C3CF',
+                textColor: '#ffffff',
+                id: id+index,
+                extendedProps: {
+                    id: id
+                },
+            });
+            index++;
+        }
+        // remove whatever date
+        function addRemove(date) {
+            const form = $('#calendar-form');
+            $(form).append(`<input name='remove' value='${date}'>`);
+        }
+
+        function addPt(id, start, end) {
+            const form = $('#calendar-form');
+            var startDate=new Date(start);
+            var dateStr=parseDate(startDate);
+            $(form).append(`<input name='part' value='${id}:${dateStr}'>`);
+            if(end) {
+                var endDate=new Date(end);
+                var startDay=parseInt(dateStr.split('-')[2])+1;
+                for(var i=startDay; i<endDate.getDate(); i++) {
+                    var str=startDate.getFullYear()+'-';
+                    if(startDate.getMonth()<9) {
+                        str+='0';
+                    }
+                    str+=(startDate.getMonth()+1)+'-';
+                    if(i<10) {
+                        str+='0';
+                    }
+                    str+=i;
+                    console.log(str);
+                    $(form).append(`<input name='part' value='${id}:${str}'>`);
+                }
+            }
+        }
+
+        function removePt(start, end) {
+            const form = $('#calendar-form');
+            var startDate=new Date(start);
+            var dateStr=parseDate(startDate);
+            console.log(dateStr);
+            $(form).children(`input[name=part][value*='${dateStr}']`).remove();
+            console.log('test');
+            if(end) {
+                console.log('test');
+                var endDate=new Date(end);
+                var startDay=parseInt(dateStr.split('-')[2])+1;
+                for(var i=startDay; i<endDate.getDate(); i++) {
+                    var str=startDate.getFullYear()+'-';
+                    if(startDate.getMonth()<9) {
+                        str+='0';
+                    }
+                    str+=(startDate.getMonth()+1)+'-';
+                    if(i<10) {
+                        str+='0';
+                    }
+                    str+=i;
+                    console.log(str);
+                    $(form).children(`input[name=part][value*='${str}']`).remove();
+                }
+            }
+            
+        }
+
+        function parseDate(d) {
+            var date=new Date(d);
+            var dateStr=date.getFullYear()+'-';
+            if(date.getMonth()<9) {
+                dateStr+='0';
+            }
+            dateStr+=(date.getMonth()+1)+'-';
+            if(date.getDate()<10) {
+                dateStr+='0';
+            }
+            dateStr+=date.getDate();
+            return dateStr;
+        }
+    </script>
+    </head>
+    <body>
+        <div class="vertical">
+            <!-- calnedar and data -->
+            <div class="horizontal between" style="width: 95%; align-items: baseline;">
+                <div class="card" style="width: 65%;">
+                    <div class="card-body">
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+    
+                <!-- part time event> -->
+                <div style="width: 29%; height: 100%;">
+                    <div class="card">
+                        <div class="card-body" id="part-event" style="height: 300px;">
+                            <!-- part time list -->
+                            <h4 class="card-title">물류관리 직원</h4>
+                            <% for(var i=0; i<part.length; i++) { %>
+                                <div class="event item-part" data-id="<%=part[i].ID%>"><%=part[i].Name%></div>
+                            <% } %>
+                            
+                        </div>
+                    </div>
+                    <br>
+                    <div id="trashCan">
+                        <img src="/public/images/trashcan.png">
+                        <label style="opacity: 0.7; margin-top: 10px;">삭제 스케줄을 드래그하세요.</label>
+                    </div>
+                    <br>
+                    <button class="btn-main" style="width: 100%;" id="confirm-btn">확인</button>
+                </div>
+            </div>
+            <form id="calendar-form" action="/Manager/Timeline" method="POST" hidden>
+                <input name="routeID" value="<%=routeID%>">
+            </form>
+        </div>
+        
+    </body>
+</html>

@@ -78,8 +78,21 @@
                         addBus('<%=event[i].Num%>', dateStr);
                     <% }%>
                 <% } %>
+            } else  if('<%=cat%>'=='part') {
+                <% for(var i=0; i<event.length; i++) { %>
+                    var date=new Date('<%=event[i].RunDate%>');
+                    var dateStr=date.getFullYear()+'-';
+                    if(date.getMonth()<=9) {
+                        dateStr+='0';
+                    }
+                    dateStr+=(date.getMonth()+1)+'-';
+                    if(date.getDate()<=9) {
+                        dateStr+='0';
+                    }
+                    dateStr+=date.getDate();
+                    addRoute('<%=event[i].RouteName%>', dateStr);
+                <% } %>
             }
-            
         }
         
         // add each driver
