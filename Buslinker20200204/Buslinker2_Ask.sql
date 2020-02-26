@@ -25,8 +25,8 @@ DROP TABLE IF EXISTS `Ask`;
 CREATE TABLE `Ask` (
   `AskID` int NOT NULL AUTO_INCREMENT,
   `Subject` int DEFAULT NULL,
-  `Email` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `Message` varchar(1000) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `Email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `Message` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `View` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`AskID`),
   KEY `Subject` (`Subject`),
@@ -53,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-12 19:08:43
+-- Dump completed on 2020-02-26 19:24:01

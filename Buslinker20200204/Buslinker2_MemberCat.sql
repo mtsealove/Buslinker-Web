@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `MemberCat`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `MemberCat` (
   `CatID` int NOT NULL AUTO_INCREMENT,
-  `CatName` varchar(30) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `CatName` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`CatID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -48,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-12 19:08:43
+-- Dump completed on 2020-02-26 19:24:02

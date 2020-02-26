@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `AskSubject`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `AskSubject` (
   `SubjectID` int NOT NULL AUTO_INCREMENT,
-  `SubjectName` varchar(45) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `SubjectName` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`SubjectID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -48,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-12 19:08:39
+-- Dump completed on 2020-02-26 19:23:59

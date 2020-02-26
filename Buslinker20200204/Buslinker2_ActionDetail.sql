@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `ActionDetail`;
 CREATE TABLE `ActionDetail` (
   `ActionID` int NOT NULL AUTO_INCREMENT,
   `Cat` int DEFAULT NULL,
-  `ActionName` varchar(30) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ActionName` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`ActionID`),
   KEY `Cat` (`Cat`),
   CONSTRAINT `actiondetail_ibfk_1` FOREIGN KEY (`Cat`) REFERENCES `ActionCat` (`CatID`)
@@ -51,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-12 19:08:43
+-- Dump completed on 2020-02-26 19:24:02

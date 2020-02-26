@@ -24,9 +24,9 @@ DROP TABLE IF EXISTS `Bus`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Bus` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `Corp` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `Num` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `DriverID` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `Corp` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `Num` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `DriverID` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `Corp` (`Corp`),
   KEY `DriverID` (`DriverID`),
@@ -41,7 +41,7 @@ CREATE TABLE `Bus` (
 
 LOCK TABLES `Bus` WRITE;
 /*!40000 ALTER TABLE `Bus` DISABLE KEYS */;
-INSERT INTO `Bus` VALUES (2,'mtsealove','13육5151',NULL),(3,'mtsealove','13육0743',NULL),(4,'Bus@gmail.com','50구2722',NULL);
+INSERT INTO `Bus` VALUES (2,'Bus@gmail.com','13육5151',NULL),(3,'Bus@gmail.com','13육0743',NULL),(4,'Bus@gmail.com','50구2722',NULL);
 /*!40000 ALTER TABLE `Bus` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-12 19:08:40
+-- Dump completed on 2020-02-26 19:24:00
