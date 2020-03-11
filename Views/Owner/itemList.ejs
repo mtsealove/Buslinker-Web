@@ -227,7 +227,7 @@
                 </tbody>
             </table>
             <%  var deadStr='';
-            if(itemList[0].Deadline) {
+            if(itemList[0]!=null&&itemList[0].Deadline) {
                 var dDate=new Date(itemList[0].Deadline);
                 var currentDate=new Date();
                 if(dDate.getDate()==currentDate.getDate()) {

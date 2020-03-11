@@ -1,0 +1,187 @@
+const auth = require('./auth');
+const Ok = {
+    Result: true
+};
+const Not = {
+    Result: false
+};
+const sql = require('./sql');
+
+exports.startLogistics = (app) => {
+    app.get('/Logistics', (req, res) => {
+        res.render('./Logi/index', { user: auth.getUser(req) });
+    });
+
+    app.get('/Logistics/ItemList', (req, res) => {
+        const user = auth.getUser(req);
+        var date = req.query.Date;
+        if (!date) {
+            date = getDate();
+        }
+
+        if (user.userID) {
+            sql.getRouteItem(date, user.userID, (route) => {
+                res.render('./Logi/itemList', { user: user, route: route, current: date });
+            });
+        } else {
+            res.redirect('/');
+        }
+    });
+
+    app.post('/Logistics/Driver', (req, res) => {
+        const name = req.body['name'];
+        const phone = req.body['phone'];
+        const route = req.body['route'];
+        const sector = req.body['sector'];
+        const user = auth.getUser(req);
+
+        sql.createDeliveryDriver(user.userID, name, phone, route, sector, (result) => {
+            if (result) {
+                res.json(Ok);
+            } else {
+                res.json(Not);
+            }
+        });
+    });
+
+    app.get('/Logistics/Driver/Schedule', (req, res) => {
+        const id = req.query.Driver;
+        sql.getDeliveryDriverSchedule(id, (dates) => {
+            res.render('./Logi/schedule', { dates: dates, driver: id });
+        });
+    });
+
+    app.post('/Logistics/Driver/Schedule', (req, res) => {
+        const newDates = req.body['new'];
+        const removeDates = req.body['remove'];
+        var newArr = [], removeArr = [];
+        const driver = req.body['driver'];
+
+        if (Array.isArray(newDates)) {
+            newArr = newDates;
+        } else {
+            if (newDates) {
+                newArr.push(newDates);
+            }
+        }
+        if (Array.isArray(removeDates)) {
+            removeArr = removeDates;
+        } else {
+            if (removeDates) {
+                removeArr.push(removeDates);
+            }
+        }
+
+        console.log(removeArr);
+        console.log(newArr);
+
+        sql.updateDeliverySchedule(driver, removeArr, newArr, (result) => {
+            if (result) {
+                res.send(`<script>alert('근무일이 지정되었습니다.');parent.closeModal();</script>`);
+            } else {
+                res.send(`<script>alert('오류가 발생하였습니다.);</script>`);
+            }
+        });
+    });
+
+    app.post('/Logistics/ajax/ItemList', (req, res) => {
+        const startTime=new Date().getTime();
+        console.log(startTime);
+        const ids = req.body['id'];
+        const names = req.body['name'];
+        const addrs = req.body['addr'];
+        const des_names = req.body['des_name'];
+        const des_phones = req.body['des_phone'];
+        const user=auth.getUser(req);
+
+        const items = [];
+        for (var i = 0; i < ids.length; i++) {
+            items.push({
+                id: ids[i],
+                name: names[i],
+                addr: addrs[i],
+                des_name: des_names[i],
+                des_phone: des_phones[i]
+            });
+        }
+        const cluster = [{ gu: '', Items: [] }];
+
+        sql.getDong(items, (itemsRs) => {
+            for (var i = 0; i < itemsRs.length; i++) {
+                var index = null;
+                // check cluster already exist
+                var gu = itemsRs[i].gu;
+                for (var j = 0; j < cluster.length; j++) {
+                    if (gu == cluster[j].gu) {
+                        index = j;
+                    }
+                }
+                // gu already exist
+                if (index != null) {
+                    var dongIndex = null;
+                    var dong = itemsRs[i].dong;
+                    // check dong exist
+                    for (var j = 0; j < cluster[index].Items.length; j++) {
+                        if (dong == cluster[index].Items[j].dong) {
+                            dongIndex = j;
+                            break;
+                        }
+                    }
+                    // dong exist
+                    if (dongIndex == null) {
+                        cluster[index].Items.push({
+                            dong: dong,
+                            Items: [itemsRs[i]]
+                        });
+                    } else {
+                        //dong not exist
+                        cluster[index].Items[dongIndex].Items.push(itemsRs[i]);
+                    }
+                } else {
+                    // gu not exist
+                    cluster.push({
+                        gu: itemsRs[i].gu,
+                        Items: [
+                            {
+                                dong: itemsRs[i].dong,
+                                Items: [itemsRs[i]]
+                            }
+                        ]
+                    });
+                }
+            }
+            cluster.reverse();
+            cluster.pop();
+            cluster.reverse();
+
+            sql.createLogiItemList(user.userID, getDate(), cluster, (result)=>{
+                if(result) {
+                    console.log('success');
+                    res.json(Ok);
+                    const endTime=new Date().getTime();
+                    console.log(endTime);
+                    const time=endTime-startTime
+                    console.log('time: '+time);
+                } else {
+                    console.log('fail');
+                    res.json(Not);
+                }
+            });
+        });
+    });
+}
+
+function getDate() {
+    var date = new Date();
+    var str = date.getUTCFullYear() + '-';
+    if (date.getMonth() < 9) {
+        str += '0';
+    }
+    str += (date.getMonth() + 1) + '-';
+    if (date.getDate() < 10) {
+        str += '0';
+    }
+    str += date.getDate();
+
+    return str;
+}

@@ -19,15 +19,15 @@
             console.log(calendar);
         });
         // remove whatever date
-        function addRemove(d) {
+        function addRemove(cls,d) {
             const form = $('#calendar-form');
-            var date=new Date(d);
-            var dateStr=date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
-            $(form).append(`<input name='remove' value='${dateStr}'>`);
+            var date = new Date(d);
+            var dateStr = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+            $(form).append(`<input name='remove' value='${cls}:${dateStr}'>`);
         }
 
         // managae driver
-        function addDriver(date, id) {
+        function addDriver(date, id, add) {
             // check origianl date
             if ((String)(date).indexOf('.') != -1) {
                 date = parseDate(date);
@@ -36,8 +36,11 @@
             const form = $('#calendar-form');
             // remove original
             $(form).children(`input[name=driver][value*='${date}']`).remove();
-            // append new
-            $(form).append(`<input name="driver" style="width:100vw;" value="${date}:${id}">`);
+            console.log(add);
+            if (add) {
+                // append new
+                $(form).append(`<input name="driver" style="width:100vw;" value="${date}:${id}">`);
+            }
         }
 
         function removeDriver(date) {
@@ -51,7 +54,7 @@
         }
 
         // manage bus
-        function addBus(date, id) {
+        function addBus(date, id, add) {
             // check origianl date
             if ((String)(date).indexOf('.') != -1) {
                 date = parseDate(date);
@@ -60,8 +63,10 @@
             const form = $('#calendar-form');
             // remove original
             $(form).children(`input[name=bus][value*='${date}']`).remove();
-            // append new
-            $(form).append(`<input name="bus" value="${date}:${id}"  style="width:100vw;">`);
+            if (add) {
+                // append new
+                $(form).append(`<input name="bus" value="${date}:${id}"  style="width:100vw;">`);
+            }
         }
 
         function removeBus(date) {
@@ -164,11 +169,11 @@
                     if (cat == 'bus') {
                         console.log('new bus');
                         removeBus(date);
-                        addBus(date, id);
+                        addBus(date, id, true);
                     } else {
                         console.log('new driver');
                         removeDriver(date);
-                        addDriver(date, id);
+                        addDriver(date, id, true);
                     }
 
                 },
@@ -181,13 +186,13 @@
                     var y2 = ofs.top + trashEl.outerHeight(true);
 
                     console.log(event.event.start);
-                    addRemove(event.event.start);
+                    addRemove(event.event.extendedProps.class,event.event.start);
                     // remove event fully
                     if (event.jsEvent.pageX >= x1 && event.jsEvent.pageX <= x2 &&
                         event.jsEvent.pageY >= y1 && event.jsEvent.pageY <= y2) {
                         var event = calendar.getEventById(event.event.id);
                         event.remove();
-                        handleRemove(event);                    
+                        handleRemove(event);
                     }
                 },
                 eventDrop: function (event, jsEvent, ui, view) {
@@ -218,7 +223,6 @@
                 var oldStartDate = parseInt(oldStart.split('.')[2]);
                 var oldEndDate = parseInt(oldEnd.split('.')[2]);
                 var oldDiff = oldEndDate - oldStartDate;
-
 
                 for (var i = 0; i < oldDiff; i++) {
                     var line = ((String)(oldStart)).split('.');
@@ -261,9 +265,9 @@
                     console.log(date);
 
                     if (event.event.extendedProps.class == 'bus') {
-                        addBus(date, id);
+                        addBus(date, id, true);
                     } else {
-                        addDriver(date, id);
+                        addDriver(date, id, true);
                     }
                 }
             } else {
@@ -271,9 +275,9 @@
                 var date = line[0] + '-' + line[1] + '-' + line[2];
                 console.log(date);
                 if (event.event.extendedProps.class == 'bus') {
-                    addBus(date, id);
+                    addBus(date, id, true);
                 } else {
-                    addDriver(date, id);
+                    addDriver(date, id, true);
                 }
             }
         }
@@ -323,22 +327,22 @@
                             id: '<%=timeline[i].DriverID%>'
                         }
                     });
-                    addDriver(date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate(), '<%=timeline[i].DriverID%>');
+                    addDriver(date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate(), '<%=timeline[i].DriverID%>', false);
                     // if bus exist
                         <% } if (timeline[i].BusID) { %>
-                            calendar.addEvent({
-                                title: '<%=timeline[i].Num%>',
-                                start: dateStr,
-                                allDay: true,
-                                color: '#011D46',
-                                textColor: '#ffffff',
-                                id: 'bus-<%=timeline[i].BusID%>' + num++,
-                                extendedProps: {
-                                    class: 'bus',
-                                    id: '<%=timeline[i].BusID%>'
-                                }
-                            });
-                            addBus(date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate(), '<%=timeline[i].BusID%>');
+                    calendar.addEvent({
+                        title: '<%=timeline[i].Num%>',
+                        start: dateStr,
+                        allDay: true,
+                        color: '#011D46',
+                        textColor: '#ffffff',
+                        id: 'bus-<%=timeline[i].BusID%>' + num++,
+                        extendedProps: {
+                            class: 'bus',
+                            id: '<%=timeline[i].BusID%>'
+                        }
+                    });
+                    addBus(date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate(), '<%=timeline[i].BusID%>', false);
                                 <% }
             } %>
             

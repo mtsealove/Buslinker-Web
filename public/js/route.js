@@ -6,12 +6,13 @@ function searchAddr(obj) {
     }).open();
 }
 
+
 var level = 0;
 var bus_name;
 
 $(function () {
-    $('select[name=bus]').children('option').click(function() {
-        bus_name=$(this).text();
+    $('select[name=bus]').children('option').click(function () {
+        bus_name = $(this).text();
     });
     $('#add-tr').hide();
     $('#add-owner-btn').hide();
@@ -83,8 +84,9 @@ $(function () {
         $("#owner-id").focus();
     });
 
-    $('.close').click(function() {
+    $('.close').click(function () {
         $('#modal').fadeOut(400);
+        $('.popup').hide();
     });
 
     setDate();
@@ -92,25 +94,27 @@ $(function () {
     setDrop();
     lastConfirm();
     setPartTime();
-})
+    setSector();
+
+});
 
 function setDate() {
     var date = new Date();
-    var currentDate = date.getFullYear()+'-';
+    var currentDate = date.getFullYear() + '-';
     var nextDate = (date.getFullYear() + 1) + '-';
-    if(date.getMonth()<11) {
-        currentDate+='0';
-        nextDate+='0';
+    if (date.getMonth() < 11) {
+        currentDate += '0';
+        nextDate += '0';
     }
-    currentDate+=(date.getMonth()+1)+'-';
-    nextDate+=(date.getMonth()+1)+'-';
-    if(date.getDate()<10) {
-        currentDate+='0';
-        nextDate+='0';
+    currentDate += (date.getMonth() + 1) + '-';
+    nextDate += (date.getMonth() + 1) + '-';
+    if (date.getDate() < 10) {
+        currentDate += '0';
+        nextDate += '0';
     }
-    currentDate+=date.getDate();
-    nextDate+=date.getDate();
-    
+    currentDate += date.getDate();
+    nextDate += date.getDate();
+
     $('#contract-start').val(currentDate);
     $('#contract-end').val(nextDate);
 }
@@ -156,7 +160,7 @@ function setLogi() {
         $('#logi2').html(logi2);
         $('#modal').fadeOut(400);
         $('#popup-logi').hide();
-        $('#input-name').val($('#station-name').val()+'-'+name);
+        $('#input-name').val($('#station-name').val() + '-' + name);
     }
 }
 
@@ -207,7 +211,7 @@ function addOwner() {
             for (var j = 0; j < i; j++) {
                 var item1 = $(items[i]);
                 var item2 = $(items[j]);
-                
+
                 if ($(items[i]).children('input[name=owner-time]').val() < $(items[j]).children('input[name=owner-time]').val()) {
                     item2.insertAfter(item1);
                 }
@@ -219,11 +223,11 @@ function addOwner() {
 }
 
 function lastConfirm() {
-    $('#bus-btn').click(function() {
-        if(confirm('운행정보를 등록하시겠습니까?')) {
+    $('#bus-btn').click(function () {
+        if (confirm('운행정보를 등록하시겠습니까?')) {
             $('#route-form').submit();
         }
-    }); 
+    });
 }
 
 function next() {
@@ -254,12 +258,12 @@ function next() {
 }
 
 function removeRoute() {
-    $('.remove-btn').click(function() {
-        const id=$(this).data('id');
-        const name=$(this).data('name');
-        if(confirm('경로 '+name+'을(를) 삭제하시겠습니까?')) {
-            $.post('/Manager/Remove/Route', {id:id}, (data)=> {
-                if(data.Result) {
+    $('.remove-btn').click(function () {
+        const id = $(this).data('id');
+        const name = $(this).data('name');
+        if (confirm('경로 ' + name + '을(를) 삭제하시겠습니까?')) {
+            $.post('/Manager/Remove/Route', { id: id }, (data) => {
+                if (data.Result) {
                     alert('운행경로가 삭제되었습니다.');
                     location.reload();
                 } else {
@@ -271,42 +275,114 @@ function removeRoute() {
 }
 
 function setDrop() {
-    const buttons=$('.drop');
-    for(var i=0; i<buttons.length; i++) {
-        const id=$(buttons[i]).data('menu');
-        const top=$(buttons[i]).offset().top;
-        const left=$(buttons[i]).parent().offset().left;
-        $('#'+id).offset({left:left, top:top+25});
+    const buttons = $('.drop');
+    for (var i = 0; i < buttons.length; i++) {
+        const id = $(buttons[i]).data('menu');
+        const top = $(buttons[i]).offset().top;
+        const left = $(buttons[i]).parent().offset().left;
+        $('#' + id).offset({ left: left, top: top + 25 });
     }
 
-    $('.drop').click(function() {
-        const id=$(this).data('menu');
+    $('.drop').click(function () {
+        const id = $(this).data('menu');
         $(`.drop-menu[id!=${id}]`).fadeOut(200);
-        $('#'+id).fadeToggle(200);
+        $('#' + id).fadeToggle(200);
     });
 }
 
 function getOwner() {
-    const logi=(($('#logi-id')).val().split('-'))[0];
-    $.get('/Manager/ajax/owners', {logi: logi}, function(data) {
-        var html='';
-        for(var i=0; i<data.length; i++) {
-            html+=`<option value='${data[i].Name+'-'+data[i].ID}'>${data[i].Name}</option>`;
+    const logi = (($('#logi-id')).val().split('-'))[0];
+    $.get('/Manager/ajax/owners', { logi: logi }, function (data) {
+        var html = '';
+        for (var i = 0; i < data.length; i++) {
+            html += `<option value='${data[i].Name + '-' + data[i].ID}'>${data[i].Name}</option>`;
         }
         $('#owner-id').html(html);
     });
 }
 
 function setPartTime() {
-    $('.link').click(function() {
-        const id=$(this).data('id');
-        const url=`/Manager/Timeline?RouteID=${id}`;
-        const name=$(this).data('name');
-        const contract=$(this).data('contract');
+    $('.link-schedule').click(function () {
+        const id = $(this).data('id');
+        const url = `/Manager/Timeline?RouteID=${id}`;
+        const name = $(this).data('name');
+        const contract = $(this).data('contract');
         $('#route-name').text(name);
         $('#contract').text(contract);
         $('#manage-pt').show();
         $('#schedule-frame').attr('src', url);
         $('#modal').fadeIn(400);
+    });
+}
+
+function setSector() {
+    var gu = ["강남구",
+        "강동구",
+        "강북구",
+        "강서구",
+        "관악구",
+        "광진구",
+        "구로구",
+        "금천구",
+        "노원구",
+        "도봉구",
+        "동대문구",
+        "동작구",
+        "마포구",
+        "서대문구",
+        "서초구",
+        "성동구",
+        "성북구",
+        "송파구",
+        "양천구",
+        "영등포구",
+        "용산구",
+        "은평구",
+        "종로구",
+        "중구",
+        "중랑구"];
+        
+    $('.link-sector').click(function () {
+        const id = $(this).data('id');
+        const name = $(this).data('name');
+        $('#sector-route-name').text(name);
+        $('#sector-route-id').val(id);
+        $('#manage-sector').show();
+        $('#modal').fadeIn(400);
+
+        $.get('/Manager/ajax/Gu', { route: id }, function (data) {
+            var index=-1;
+            for(var i=0; i<gu.length; i++) {
+                if(gu[i]==data.gu) {
+                    index=i;
+                }
+            }
+            if(index!=-1) {
+                $(`#gu option:eq(${index})`).attr("selected", true);
+            } else {
+                var option=`<option>담당구역 없음</option>`;
+                $('#gu').append(option);
+                $(`#gu option:last`).attr("selected", true);
+            }
+            
+        })
+    });
+
+    $('#sector-confirm-btn').click(function () {
+        if (confirm('담당 구역을 설정하시겠습니까?')) {
+            const gu=$('#gu').val();
+            const route=$('#sector-route-id').val();
+            $.post('/Manager/ajax/Gu', {
+                gu: gu,
+                route: route
+            }, function(data){
+                if(data.Result) {
+                    alert('구역이 변경되었습니다.');
+                    location.reload();
+                } else {
+                    alert('오류가 발생하였습니다.');
+                }
+            });
+        }
     });
 }

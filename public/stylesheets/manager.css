@@ -74,13 +74,6 @@ th,td.remove {
     padding-right: 10px;
 }
 
-div.normal {
-    width: 100%;
-    padding-left: 30px;
-    padding-right: 30px;
-    padding-top: 30px;
-}
-
 .calculate-icon {
     width: 40px;
     height: 40px;
@@ -90,12 +83,6 @@ div.normal {
     margin-left: 10px;
     width: 16px;
     height: 16px;
-}
-
-.single-tab {
-    background-color: white;
-    padding: 20px 20px 0px 20px;
-    border-bottom: 2px solid #011D46;
 }
 
 #bus-top {
@@ -145,4 +132,21 @@ div.normal {
     width: 90px;
     text-align: center;
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+#sector-container {
+    border: 1px solid #D8D9DE;
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.sector-item {
+    margin-bottom: 10px;
+    border-radius: 15px;
+    background-color: #D8D9DE;
+    border:0;
+    outline: 0;
+    padding: 15px;
+    color: #1C69A5;
+    width: 100%;
 }

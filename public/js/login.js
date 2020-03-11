@@ -41,9 +41,11 @@ function login() {
                         case 2:
                             location.href = '/Bus/Status';
                             break;
-                            case 3:
-                                location.href='/Owner/ItemList';
-                                break;
+                        case 3:
+                            location.href = '/Owner/ItemList';
+                            break;
+                        case 4:
+                            location.href = '/Logistics';
                     }
                 } else {
                     alert('아이디와 비밀번호를 확인하세요');

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>물량관리</title>
+    <%- include('config')%>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/public/stylesheets/loading-bar.min.css" />
+    <script type="text/javascript" src="/public/js/loading-bar.min.js"></script>
+    <script>
+        $(function () {
+            $('#select-date').change(function () {
+                const date = $(this).val();
+                location.href = `?Date=${date}`;
+            });
+
+            $('#modal').hide();
+            $('#popup-position').hide();
+            $('#progress-dialog').hide();
+            $('#complete-dialog').hide();
+            $('#upload-btn').click(function () {
+                $('#input-file').trigger('click');
+            });
+
+            $('#cancel-btn').click(function () {
+                if (confirm('취소하시겠습니까?')) {
+                    $('#popup-position').hide();
+                    $('#modal').fadeOut(300);
+                }
+            });
+
+            $('#confirm-btn').click(function () {
+                if (confirm('물량을 등록하시겠습니까?')) {
+                    //$('#item-form').submit();
+                    const idInput = $(`input[name='id']`);
+                    const nameInput = $(`input[name='name']`);
+                    const addrInput = $(`input[name='addr']`);
+                    const desNameInput = $(`input[name='des_name']`);
+                    const desPhoneInput = $(`input[name='des_phone']`);
+                    const ids = [], names = [], addr = [], desNames = [], desPhones = [];
+                    for (var i = 0; i < idInput.length; i++) {
+                        ids.push($(idInput[i]).val());
+                        names.push($(nameInput[i]).val());
+                        addr.push($(addrInput[i]).val());
+                        desNames.push($(desNameInput[i]).val());
+                        desPhones.push($(desPhoneInput[i]).val());
+                    }
+                    const data = {
+                        id: ids,
+                        name: names,
+                        addr: addr,
+                        des_name: desNames,
+                        des_phone: desPhones
+                    }
+                    startProgress(ids.length);
+                    $('#popup-position').fadeOut(300);
+
+                    $.ajax({
+                        url: '/Logistics/ajax/ItemList',
+                        type: "post",
+                        data: data,
+                        dataType: "json",
+                        timeout: 1000000,
+                        success: function (data) {
+                            console.log(data);
+                            if(data.Result) {
+                                $('#progress-dialog').fadeOut(200);
+                                $('#complete-dialog').fadeIn(200);
+                            }
+                        },
+                        error: function (err) {
+                            alert('오류가 발생하였습니다');
+                            console.log(err);
+                        }
+                    });
+                }
+            });
+
+        });
+
+        function excelExport(event) {
+            var input = event.target;
+            var reader = new FileReader();
+            reader.onload = function () {
+                var fileData = reader.result;
+                var wb = XLSX.read(fileData, { type: 'binary' });
+                wb.SheetNames.forEach(function (sheetName) {
+                    var row = XLSX.utils.sheet_to_json(wb.Sheets[sheetName]);
+                    var html = '';
+                    for (var i = 0; i < row.length; i++) {
+                        html += `<tr>
+                            <td><input hidden name='id' value='${row[i].송장번호}'>${row[i].송장번호}</td>
+                            <td><input hidden name='name' value='${row[i].품목명}'>${row[i].품목명}</td>
+                            <td><input hidden name='addr' value='${row[i].도착지}'>${row[i].도착지}</td>
+                            <td><input hidden name='des_name' value='${row[i].이름}'>${row[i].이름}</td>
+                            <td><input hidden name='des_phone' value='${row[i].전화번호}'>${row[i].전화번호}</td>
+                            </tr>`
+                    }
+                    $('#item-body').html(html);
+                    $('#popup-position').show();
+                    $('#modal').fadeIn(300);
+                })
+            };
+            reader.readAsBinaryString(input.files[0]);
+        }
+
+        function startProgress(cnt) {
+            $('#modal').show();
+            $('#progress-dialog').fadeIn(300);
+            var bar1 = new ldBar("#progress");
+            var bar2 = document.getElementById('progress').ldBar;
+            var index = 0;
+            var interval = setInterval(() => {
+                var current = (index / cnt) * 100;
+                bar1.set(current);
+                console.log(current);
+                index++;
+                if ((index / cnt) * 100 >= 99) {
+                    clearInterval(interval);
+                }
+            }, 300);
+        }
+    </script>
+</head>
+
+<body>
+    <div id="modal">
+        <!-- item list -->
+        <div style="width: 80vw; background-color: #EFEFEF; height: 80vh; overflow-x: auto;" id="popup-position">
+            <div class="horizontal between">
+                <div class="single-tab">
+                    <p>상품 목록</p>
+                </div>
+                <div class="horizontal">
+                    <button class=" btn-main" style="margin-right: 20px;" id="cancel-btn">취소</button>
+                    <button class=" btn-blue" style="margin-right:20px;" id="confirm-btn">확인</button>
+                </div>
+
+            </div>
+            <div>
+                <form method="POST" action="/Logistics/ItemList" id="item-form">
+                    <table class="table" style="background-color: white; padding-left: 20px; padding-right: 20px;">
+                        <thead>
+                            <th class="head">송장번호</th>
+                            <th class="head">품목명</th>
+                            <th class="head">도착지</th>
+                            <th class="head">이름</th>
+                            <th class="head">전화번호</th>
+                        </thead>
+                        <tbody id="item-body" style="height: 80vh; overflow-x: auto;">
+
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+        <!-- progress -->
+        <div class="popup-process" style="width: 300px; height: 300px; background-color: #EFF1F6; display: flex;
+        flex-direction:column; align-items: center; justify-content: center;" id="progress-dialog">
+            <div id="progress" class="ldBar label-center" data-value="35" data-preset="circle"></div>
+            <br>
+            <label><b>분류중입니다.</b></label>
+        </div>
+        <!-- progress complete -->
+        <div class="popup-process" style="width: 300px; height: 300px; background-color: #EFF1F6; display: flex;
+        flex-direction:column; align-items: center; justify-content: center;" id="complete-dialog">
+            
+            <br>
+            <label><b>분류가 완료되었습니다.</b></label>
+        </div>
+    </div>
+    <%- include('nav') %>
+    <section class=" container-main">
+        <div class="normal">
+            <div class="horizontal between">
+                <div>
+                    <label>물량 현황</label>
+                    <h3 id="total-cnt">배송 </h3>
+                </div>
+                <div class="horizontal">
+                    <!-- select date -->
+                    <select class="box0" id="select-date">
+                        <% var d=new Date(); 
+                                    var length=d.getDate()+1;
+                                    var month=d.getMonth()+1;
+                                    if(month<10) {
+                                        month='0'+month;
+                                    }
+                                    var year=d.getFullYear();
+                                %>
+                        <% for(var i=1; i<length; i++) { %>
+                        <% var dd;%>
+                        <% if(i<10) {
+                                        dd='0'+i;
+                                } else {
+                                    dd=i;
+                                } 
+                                var str=year+'-'+month+'-'+dd;
+                                var selected=''
+                                if(str==current) {
+                                    selected='selected';
+                                }
+                            %>
+                        <option value="<%=str%>" <%=selected%>><%=str%></option>
+                        <% } %>
+                    </select>
+                    <div style="width: 20px;"></div>
+                    <!-- 배송 / 수거 선택 -->
+                    <select class="box0">
+                        <option value="delivery">배송</option>
+                        <option value="take">수거</option>
+                    </select>
+                </div>
+            </div>
+            <div class=" horizontal between">
+                <input type="file" hidden id="input-file" onchange="excelExport(event)">
+                <label></label>
+                <button class=" btn-blue" id="upload-btn">물량 업로드</button>
+            </div>
+
+
+            <table style="width: 100%; margin-top: 30px;">
+                <thead>
+                    <th class="head">노선명</th>
+                    <th class="head">기사</th>
+                    <th class="head">차량</th>
+                    <th class="head">상태</th>
+                    <th class="head">물량</th>
+                    <th class="head">화주</th>
+                    <th class="head">배치</th>
+                </thead>
+                <tbody>
+                    <% for(var i=0; i<route.length; i++) { %>
+                    <!-- logi title -->
+                    <tr data-logi="<%=route[i].Logi%>" style="height: 50px; vertical-align: middle;">
+                        <td>
+                            <%=route[i].Name%>
+                        </td>
+                        <td><%=route[i].DriverName%> 기사</td>
+                        <td><%=route[i].BusNum%></td>
+                        <% var status;
+                                    if(route[i].Cnt)
+                                        status='마감 완료';
+                                    else
+                                        status='상품 미배정'; %>
+                        <td><%=status%></td>
+                        <td class="cnt"><%=route[i].Cnt%></td>
+                        <% var owner=''; %>
+                        <% for(var j=0; j<route[i].Owners.length; j++) 
+                                        owner+=route[i].Owners[j];
+                                        if(j=route[i].Owners.length-1) {
+                                            owner+=', ';
+                                        }
+                                    %>
+                        <td><%=owner%></td>
+                        <td><span class="link position" data-list="<%=route[i].ListID%>">배치 확인</span></td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</body>
+
+</html>

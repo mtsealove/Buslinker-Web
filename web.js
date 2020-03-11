@@ -4,15 +4,16 @@ exports.startApp = (port) => {
     const session = require('express-session');
     const app = express();
     const sql = require('./sql');
-    const manager=require('./manager');
-    const bus=require('./bus');
-    const owenr=require('./owner');
-    const auth=require('./auth');
+    const manager = require('./manager');
+    const bus = require('./bus');
+    const owenr = require('./owner');
+    const auth = require('./auth');
+    const logistics = require('./logistics');
 
     app.set('view engine', 'ejs');
     app.set('views', './Views');
-    app.use(body_parser.json({limit: '150mb'}));
-    app.use(body_parser.urlencoded({ extended: true, limit: '150mb', parameterLimit: 2100 }));
+    app.use(body_parser.json({ limit: '150mb' }));
+    app.use(body_parser.urlencoded({ extended: true, limit: '150mb', parameterLimit: 1000000 }));
     app.use(session({
         key: 'sid',
         secret: 'secret',
@@ -24,9 +25,22 @@ exports.startApp = (port) => {
     }));
     app.use('/public', express.static('public'));
 
-    manager.startManger(app);
+    app.use((req, res, next)=>{
+        req.setTimeout(600000, ()=>{
+            let err=new Error('Req Timeout');
+            next(err);
+        });
+        res.setTimeout(600000, ()=>{
+            let err=new Error('Res Timeout');
+            next(err);
+        });
+        next();
+    })
+
+    manager.startManager(app);
     bus.startBus(app, sql);
     owenr.startOwner(app, sql);
+    logistics.startLogistics(app);
 
     // index page
     app.get('/', (req, res) => {
@@ -102,6 +116,13 @@ exports.startApp = (port) => {
     app.get('/Logout', (req, res) => {
         req.session.destroy();
         res.send(`<script>alert('로그아웃 되었습니다.');location.href='/'</script>`);
+    });
+
+    app.get('/ajax/Sector', (req, res)=>{
+        const route=req.query.route;
+        sql.getSectorList(route, (sector)=>{
+            res.json(sector);
+        });
     });
 
     app.listen(port, () => {

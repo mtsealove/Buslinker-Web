@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config')%>
+    <script src="/public/js/fullcalendar/core.js"></script>
+    <script src="/public/js/fullcalendar/timegrid.js"></script>
+    <script src="/public/js/fullcalendar/daygrid.js"></script>
+    <script src="/public/js/fullcalendar/interaction.js"></script>
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/core.css" />
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/timegrid.css" />
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/daygrid.css" />
+    <script>
+        $(function () {
+            getEvents();
+            setConfirmBtn();
+            setContract();
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            var Calendar = FullCalendar.Calendar;
+            var calendarEl = document.getElementById('calendar');
+
+            calendar = new Calendar(calendarEl, {
+                plugins: ['interaction', 'dayGrid', 'timeGrid'],
+                header: {
+                    left: 'prev',
+                    center: 'title',
+                    right: 'next'
+                },
+                editable: true,
+                droppable: false, // this allows things to be dropped onto the calendar
+                locale: 'ko',
+                eventLimit: true, // for all non-TimeGrid views
+                eventLimitText: '개 이상은 무시됩니다.',
+                eventClick: function (info) {
+                    info.event.remove();
+                    addRemove(info.event.start);
+                },
+                dateClick: function (info) {
+                    addEvent(info.dateStr);
+                    addNew(info.dateStr);
+                },
+                eventRender: function (event) {
+                    //$(event.el).css("width", "20px");
+                }
+            });
+
+            calendar.render();
+        });
+
+        function getEvents() {
+            <% for (var i = 0; i < dates.length; i++) { %>
+                var dateStr=getDate('<%=dates[i].RunDate%>');
+                addEvent(dateStr);
+            <% } %>
+        }
+
+        function addEvent(date) {
+            calendar.addEvent({
+                start: date,
+                allDay: true,
+            });
+            
+        }
+        function addNew(date) {
+            const form=$('#schedule-form');
+            const input=`<input value='${date}' name='new'>`;
+            form.append(input);
+        }
+
+        function addRemove(date) {
+            const form=$('#schedule-form');
+            const dateStr=getDate(date);
+            $(`input[name='new'][value='${dateStr}']`).remove();
+            const input=`<input value='${dateStr}' name='remove' type='date'>`;
+            form.append(input);
+        }
+
+        function setConfirmBtn() {
+            $('#confirm-btn').click(function(){
+                if(confirm('근무일을 지정하시겠습니까?')) {
+                    $('#schedule-form').submit();
+                }
+            })
+        }
+
+        function getDate(date) {
+            var d=new Date(date);
+            var dateStr=d.getFullYear()+'-';
+            if(d.getMonth()<9) {
+                dateStr+='0';
+            }
+            dateStr+=(d.getMonth()+1)+'-';
+            if(d.getDate()<10) {
+                dateStr+='0';
+            }
+            dateStr+=d.getDate();
+            return dateStr;
+        }
+
+        function setContract() {
+            var start=getDate('<%=dates[0].ContractStart%>');
+            var end=getDate('<%=dates[0].ContractEnd%>');
+            $('#contract').text(start+' ~ '+end);
+        }
+    </script>
+</head>
+
+<body style="padding-right: 20px; padding-left: 20px;">
+    <br>
+    <div class=" horizontal between">
+        <div>
+            <label><%=dates[0].RouteName%></label>
+            <p id="contract"></p>
+        </div>
+        <h3><b>근무일을 지정하세요.</b></h3>
+
+        <button class="btn-main" type="button" id="confirm-btn">확인</button>
+    </div>
+    <br>
+    <div class="card" style="width: 100%;">
+        <div class="card-body">
+            <div id="calendar"></div>
+        </div>
+    </div>
+    <form hidden id="schedule-form" method="POST" action="/Logistics/Driver/Schedule">
+        <input name="driver" value="<%=driver%>" >
+    </form>
+</body>
+
+</html>

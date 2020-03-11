@@ -116,6 +116,58 @@
                         <iframe id="schedule-frame" style="width: 100%; height: 70vh; border: none;"></iframe>
                     </div>
                 </div>
+                <!-- manage sector -->
+                <div id="manage-sector" class="popup card" style="width: 40vw; background-color: white;">
+                    <div class="card-body">
+                        <div class="horizontal between">
+                            <input name="route" id="sector-route-id" hidden>
+                            <h3 id="sector-route-name">노선명</h3>
+                            <img src="/public/images/x_icon.png" class="close">
+                        </div>
+                        <br>
+                        <h5><b>담당 구역 설정</b></h4>
+                            
+                        <div id="sector-container">
+                            <select id='gu'>
+                            <% var gu=["강남구",
+                            "강동구",
+                            "강북구",
+                            "강서구",
+                            "관악구",
+                            "광진구",
+                            "구로구",
+                            "금천구",
+                            "노원구",
+                            "도봉구",
+                            "동대문구",
+                            "동작구",
+                            "마포구",
+                            "서대문구",
+                            "서초구",
+                            "성동구",
+                            "성북구",
+                            "송파구",
+                            "양천구",
+                            "영등포구",
+                            "용산구",
+                            "은평구",
+                            "종로구",
+                            "중구",   
+                            "중랑구"];
+                            var selected='';
+                            for(var i=0; i<gu.length; i++){ %>
+                                <option value="<%=gu[i]%>" class="gu"><%=gu[i]%></option>
+                            <% } %>
+                            </select>
+                        </div>
+                        <br>
+                        <div class=" horizontal between">
+                            <label></label>
+                            <button type="button" class="btn-main" id="sector-confirm-btn">확인</button>
+                        </div>
+                        
+                    </div>
+                </div>
             </div>
 
             <div class="drop-menu" id="drop-name">
@@ -236,9 +288,16 @@
                             <img src="/public/images/remove.png" class="sm-btn remove-btn"
                                 data-id="<%=routes[i].RouteID%>" data-name="<%=routes[i].Name%>">
                         </td>
-                        <td class="mid" style="width: 150px;"><b><%=routes[i].Name%></b><br><%=routes[i].Bus%></td>
+                        <td class="mid" style="width: 150px;"><b><%=routes[i].Name%></b><br><%=routes[i].Gu%><br><%=routes[i].Bus%></td>
                         <td class="mid" style="width: 300px;"><b><%=start+' ~ '+end%><br>
-                                <span class="link" data-id="<%=routes[i].RouteID%>" data-name="<%=routes[i].Name%>" data-contract="<%=start+' ~ '+end%>">일정 상세보기</span></b>
+                                <div class="horizontal between" style="width: 70%; margin-left: 15%;">
+                                    <span class="link link-schedule" data-id="<%=routes[i].RouteID%>"
+                                        data-name="<%=routes[i].Name%>" data-contract="<%=start+' ~ '+end%>">일정
+                                        상세보기</span>
+                            </b>
+                            <span class="link link-sector" data-id="<%=routes[i].RouteID%>"
+                                data-name="<%=routes[i].Name%>"><b>구역 설정하기</b></span>
+                            </div>
                         </td>
                         <td class="space"></td>
                         <td colspan="10">

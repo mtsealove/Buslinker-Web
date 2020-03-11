@@ -6,7 +6,7 @@ const Not = {
     Result: false
 };
 const sql = require('./sql');
-exports.startManger = (app) => {
+exports.startManager = (app) => {
     const multer = require('multer');
     const upload = multer({ dest: 'public/uploads/' });
     // index
@@ -267,7 +267,7 @@ exports.startManger = (app) => {
         }
         console.log(date);
         if (user.userID) {
-            sql.getRouteItem(date, (route) => {
+            sql.getRouteItem(date, null, (route) => {
                 res.render('./Manager/itemList', { user: user, route: route, current:date });
             });
         } else {
@@ -321,5 +321,27 @@ exports.startManger = (app) => {
         } else {
             res.redirect('/');
         }
+    });
+
+    app.get('/Manager/ajax/Gu', (req, res)=>{
+        const route=req.query.route;
+        sql.getGu(route, (Gu)=>{
+            res.json({
+                gu: Gu
+            });
+        });
+    });
+
+    app.post('/Manager/ajax/Gu', (req, res)=>{
+        const gu=req.body['gu'];
+        const route=req.body['route'];
+
+        sql.updateGu(route, gu, (result)=>{
+            if(result) {
+                res.json(Ok);
+            } else {
+                res.json(Not);
+            }
+        });
     });
 }
