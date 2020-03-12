@@ -21,67 +21,13 @@ exports.startLogistics = (app) => {
 
         if (user.userID) {
             sql.getRouteItem(date, user.userID, (route) => {
-                res.render('./Logi/itemList', { user: user, route: route, current: date });
+                sql.getLogiItemList(user.userID, date, (itemRs)=>{
+                    res.render('./Logi/itemList', { user: user, route: route, current: date, items: itemRs });
+                });
             });
         } else {
             res.redirect('/');
         }
-    });
-
-    app.post('/Logistics/Driver', (req, res) => {
-        const name = req.body['name'];
-        const phone = req.body['phone'];
-        const route = req.body['route'];
-        const sector = req.body['sector'];
-        const user = auth.getUser(req);
-
-        sql.createDeliveryDriver(user.userID, name, phone, route, sector, (result) => {
-            if (result) {
-                res.json(Ok);
-            } else {
-                res.json(Not);
-            }
-        });
-    });
-
-    app.get('/Logistics/Driver/Schedule', (req, res) => {
-        const id = req.query.Driver;
-        sql.getDeliveryDriverSchedule(id, (dates) => {
-            res.render('./Logi/schedule', { dates: dates, driver: id });
-        });
-    });
-
-    app.post('/Logistics/Driver/Schedule', (req, res) => {
-        const newDates = req.body['new'];
-        const removeDates = req.body['remove'];
-        var newArr = [], removeArr = [];
-        const driver = req.body['driver'];
-
-        if (Array.isArray(newDates)) {
-            newArr = newDates;
-        } else {
-            if (newDates) {
-                newArr.push(newDates);
-            }
-        }
-        if (Array.isArray(removeDates)) {
-            removeArr = removeDates;
-        } else {
-            if (removeDates) {
-                removeArr.push(removeDates);
-            }
-        }
-
-        console.log(removeArr);
-        console.log(newArr);
-
-        sql.updateDeliverySchedule(driver, removeArr, newArr, (result) => {
-            if (result) {
-                res.send(`<script>alert('근무일이 지정되었습니다.');parent.closeModal();</script>`);
-            } else {
-                res.send(`<script>alert('오류가 발생하였습니다.);</script>`);
-            }
-        });
     });
 
     app.post('/Logistics/ajax/ItemList', (req, res) => {
@@ -93,6 +39,10 @@ exports.startLogistics = (app) => {
         const des_names = req.body['des_name'];
         const des_phones = req.body['des_phone'];
         const user=auth.getUser(req);
+        var date=req.body['date'];
+        if(!date) {
+            date=getDate();
+        }
 
         const items = [];
         for (var i = 0; i < ids.length; i++) {
@@ -154,7 +104,7 @@ exports.startLogistics = (app) => {
             cluster.pop();
             cluster.reverse();
 
-            sql.createLogiItemList(user.userID, getDate(), cluster, (result)=>{
+            sql.createLogiItemList(user.userID, date, cluster, (result)=>{
                 if(result) {
                     console.log('success');
                     res.json(Ok);
@@ -167,6 +117,25 @@ exports.startLogistics = (app) => {
                     res.json(Not);
                 }
             });
+        });
+    });
+
+    app.get('/Logistics/Route', (req, res)=>{
+        const user=auth.getUser(req);
+        if (user.userID) {
+            sql.getLogiRoute('asc', 'true', user.userID, (routeList) => {
+                console.log(routeList);
+                res.render('./Logi/route', { user: user, routes: routeList });
+            })
+        } else {
+            res.redirect('/');
+        }
+    });
+
+    app.get('/Logistics/Route/Schedule', (req, res)=>{
+        const routeID=req.query.route;
+        sql.getTimelineShort(routeID, (timeline)=>{
+            res.render('./Logi/schedule', {timeline:timeline});
         });
     });
 }

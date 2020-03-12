@@ -94,8 +94,7 @@ $(function () {
     setDrop();
     lastConfirm();
     setPartTime();
-    setSector();
-
+    setGu();
 });
 
 function setDate() {
@@ -139,7 +138,7 @@ function setStation() {
         $('#station2').html(station2);
         $('#modal').fadeOut(400);
         $('#popup-station').hide();
-        $('#input-name').val($('#station-name').val());
+        //$('#input-name').val($('#station-name').val());
     }
 }
 
@@ -160,7 +159,8 @@ function setLogi() {
         $('#logi2').html(logi2);
         $('#modal').fadeOut(400);
         $('#popup-logi').hide();
-        $('#input-name').val($('#station-name').val() + '-' + name);
+        LogiName=name;
+        setRouteName();
     }
 }
 
@@ -315,74 +315,22 @@ function setPartTime() {
     });
 }
 
-function setSector() {
-    var gu = ["강남구",
-        "강동구",
-        "강북구",
-        "강서구",
-        "관악구",
-        "광진구",
-        "구로구",
-        "금천구",
-        "노원구",
-        "도봉구",
-        "동대문구",
-        "동작구",
-        "마포구",
-        "서대문구",
-        "서초구",
-        "성동구",
-        "성북구",
-        "송파구",
-        "양천구",
-        "영등포구",
-        "용산구",
-        "은평구",
-        "종로구",
-        "중구",
-        "중랑구"];
-        
-    $('.link-sector').click(function () {
-        const id = $(this).data('id');
-        const name = $(this).data('name');
-        $('#sector-route-name').text(name);
-        $('#sector-route-id').val(id);
-        $('#manage-sector').show();
-        $('#modal').fadeIn(400);
-
-        $.get('/Manager/ajax/Gu', { route: id }, function (data) {
-            var index=-1;
-            for(var i=0; i<gu.length; i++) {
-                if(gu[i]==data.gu) {
-                    index=i;
-                }
-            }
-            if(index!=-1) {
-                $(`#gu option:eq(${index})`).attr("selected", true);
-            } else {
-                var option=`<option>담당구역 없음</option>`;
-                $('#gu').append(option);
-                $(`#gu option:last`).attr("selected", true);
-            }
-            
+var GuCnt=0;
+var Gu='';
+var LogiName='';
+function setGu() {
+    $('#select-gu').change(function() {
+        const gu=$(this).val();
+        Gu=gu;
+        $.get(`/Manager/ajax/Gu/Cnt?gu=${gu}구`, function(data) {            
+            GuCnt=data.Cnt+1;
+            setRouteName();
         })
     });
+}
 
-    $('#sector-confirm-btn').click(function () {
-        if (confirm('담당 구역을 설정하시겠습니까?')) {
-            const gu=$('#gu').val();
-            const route=$('#sector-route-id').val();
-            $.post('/Manager/ajax/Gu', {
-                gu: gu,
-                route: route
-            }, function(data){
-                if(data.Result) {
-                    alert('구역이 변경되었습니다.');
-                    location.reload();
-                } else {
-                    alert('오류가 발생하였습니다.');
-                }
-            });
-        }
-    });
+function setRouteName() {
+    var route_name=Gu+'-'+LogiName+'-'+GuCnt
+    $('#input-name').val(route_name);
+    $('#route-show').text(route_name);
 }

@@ -5,6 +5,7 @@
     <title>물량관리</title>
     <%- include('config')%>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/public/stylesheets/loading-bar.min.css" />
     <script type="text/javascript" src="/public/js/loading-bar.min.js"></script>
     <script>
@@ -12,6 +13,11 @@
             $('#select-date').change(function () {
                 const date = $(this).val();
                 location.href = `?Date=${date}`;
+            });
+
+            $('.close').click(function () {
+                $('#modal').fadeOut(300);
+                $('complete-dialog').hide();
             });
 
             $('#modal').hide();
@@ -50,7 +56,8 @@
                         name: names,
                         addr: addr,
                         des_name: desNames,
-                        des_phone: desPhones
+                        des_phone: desPhones,
+                        date: '<%=current%>'
                     }
                     startProgress(ids.length);
                     $('#popup-position').fadeOut(300);
@@ -63,9 +70,12 @@
                         timeout: 1000000,
                         success: function (data) {
                             console.log(data);
-                            if(data.Result) {
+                            if (data.Result) {
                                 $('#progress-dialog').fadeOut(200);
                                 $('#complete-dialog').fadeIn(200);
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000)
                             }
                         },
                         error: function (err) {
@@ -75,7 +85,11 @@
                     });
                 }
             });
+            $('#download-btn').click(function () {
+                getExcel();
+            });
 
+            setItemCnt();
         });
 
         function excelExport(event) {
@@ -87,6 +101,7 @@
                 wb.SheetNames.forEach(function (sheetName) {
                     var row = XLSX.utils.sheet_to_json(wb.Sheets[sheetName]);
                     var html = '';
+                    $('#cnt').text('총 ' + row.length + '개');
                     for (var i = 0; i < row.length; i++) {
                         html += `<tr>
                             <td><input hidden name='id' value='${row[i].송장번호}'>${row[i].송장번호}</td>
@@ -120,6 +135,63 @@
                 }
             }, 300);
         }
+
+        function getExcel() {
+            var wb = XLSX.utils.book_new();
+            // step 2. 시트 만들기 
+            var newWorksheet = excelHandler.getWorksheet();
+            // step 3. workbook에 새로만든 워크시트에 이름을 주고 붙인다.  
+            var items = [];
+            var names = [];
+            
+            <% for (var i = 0; i < items.length; i++) {
+                if (i == 0 || (i != 0 && items[i].ListID != items[i - 1].ListID)) { %>
+                    items.push([['송장번호', '품목명', '이름', '전화번호', '도착지']]);
+                    names.push('<%=items[i].DesAddr%>'.split(' ')[1]);
+                <% } %>
+                    items[items.length - 1].push([
+                        '<%=items[i].ItemID%>',
+                        '<%=items[i].ItemName%>',
+                        '<%=items[i].DesName%>',
+                        '<%=items[i].DesPhone%>',
+                        '<%=items[i].DesAddr%>'
+                    ]);
+            <% } %>
+            
+            for (var i = 0; i < items.length; i++) {
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(items[i]), names[i]);
+            }
+            // step 4. 엑셀 파일 만들기 
+            var wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+            // step 5. 엑셀 파일 내보내기 
+            saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), '물량 전표');
+        }
+
+        function s2ab(s) {
+            var buf = new ArrayBuffer(s.length); //convert s to arrayBuffer
+            var view = new Uint8Array(buf);  //create uint8array as viewer
+            for (var i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF; //convert to octet
+            return buf;
+        }
+
+        function setItemCnt() {
+            const cntList = $('.cnt');
+            var total = 0;
+            for (var i = 0; i < cntList.length; i++) {
+                total += parseInt($(cntList[i]).text());
+            }
+            if (total) {
+                $('#total-cnt').text('배송 ' + total + '상자');
+            } else {
+                $('#total-cnt').text('배송 0상자');
+            }
+            
+            const cnts=$('.cnt');
+            
+            for(var i=0; i<cnts.length; i++) {
+                console.log($(cnts[i]).data('gu'));
+            }
+        }
     </script>
 </head>
 
@@ -128,8 +200,10 @@
         <!-- item list -->
         <div style="width: 80vw; background-color: #EFEFEF; height: 80vh; overflow-x: auto;" id="popup-position">
             <div class="horizontal between">
-                <div class="single-tab">
+                <div class="single-tab horizontal">
                     <p>상품 목록</p>
+                    <div style="width: 20px;"></div>
+                    <p id="cnt"></p>
                 </div>
                 <div class="horizontal">
                     <button class=" btn-main" style="margin-right: 20px;" id="cancel-btn">취소</button>
@@ -164,7 +238,10 @@
         <!-- progress complete -->
         <div class="popup-process" style="width: 300px; height: 300px; background-color: #EFF1F6; display: flex;
         flex-direction:column; align-items: center; justify-content: center;" id="complete-dialog">
-            
+            <div class=" horizontal between">
+                <label></label>
+                <img src="/public/images/x_icon.png" class="close" />
+            </div>
             <br>
             <label><b>분류가 완료되었습니다.</b></label>
         </div>
@@ -215,7 +292,16 @@
             <div class=" horizontal between">
                 <input type="file" hidden id="input-file" onchange="excelExport(event)">
                 <label></label>
+                <% if(items.length==0) { %>
                 <button class=" btn-blue" id="upload-btn">물량 업로드</button>
+                <% }else {%>
+                <div class="horizontal">
+                    <button class=" btn-blue" id="upload-btn">물량 재업로드</button>
+                    <div style="width: 20px;"></div>
+                    <button class=" btn-blue" id="download-btn">물량 다운로드</button>
+                </div>
+                <% } %>
+
             </div>
 
 
@@ -226,34 +312,41 @@
                     <th class="head">차량</th>
                     <th class="head">상태</th>
                     <th class="head">물량</th>
-                    <th class="head">화주</th>
-                    <th class="head">배치</th>
                 </thead>
                 <tbody>
                     <% for(var i=0; i<route.length; i++) { %>
+                    <% if(i==0 ||(i!=0&&route[i].Gu!=route[i-1].Gu)) { %>
+                    <tr>
+                        <td colspan="4"><%=route[i].Gu%></td>
+                        <td class="gu-cnt" data-gu="<%=route[i].Gu%>"></td>
+                    </tr>
+                    <% } %>
                     <!-- logi title -->
                     <tr data-logi="<%=route[i].Logi%>" style="height: 50px; vertical-align: middle;">
                         <td>
-                            <%=route[i].Name%>
+                            <div class="horizontal">
+                                <div class="item-divider"></div>
+                                <label><%=route[i].Name%></label>
+                            </div>
                         </td>
-                        <td><%=route[i].DriverName%> 기사</td>
-                        <td><%=route[i].BusNum%></td>
+                        <% var driver='기사 미배정';
+                        if(route[i].DriverName) {
+                            driver=route[i].DriverName+' 기사';
+                        }
+                        var bus='차량 미배정';
+                        if(route[i].BusNum) {
+                            bus=route[i].BusNum;
+                        }
+                        %>
+                        <td><%=driver%></td>
+                        <td><%=bus%></td>
                         <% var status;
-                                    if(route[i].Cnt)
+                                    if(route[i].ItemCnt)
                                         status='마감 완료';
                                     else
                                         status='상품 미배정'; %>
                         <td><%=status%></td>
-                        <td class="cnt"><%=route[i].Cnt%></td>
-                        <% var owner=''; %>
-                        <% for(var j=0; j<route[i].Owners.length; j++) 
-                                        owner+=route[i].Owners[j];
-                                        if(j=route[i].Owners.length-1) {
-                                            owner+=', ';
-                                        }
-                                    %>
-                        <td><%=owner%></td>
-                        <td><span class="link position" data-list="<%=route[i].ListID%>">배치 확인</span></td>
+                        <td class="cnt" data-gu="<%=route[i].Gu%>"><%=route[i].ItemCnt%></td>
                     </tr>
                     <% } %>
                 </tbody>

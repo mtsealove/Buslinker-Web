@@ -13,8 +13,8 @@
     <script>
         $(function () {
             getEvents();
-            setConfirmBtn();
             setContract();
+            setClose();
         });
         document.addEventListener('DOMContentLoaded', function () {
             var Calendar = FullCalendar.Calendar;
@@ -30,8 +30,6 @@
                 editable: true,
                 droppable: false, // this allows things to be dropped onto the calendar
                 locale: 'ko',
-                eventLimit: true, // for all non-TimeGrid views
-                eventLimitText: '개 이상은 무시됩니다.',
                 eventClick: function (info) {
                     info.event.remove();
                     addRemove(info.event.start);
@@ -49,10 +47,64 @@
         });
 
         function getEvents() {
-            <% for (var i = 0; i < dates.length; i++) { %>
-                var dateStr=getDate('<%=dates[i].RunDate%>');
-                addEvent(dateStr);
-            <% } %>
+            <% for(var i=0; i<timeline.length; i++) { 
+                var date=new Date(timeline[i].RunDate); 
+                var DriverName=timeline[i].DriverName;
+                var Num=timeline[i].Num;
+                var PtName=timeline[i].PtName;
+                var PtId=timeline[i].PTID;
+                var dateStr=date.getFullYear()+'-';
+                if(date.getMonth()<9) {
+                    dateStr+='0';
+                }
+                dateStr+=(date.getMonth()+1)+'-';
+                if(date.getDate()<10) {
+                    dateStr+='0';
+                }
+                dateStr+=date.getDate();
+                if(DriverName) { %>
+                    addDriver('<%=DriverName%>', '<%=dateStr%>');
+                <% } %>
+                <% if(Num) { %>
+                    addBus('<%=Num%>', '<%=dateStr%>');
+                <% } %>
+                <% if(PtName) { %>
+                    addPartTime('<%=PtName%>', '<%=dateStr%>', '<%=PtId%>');
+                <% } %>
+                <% } %>
+        }
+
+           // add each driver
+           function addDriver(name, date) {
+            calendar.addEvent({
+                title: name,
+                start: date,
+                allDay: true,
+                color: '#ffcc00',
+                textColor: '#ffffff',
+                editable: false,
+            });
+        }
+
+        function addBus(num, date) {
+            calendar.addEvent({
+                title: num,
+                start: date,
+                allDay: true,
+                color: '#011D46',
+                textColor: '#ffffff',
+                editable: false,
+            });
+        }
+
+        function addPartTime(name, date, id) {
+            calendar.addEvent({
+                title: name,
+                start: date,
+                allDay: true,
+                color: '#46C3CF',
+                textColor: '#ffffff',
+            });
         }
 
         function addEvent(date) {
@@ -61,27 +113,6 @@
                 allDay: true,
             });
             
-        }
-        function addNew(date) {
-            const form=$('#schedule-form');
-            const input=`<input value='${date}' name='new'>`;
-            form.append(input);
-        }
-
-        function addRemove(date) {
-            const form=$('#schedule-form');
-            const dateStr=getDate(date);
-            $(`input[name='new'][value='${dateStr}']`).remove();
-            const input=`<input value='${dateStr}' name='remove' type='date'>`;
-            form.append(input);
-        }
-
-        function setConfirmBtn() {
-            $('#confirm-btn').click(function(){
-                if(confirm('근무일을 지정하시겠습니까?')) {
-                    $('#schedule-form').submit();
-                }
-            })
         }
 
         function getDate(date) {
@@ -99,9 +130,15 @@
         }
 
         function setContract() {
-            var start=getDate('<%=dates[0].ContractStart%>');
-            var end=getDate('<%=dates[0].ContractEnd%>');
+            var start=getDate('<%=timeline[0].ContractStart%>');
+            var end=getDate('<%=timeline[0].ContractEnd%>');
             $('#contract').text(start+' ~ '+end);
+        }
+
+        function setClose() {
+            $('#confirm-btn').click(function() {
+                parent.closeModal();
+            });
         }
     </script>
 </head>
@@ -109,13 +146,8 @@
 <body style="padding-right: 20px; padding-left: 20px;">
     <br>
     <div class=" horizontal between">
-        <div>
-            <label><%=dates[0].RouteName%></label>
-            <p id="contract"></p>
-        </div>
-        <h3><b>근무일을 지정하세요.</b></h3>
-
-        <button class="btn-main" type="button" id="confirm-btn">확인</button>
+        <label></label>
+        <img src="/public/images/x_icon.png" id="confirm-btn" class="close">
     </div>
     <br>
     <div class="card" style="width: 100%;">
@@ -123,9 +155,6 @@
             <div id="calendar"></div>
         </div>
     </div>
-    <form hidden id="schedule-form" method="POST" action="/Logistics/Driver/Schedule">
-        <input name="driver" value="<%=driver%>" >
-    </form>
 </body>
 
 </html>

@@ -534,6 +534,70 @@ exports.getRoute = (order, current, bus, callback) => {
     });
 }
 
+exports.getLogiRoute= (order, current, logi, callback) => {
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var dateStr = year + '-' + month + '-' + day;
+
+    var query = `select R.*, M.Name as Bus from Route R join Members M
+    on R.CorpID=M.ID where ContractEnd`;
+    if (current == 'true') {
+        query += `>='${dateStr}'`;
+    } else {
+        query += `<'${dateStr}'`;
+    }
+    if (logi) {
+        query += ` and R.Logi='${logi}' `;
+    }
+
+    query += ` order by Name ${order}`;
+    connection.query(query, (err, result) => {
+        if (err) {
+            console.log('e1');
+            console.error(err);
+        } else {
+            console.log('e1 pass');
+            // get location info
+            var locations = [];
+            for (var i = 0; i < result.length; i++) {
+                const line = (result[i].Locations).split(',');
+                result[i].Loc = [];
+                for (var j = 0; j < line.length; j++) {
+                    locations.push(line[j]);
+                }
+            }
+            var inQeury = `select * from Location where LocID in (`;
+            for (var i = 0; i < locations.length; i++) {
+                inQeury += locations[i];
+                if (i != locations.length - 1) {
+                    inQeury += ', ';
+                } else {
+
+                }
+            }
+            inQeury += ')';
+
+            connection.query(inQeury, (e2, result2) => {
+                if (e2) {
+                    console.log('e2');
+                    console.error(e2);
+                    callback(result);
+                } else {
+                    for (var i = 0; i < result.length; i++) {
+                        const line = (result[i].Locations).split(',');
+                        for (var j = 0; j < line.length; j++) {
+                            result[i].Loc.push(result2.find(c => c.LocID == line[j]));
+                        }
+                    }
+                    callback(result);
+                }
+            })
+        }
+    });
+}
+
 exports.removeRoute = (id, callback) => {
     const getQuery = `select Locations from Route where RouteID=${id}`;
     connection.query(getQuery, (e0, results) => {
@@ -1053,7 +1117,7 @@ exports.getAllCorpResource = (callback) => {
                                 } else {
                                     for (var i = 0; i < driver.length; i++) {
                                         for (var j = 0; j < driverCnt.length; j++) {
-                                            if (driverCnt[i].Corp == driverCnt[j].Corp) {
+                                            if (driver[i].Corp == driverCnt[j].Corp) {
                                                 driver[i].CorpCnt = driverCnt[j].Cnt;
                                                 break;
                                             }
@@ -1083,12 +1147,12 @@ exports.getAllCorpResource = (callback) => {
 
 exports.getRouteItem = (date, logi, callback) => {
     var routeQuery = `select R.*, L.Name Logi from
-   (select RouteID, Name, Logi, Owners as ownerIds from Route` ;
+   (select RouteID, Gu, Name, Logi, Owners as ownerIds from Route` ;
     if (logi) {
         routeQuery += ` where Logi='${logi}'`;
     }
     routeQuery += `) R join Members L
-   on R.Logi=L.ID`;
+   on R.Logi=L.ID order by R.Gu`;
     var onwerTotal = 0;
     var ownerCnt = 0;
     var itemTotal = 0;
@@ -1153,6 +1217,7 @@ exports.getRouteItem = (date, logi, callback) => {
                                 route[j].DriverName = timeline[i].DriverName;
                                 route[j].BusNum = timeline[i].Num;
                                 route[j].listID = timeline[i].ListID;
+                                route[j].ItemCnt=timeline[i].ItemCnt;
                             }
                         }
                     }
@@ -1536,6 +1601,18 @@ exports.createLogiItemList = (logiId, date, cluster, callback) => {
                                 });
                             }
                         }
+                        const updateQuery=`update Timeline set LogiList=${listID}
+                        where RunDate='${date}' and RouteID in (
+                            select RouteID from Route where Gu='${gu}'
+                        )`;
+                        total++;
+                        connection.query(updateQuery, (e3)=>{
+                            if(e3) {
+                                callback(false);
+                            } else {
+                                cnt++;
+                            }
+                        });
                     }
                     var interval = setInterval(() => {
                         if (total == cnt) {
@@ -1547,6 +1624,20 @@ exports.createLogiItemList = (logiId, date, cluster, callback) => {
             });
         }
     });
+}
+exports.getLogiItemList=(logiId, date, callback)=>{
+    const query=`select * from Item where ListID in 
+    (select LogiList from Timeline where RouteID in (
+    select RouteID from Route where Logi='${logiId}')
+    and RunDate='${date}') order by ListID`;
+
+    connection.query(query, (e0, itmeRs)=>{
+        if(e0) {
+            callback(null);
+        } else {
+            callback(itmeRs);
+        }
+    })
 }
 
 exports.getGu=(route, callback)=>{
@@ -1571,6 +1662,18 @@ exports.updateGu=(route, gu, callback)=>{
             callback(false);
         } else {
             callback(true);
+        }
+    });
+}
+
+exports.getGuCnt=(gu, callback)=>{
+    const query=`select count(RouteID) Cnt from Route where Gu='${gu}'`;
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs[0].Cnt)
         }
     });
 }

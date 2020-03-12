@@ -116,14 +116,11 @@
                     <th class="head">차량</th>
                     <th class="head">상태</th>
                     <th class="head">물량</th>
-                    <th class="head">화주</th>
-                    <th class="head">배치</th>
                 </thead>
                 <tbody>
                     <% for(var i=0; i<route.length; i++) { %>
                     <!-- logi title -->
                     <% if(i==0||(i!=0&&route[i].Logi!=route[i-1].Logi)) { %>
-
                     <tr class="cat-tr">
                         <td>
                             <h5><b><%=route[i].Logi%></b></h5>
@@ -131,40 +128,39 @@
                         <td></td>
                         <td></td>
                         <td>마감 완료</td>
-                        <td></td>
-                        <td>화주...</td>
                         <td>
-                            <img class="extend-table" src="/public/images/down.png" data-logi="<%=route[i].Logi%>">
+                            <div class=" horizontal between">
+                                <label></label>
+                                <img class="extend-table" src="/public/images/down.png" data-logi="<%=route[i].Logi%>">
+                            </div>
+                            
                         </td>
                     </tr>
                     <% } %>
                     <tr data-logi="<%=route[i].Logi%>" style="height: 50px; vertical-align: middle;">
                         <td>
                             <div class=" horizontal">
-                                <div
-                                    style="width: 1px; height: 50px; background-color: #D5D5D5; margin-right: 20px; margin-left: 20px;">
-                                </div>
+                                <div class="item-divider"></div>
                                 <%=route[i].Name%>
                             </div>
                         </td>
-                        <td><%=route[i].DriverName%> 기사</td>
-                        <td><%=route[i].BusNum%></td>
+                        <% var driver='기사 미배정';
+                        var bus='차량 미배정';
+                        if(route[i].DriverName) {
+                            driver=route[i].DriverName+' 기사';
+                        }
+                        if(route[i].BusNum) {
+                            bus=route[i].BusNum;
+                        } %>
+                        <td><%=driver%></td>
+                        <td><%=bus%></td>
                         <% var status;
-                                if(route[i].Cnt)
+                                if(route[i].ItemCnt)
                                     status='마감 완료';
                                 else
                                     status='상품 미배정'; %>
                         <td><%=status%></td>
-                        <td class="cnt"><%=route[i].Cnt%></td>
-                        <% var owner=''; %>
-                        <% for(var j=0; j<route[i].Owners.length; j++) 
-                                    owner+=route[i].Owners[j];
-                                    if(j=route[i].Owners.length-1) {
-                                        owner+=', ';
-                                    }
-                                %>
-                        <td><%=owner%></td>
-                        <td><span class="link position" data-list="<%=route[i].ListID%>">배치 확인</span></td>
+                        <td class="cnt"><%=route[i].ItemCnt%></td>
                     </tr>
                     <% } %>
                 </tbody>

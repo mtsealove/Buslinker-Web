@@ -323,25 +323,12 @@ exports.startManager = (app) => {
         }
     });
 
-    app.get('/Manager/ajax/Gu', (req, res)=>{
-        const route=req.query.route;
-        sql.getGu(route, (Gu)=>{
+    app.get('/Manager/ajax/Gu/Cnt', (req, res)=>{
+        const gu=req.query.gu;
+        sql.getGuCnt(gu, (rs)=>{
             res.json({
-                gu: Gu
-            });
-        });
-    });
-
-    app.post('/Manager/ajax/Gu', (req, res)=>{
-        const gu=req.body['gu'];
-        const route=req.body['route'];
-
-        sql.updateGu(route, gu, (result)=>{
-            if(result) {
-                res.json(Ok);
-            } else {
-                res.json(Not);
-            }
+                Cnt: rs
+            })
         });
     });
 }
