@@ -3,7 +3,8 @@ const connection = mysql.createConnection({
     host: 'localhost',
     user: 'buslinker',
     password: 'Fucker0916!',
-    database: 'Buslinker2'
+    database: 'Buslinker2',
+    timezone: '+09:00'
 });
 const crypto = require('./cryto');
 const fcm = require('./FCM');
@@ -201,7 +202,7 @@ exports.UpdateLocation = (id, date, lat, lng, callback) => {
 }
 
 exports.getDriverCalendar = (id, callback) => {
-    const query = `select RunDate from Timeline where DriverID='${id}'`;
+    const query = `select date_format(RunDate, '%Y-%m-%d') RunDate from Timeline where DriverID='${id}'`;
     connection.query(query, (e0, results) => {
         if (e0) {
             console.error(e0);

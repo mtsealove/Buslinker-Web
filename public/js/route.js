@@ -321,6 +321,7 @@ var LogiName='';
 function setGu() {
     $('#select-gu').change(function() {
         const gu=$(this).val();
+        $('#gu-input').val(gu+'구');
         Gu=gu;
         $.get(`/Manager/ajax/Gu/Cnt?gu=${gu}구`, function(data) {            
             GuCnt=data.Cnt+1;

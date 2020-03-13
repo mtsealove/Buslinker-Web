@@ -22,6 +22,7 @@ exports.startLogistics = (app) => {
         if (user.userID) {
             sql.getRouteItem(date, user.userID, (route) => {
                 sql.getLogiItemList(user.userID, date, (itemRs)=>{
+                    console.log(itemRs);
                     res.render('./Logi/itemList', { user: user, route: route, current: date, items: itemRs });
                 });
             });

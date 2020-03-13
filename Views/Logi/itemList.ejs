@@ -139,7 +139,7 @@
         function getExcel() {
             var wb = XLSX.utils.book_new();
             // step 2. 시트 만들기 
-            var newWorksheet = excelHandler.getWorksheet();
+            //var newWorksheet = excelHandler.getWorksheet();
             // step 3. workbook에 새로만든 워크시트에 이름을 주고 붙인다.  
             var items = [];
             var names = [];
@@ -164,7 +164,7 @@
             // step 4. 엑셀 파일 만들기 
             var wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
             // step 5. 엑셀 파일 내보내기 
-            saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), '물량 전표');
+            saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), '물량 전표<%=current%>.xlsx');
         }
 
         function s2ab(s) {
@@ -175,6 +175,7 @@
         }
 
         function setItemCnt() {
+            /*
             const cntList = $('.cnt');
             var total = 0;
             for (var i = 0; i < cntList.length; i++) {
@@ -187,9 +188,62 @@
             }
             
             const cnts=$('.cnt');
-            
+            const gus=$('.gu-cnt');
+            const guCnt=[];
+            for(var i=0; i<gus.length; i++) {
+                guCnt.push({
+                    gu: $(gus[i]).data('gu'),
+                    total: 0
+                })
+            }
+
             for(var i=0; i<cnts.length; i++) {
-                console.log($(cnts[i]).data('gu'));
+                for(var j=0; j<guCnt.length; j++) {
+                    if(guCnt[j].gu==$(cnts[i]).data('gu')) {
+                        guCnt[i].total+=parseInt($(cnts[i]).text());
+                    }
+                }
+            }
+            for(var i=0; i<gus.length; i++) {
+                for(var j=0; j<guCnt.length; j++) {
+                    if(guCnt[j].gu==$(gus[i]).data('gu')&&guCnt[j].total) {
+                        $(gus[i]).text(guCnt[j].total);
+                    }
+                }
+            } */
+            const gus = $('.gu-cnt');
+            const guArr = [];
+            for (var i = 0; i < gus.length; i++) {
+                const gu = $(gus[i]).data('gu');
+                const cnt = parseInt($(gus[i]).text());
+                guArr.push({
+                    gu: gu,
+                    cnt: cnt,
+                    divide: 0
+                });
+            }
+            console.log(guArr);
+
+            const child = $('.cnt');
+            for (var i = 0; i < child.length; i++) {
+                const gu = $(child[i]).data('gu');
+                for (var j = 0; j < guArr.length; j++) {
+                    if (guArr[j].gu == gu) {
+                        guArr[j].divide++;
+                    }
+                }
+            }
+            for (var i = 0; i < child.length; i++) {
+                const gu = $(child[i]).data('gu');
+                for (var j = 0; j < guArr.length; j++) {
+                    if (guArr[j].gu == gu) {
+                        if(guArr[j].divide!=1) {
+                            $(child[i]).text('약 '+Math.round(guArr[j].cnt/guArr[j].divide));
+                        } else {
+                            $(child[i]).text(guArr[j].cnt/guArr[j].divide);
+                        }
+                    }
+                }
             }
         }
     </script>
@@ -318,7 +372,7 @@
                     <% if(i==0 ||(i!=0&&route[i].Gu!=route[i-1].Gu)) { %>
                     <tr>
                         <td colspan="4"><%=route[i].Gu%></td>
-                        <td class="gu-cnt" data-gu="<%=route[i].Gu%>"></td>
+                        <td class="gu-cnt" data-gu="<%=route[i].Gu%>"><%=route[i].ItemCnt%></td>
                     </tr>
                     <% } %>
                     <!-- logi title -->
@@ -346,7 +400,7 @@
                                     else
                                         status='상품 미배정'; %>
                         <td><%=status%></td>
-                        <td class="cnt" data-gu="<%=route[i].Gu%>"><%=route[i].ItemCnt%></td>
+                        <td class="cnt" data-gu="<%=route[i].Gu%>"></td>
                     </tr>
                     <% } %>
                 </tbody>

@@ -41,9 +41,9 @@
                     <% for(var i=0; i<routes.length; i++) {
                         // formating dates
                         var startDate=new Date(routes[i].ContractStart);
-                        var start=startDate.getFullYear()+'-'+startDate.getMonth()+1+'-'+startDate.getDate();
+                        var start=startDate.getFullYear()+'-'+(startDate.getMonth()+1)+'-'+startDate.getDate();
                         var endDate=new Date(routes[i].ContractEnd);
-                        var end=endDate.getFullYear()+'-'+endDate.getMonth()+1+'-'+endDate.getDate();
+                        var end=endDate.getFullYear()+'-'+(endDate.getMonth()+1)+'-'+endDate.getDate();
                         %>
                         <tr style="height: 20px;"></tr>
                         <tr class="route-tr">

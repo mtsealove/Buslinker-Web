@@ -202,7 +202,9 @@ exports.startApp = (port) => {
     app.post('/Pt/Commute', (req, res)=>{
         const id=req.body['ID'];
         const qr=req.body['Code'];
-        
+        console.log('commute');
+        console.log(id);
+        console.log(qr);        
         sql.checkQrCode(id, getDate(), qr, (result)=>{
             if(result) {
                 res.json(Ok);

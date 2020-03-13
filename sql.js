@@ -3,7 +3,8 @@ const connection = mysql.createConnection({
     host: 'localhost',
     user: 'buslinker',
     password: 'Fucker0916!',
-    database: 'Buslinker2'
+    database: 'Buslinker2',
+    timezone: 'gmt+9'
 });
 const crypto = require('./cryto');
 const NodeGeocoder = require('node-geocoder');
@@ -239,7 +240,7 @@ exports.getBusList = (callback) => {
     })
 }
 
-exports.createRoute = (corp, name, station, logi, empty, owner, contract, callback) => {
+exports.createRoute = (corp, name, station, logi, empty, owner, contract, gu, callback) => {
     geocoder.geocode(station.addr, (e0, res) => {
         // geocode station
         if (e0) {
@@ -404,7 +405,7 @@ exports.createRoute = (corp, name, station, logi, empty, owner, contract, callba
 
                                                                                                                             // insert route
                                                                                                                             var routeQuery = `insert into Route set Name='${name}', CorpID='${corp}',
-                                                                                                                            ContractStart='${contract.start}', ContractEnd='${contract.end}',  Logi='${logi.id}',Locations='`;
+                                                                                                                            ContractStart='${contract.start}', ContractEnd='${contract.end}',  Logi='${logi.id}', Gu='${gu}',Locations='`;
                                                                                                                             // set location ids
                                                                                                                             routeQuery += station1ID + ',';
                                                                                                                             routeQuery += logi1ID + ',';
@@ -432,6 +433,8 @@ exports.createRoute = (corp, name, station, logi, empty, owner, contract, callba
                                                                                                                                 } else {
                                                                                                                                     console.log('e14 pass');
                                                                                                                                     console.log('success');
+                                                                                                                                    var year=new Date().getFullYear();
+                                                                                                                                    setFullTimeline(year);
                                                                                                                                     callback(true);
                                                                                                                                 }
                                                                                                                             });
@@ -494,7 +497,6 @@ exports.getRoute = (order, current, bus, callback) => {
             console.log('e1');
             console.error(err);
         } else {
-            console.log('e1 pass');
             // get location info
             var locations = [];
             for (var i = 0; i < result.length; i++) {
@@ -513,7 +515,7 @@ exports.getRoute = (order, current, bus, callback) => {
 
                 }
             }
-            inQeury += ')';
+            inQeury += ') order by RcTime';
 
             connection.query(inQeury, (e2, result2) => {
                 if (e2) {
@@ -526,6 +528,9 @@ exports.getRoute = (order, current, bus, callback) => {
                         for (var j = 0; j < line.length; j++) {
                             result[i].Loc.push(result2.find(c => c.LocID == line[j]));
                         }
+                        result[i].Loc.sort(function (a, b) {
+                            return a.RcTime < b.RcTime ? -1 : a.RcTime > b.RcTime ? 1 : 0;
+                        });
                     }
                     callback(result);
                 }
@@ -624,7 +629,7 @@ exports.removeRoute = (id, callback) => {
                     connection.query(removeQuery, (e2) => {
                         if (e2) {
                             callback(null);
-                            console.error(e3);
+                            console.error(e2);
                         } else {
                             callback(true);
                         }
@@ -1382,7 +1387,7 @@ async function updatePartTime(routeID, part, callback) {
     callback(true);
 }
 
-exports.setFullTimeline = (year) => {
+function setFullTimeline (year)  {
     const routeQuery = `select RouteID from Route where RouteID!=0`;
     var cnt = 0;
     connection.query(routeQuery, (e0, route) => {
@@ -1422,7 +1427,7 @@ exports.setFullTimeline = (year) => {
                             if (e1) {
                                 console.error(e1);
                             } else {
-                                console.log('update: ' + cnt++);
+                                //console.log('update: ' + cnt++);
                             }
                         });
                     }
@@ -1674,6 +1679,59 @@ exports.getGuCnt=(gu, callback)=>{
             callback(null);
         } else {
             callback(rs[0].Cnt)
+        }
+    });
+}
+
+// manager, bus, logi all accept
+exports.getStatus=(date, bus, logi, callback)=>{
+    var timelineQuery=`select TTTT.*, Buss.Num from 
+    (select TTT.*, DRV.Name DriverName from 
+   (select TT.*, PT.Name PtName, PT.Phone PtPhone from
+   (select R.*,T.BusID, T.DriverID, T.PTID, T.ActionID, T.Lat, T.Lng from Timeline T 
+   left outer join Route R on T.RouteID=R.RouteID
+    where T.RunDate='${date}') TT left outer join Members PT
+    on TT.PTID=PT.ID) TTT left outer join Members DRV
+    on TTT.DriverID=DRV.ID) TTTT left outer join Bus Buss
+    on TTTT.BusID=Buss.ID`;
+
+    if(bus) {
+       timelineQuery+=` where CorpID='${bus}'`;
+    } else  if(logi) {
+        timelineQuery+=`where Logi='${logi}'`;
+    }
+
+    var total=0, cnt=0;
+    var locArr=[];
+
+    connection.query(timelineQuery, (e0, timelineRs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            for(var i=0; i<timelineRs.length; i++) {
+                const locations=timelineRs[i].Locations;
+                const locationQuery=`select * from Location where LocID in (${locations}) order by RcTime`;
+                total++;
+                connection.query(locationQuery, (e1, locationRs)=>{
+                    if(e1) {
+                        console.error(e1);
+                        locArr.push([]);
+                    } else {
+                        locArr.push(locationRs);
+                    }
+                    cnt++;
+                });
+            }
+            var interval=setInterval(()=>{
+                if(cnt==total) {
+                    clearInterval(interval);
+                    for(var i=0; i<timelineRs.length; i++) {
+                        timelineRs[i].Loc=locArr[i];
+                    }
+                    callback(timelineRs);
+                }
+            }, 100);
         }
     });
 }

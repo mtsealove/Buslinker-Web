@@ -13,7 +13,10 @@ exports.startManager = (app) => {
     app.get('/Manager', (req, res) => {
         const user = auth.getUser(req);
         if (user.userID) {
-            res.render('./Manager/index', { user: user });
+            sql.getStatus(getDate(),null, null, (timeline)=>{
+                console.log(timeline);
+                res.render('./Manager/index', { user: user, timeline:timeline });
+            });
         } else {
             res.redirect('/');
         }
@@ -173,6 +176,7 @@ exports.startManager = (app) => {
         const body = req.body;
         const alias = body['name'];
         const bus = body['bus'];
+        const gu=body['gu'];
 
         const station = {
             name: body['station-name'],
@@ -216,7 +220,7 @@ exports.startManager = (app) => {
             });
         }
 
-        sql.createRoute(bus, alias, station, logi, empty, owners, contract, (result) => {
+        sql.createRoute(bus, alias, station, logi, empty, owners, contract, gu,(result) => {
             if (result) {
                 res.send(`<script>alert('운행정보가 등록되었습니다.');location.href='/Manager/Route';</script>`);
             } else {
@@ -331,4 +335,19 @@ exports.startManager = (app) => {
             })
         });
     });
+}
+
+function getDate() {
+    var date = new Date();
+    var str = date.getUTCFullYear() + '-';
+    if (date.getMonth() < 9) {
+        str += '0';
+    }
+    str += (date.getMonth() + 1) + '-';
+    if (date.getDate() < 10) {
+        str += '0';
+    }
+    str += date.getDate();
+
+    return str;
 }

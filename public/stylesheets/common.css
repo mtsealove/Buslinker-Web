@@ -474,3 +474,14 @@ div.normal {
     margin-right: 20px;
     margin-left: 20px;
 }
+
+.tr {
+    height: 80px;
+    border-bottom: 1px solid #707070;
+}
+
+#table-container {
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 30px;
+}
