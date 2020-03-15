@@ -62,7 +62,13 @@ exports.getDriverMy = (id, date, callback) => {
                 if (e1) {
                     callback(null);
                 } else {
-                    my[0].Profile = profileRs[0].ProfilePath;
+                    if(my[0]) {
+                        my[0].Profile = profileRs[0].ProfilePath;
+                    } else{
+                        my[0]={
+                            Profile: profileRs[0].ProfilePath
+                        }
+                    }
                     callback(my[0]);
                 }
             });
