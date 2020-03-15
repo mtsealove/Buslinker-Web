@@ -29,6 +29,7 @@
                 level: 9 // 지도의 확대 레벨
             };
             // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+
             map = new kakao.maps.Map(mapContainer, mapOption);
         }
 
@@ -71,7 +72,7 @@
             for (var i = 0; i < tr.length; i++) {
                 const lat = $(tr[i]).attr('data-lat');
                 const lng = $(tr[i]).attr('data-lng');
-                const title=$(tr[i]).attr('data-num');
+                const title = $(tr[i]).attr('data-num');
 
                 if (lat && lng) {
                     var imageSrc = '/public/images/bus_marker.png', // 마커이미지의 주소입니다    
@@ -111,8 +112,17 @@
         function initMapLocation() {
             const lat = $('.tr:first').attr('data-lat');
             const lng = $('.tr:first').attr('data-lng');
-            var moveLatLon = new kakao.maps.LatLng(lat, lng);
-            map.setCenter(moveLatLon);
+            if (lat && lng) {
+                var moveLatLon = new kakao.maps.LatLng(lat, lng);
+                map.setCenter(moveLatLon);
+            } else {
+                navigator.geolocation.getCurrentPosition(function (pos) {
+                    var latitude = pos.coords.latitude;
+                    var longitude = pos.coords.longitude;
+                    var moveLatLon = new kakao.maps.LatLng(latitude, longitude);
+                    map.setCenter(moveLatLon);
+                });
+            }
         }
     </script>
 </head>
@@ -122,7 +132,7 @@
     <section>
         <!-- map -->
         <div id="map"></div>
-        
+
         <!-- data list -->
         <div id="list">
             <div>
@@ -131,7 +141,8 @@
                     <h4><b>총 12대</b></h4>
                     <table style="width: 100%;" class="table-hover">
                         <% for(var i=0; i<timeline.length; i++) { %>
-                        <tr class="tr" data-filter="0" data-lat="<%=timeline[i].Lat%>" data-lng="<%=timeline[i].Lng%>" data-num="<%=timeline[i].Num%>">
+                        <tr class="tr" data-filter="0" data-lat="<%=timeline[i].Lat%>" data-lng="<%=timeline[i].Lng%>"
+                            data-num="<%=timeline[i].Num%>">
                             <% var driver='기사 미배정';
                                         var bus='차량 미배정';
                                         if(timeline[i].DriverName) {
