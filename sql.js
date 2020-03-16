@@ -1052,8 +1052,8 @@ exports.getPartTimeEvent = (id, callback) => {
 }
 
 // get ownwer's delivery fee by manage
-exports.getOwnerFee = (start, end, corp, callback) => {
-    const query = `select MM.*, II.ItemCnt from 
+exports.getOwnerFee = (start, end, corp, owner, callback) => {
+    var query = `select MM.*, II.ItemCnt from 
     (select ID,Name ,AdFee, DefaultFee, DefaultCnt from Members where MemberCat=3 and Corp='${corp}') MM
     left outer join (
     select OwnerID, sum(ItemCnt) ItemCnt from
@@ -1062,12 +1062,70 @@ exports.getOwnerFee = (start, end, corp, callback) => {
     where IL.SoldDate>='${start}' and SoldDate<'${end}'
     group by IL.ListID) O
     group by OwnerID) II on MM.ID=II.OwnerID`;
+
+    if(owner) {
+        query+=` where ID='${owner}'`;
+    }
+    
     connection.query(query, (err, result) => {
         if (err) {
             console.error(err);
             callback(null);
         } else {
             callback(result);
+        }
+    });
+}
+
+exports.getBusFee=(end, bus, callback)=>{
+    var query=`select ID, Name ,DefaultFee, Cnt from Members M join
+    (select CorpID, count(RouteID) Cnt from Route 
+    where ContractEnd>='${end}'
+    group by CorpID) R
+    on M.ID=R.CorpID
+    where M.MemberCat=2`;
+    if(bus) {
+        query+=` where ID='${bus}'`;
+    }
+
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            console.log(rs);
+            callback(rs);
+        }
+    });
+}
+
+exports.getLogiFee=(start, end, logi, callback)=>{
+    var query=`select MMMM.*, LLLL.RouteCnt from 
+    (select MMM.ID, MMM.Name, MMM.Commission, MMM.DefaultFee, MMM.AdFee, MMM.RunFee, RRR.ItemCnt from Members MMM
+    left outer join
+    (select RR.Logi, sum(TT.Cnt) ItemCnt from Route RR
+    left outer join
+    (select RouteID, Cnt from Timeline T
+    join (select ListID ,count(ItemID) Cnt from Item group by ListID) L
+    on T.LogiList=L.ListID
+    where RunDate>='${start}' and RunDate<='${end}') TT 
+    on RR.RouteID=TT.RouteID
+    group by RR.Logi) RRR
+    on MMM.ID=RRR.Logi
+    where MMM.MemberCat=4) MMMM
+    left outer join (
+    select Logi, count(Logi) RouteCnt from Route group by Logi) LLLL
+    on MMMM.ID=LLLL.Logi`;
+
+    if(logi) {
+        query+=` where ID='${logi}'`;
+    }
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
         }
     });
 }
@@ -1734,4 +1792,64 @@ exports.getStatus=(date, bus, logi, callback)=>{
             }, 100);
         }
     });
+}
+
+exports.updateCommission=(id, commission, callback)=>{
+    const query=`update Members set Commission=${commission} where ID='${id}'`;
+    connection.query(query, (e0)=>{
+        if(e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    });
+}
+
+exports.updateAdFee=(id, fee, callback)=>{
+    const query=`update Members set AdFee=${fee} where ID='${id}'`;
+    connection.query(query, (e0)=>{
+        if(e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    });
+}
+
+exports.updateLogiRunFee=(id, fee, callback)=>{
+    const query=`update Members set RunFee=${fee} where ID='${id}'`;
+    connection.query(query, (e0)=>{
+        if(e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    });
+}
+
+exports.updateBusFee=(id, fee, callback)=>{
+    const query=`update Members set DefaultFee=${fee} where ID='${id}'`;
+    connection.query(query, (e0)=>{
+        if(e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    });
+}
+
+exports.updateDefaultFee=(id, fee, callback)=>{
+    const query=`update Members set DefaultFee=${fee} where ID='${id}'`;
+    connection.query(query, (e0)=>{
+        if(e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    })
 }

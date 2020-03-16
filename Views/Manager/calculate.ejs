@@ -12,6 +12,17 @@
             setChart();
             setMonth();
             setLogis();
+            $('#modal').hide();
+            $('.popup').hide();
+            setPrice();
+            setClose();
+            setCommission();
+            setLogiAdFee();
+            setLogiRunFee();
+            setBusFee();
+            setLogiDefaultFee();
+            setOwnerDefaultFee();
+            setOwnerAdFee();
         });
 
         function setChart() {
@@ -101,13 +112,339 @@
                 const corp = $(this).val();
                 location.href = `?start=${start}&end=${end}&corp=${corp}`;
 
-            })
+            });
+        }
+
+        function setPrice() {
+            $('.price').click(function () {
+                const cat = $(this).data('cat');
+                if (cat) {
+                    const name = $(this).data('name');
+                    $('#modal').fadeIn(300);
+                    $('.name').text(name);
+                    const id = $(this).data('id');
+                    console.log(id);
+                    $('#input-id').val(id);
+                    switch (cat) {
+                        case 'commission':
+                            $('#popup-commission').show();
+                            break;
+                        case 'logi-ad-fee':
+                            $('#popup-logi-ad-fee').show();
+                            break;
+                        case 'logi-run-fee':
+                            $('#popup-logi-run-fee').show();
+                            break;
+                        case 'bus':
+                            $('#popup-bus-fee').show();
+                            break;
+                        case 'logi-default':
+                            $('#popup-logi-default').show();
+                            break;
+                        case 'owner-default':
+                            $('#popup-owner-default').show();
+                            break;
+                        case 'owner-ad':
+                            $('#popup-owner-ad').show();
+                            break;
+                    }
+                }
+            });
+        }
+
+        function setClose() {
+            $('.close').click(function () {
+                $('.popup').hide();
+                $('#modal').fadeOut(300);
+            });
+        }
+
+        function setCommission() {
+            $('#btn-commission').click(function () {
+                const commission = $('#commission-input').val();
+                if (commission == '') {
+                    alert('수수료를 입력하세요.');
+                    return;
+                } else if (confirm('수수료율을 지정하시겠습니까?')) {
+                    $.post('/Manager/ajax/Update/Commission', {
+                        id: $('#input-id').val(),
+                        commission: commission
+                    }, function (data) {
+                        if (data.Result) {
+                            alert('수수료가 지정되었습니다.');
+                            location.reload();
+                        } else {
+                            alert('오류가 발생하였습니다.');
+                        }
+                    });
+                }
+            });
+        }
+
+        function setLogiAdFee() {
+            $('#btn-logi-ad-fee').click(function () {
+                const fee = $('#logi-ad-fee-input').val();
+                if (fee == '') {
+                    alert('단가를 입력하세요.');
+                    return;
+                } else if (confirm('단가를 지정하시겠습니까?')) {
+                    $.post('/Manager/ajax/Update/AdFee', {
+                        id: $('#input-id').val(),
+                        fee: fee
+                    }, function (data) {
+                        if (data.Result) {
+                            alert('단가가 지정되었습니다.');
+                            location.reload();
+                        } else {
+                            alert('오류가 발생하였습니다.');
+                        }
+                    })
+                }
+            });
+        }
+
+        function setLogiRunFee() {
+            $('#btn-logi-run-fee').click(function () {
+                const fee = $('#logi-run-fee-input').val();
+                if (fee == '') {
+                    alert('운임을 입력하세요.');
+                    return;
+                } else if (confirm('운임을 지정하시겠습니까?')) {
+                    $.post('/Manager/ajax/Update/LogiRunFee', {
+                        id: $('#input-id').val(),
+                        fee: fee
+                    }, function (data) {
+                        if (data.Result) {
+                            alert('운임이 지정되었습니다.');
+                            location.reload();
+                        } else {
+                            alert('오류가 발생하였습니다.');
+                        }
+                    });
+                }
+            });
+        }
+
+        function setBusFee() {
+            $('#btn-bus-fee').click(function () {
+                const fee = $('#bus-fee-input').val();
+                if (fee == '') {
+                    alert('운임을 입력하세요.');
+                    return;
+                } else if (confirm('운임을 지정하시겠습니까?')) {
+                    $.post('/Manager/ajax/Update/BusFee', {
+                        id: $('#input-id').val(),
+                        fee: fee
+                    }, function (data) {
+                        if (data.Result) {
+                            alert('운임이 지정되었습니다.');
+                            location.reload();
+                        } else {
+                            alert('오류가 발생하였습니다.');
+                        }
+                    });
+                }
+            });
+        }
+
+        function setLogiDefaultFee() {
+            $('#btn-logi-default').click(function () {
+                const fee = $('#logi-default-input').val();
+                if (fee == '') {
+                    alert('물류 수거 비용을 입력하세요.');
+                    return;
+                } else if (confirm('물류 수거 비용을 지정하시겠습니까?')) {
+                    $.post('/Manager/ajax/Update/DefaultFee', {
+                        id: $('#input-id').val(),
+                        fee: fee
+                    }, function(data) {
+                        if(data.Result) {
+                            alert('물류 수거 비용이 지정되었습니다.');
+                            location.reload();
+                        }  else {
+                            alert('오류가 발생하였습니다.');
+                        }
+                    });
+                }
+            });
+        }
+
+        function setOwnerDefaultFee() {
+            $('#btn-owner-default').click(function () {
+                const fee = $('#owner-default-input').val();
+                if (fee == '') {
+                    alert('기본 비용을 입력하세요.');
+                    return;
+                } else if (confirm('기본 비용을 지정하시겠습니까?')) {
+                    $.post('/Manager/ajax/Update/DefaultFee', {
+                        id: $('#input-id').val(),
+                        fee: fee
+                    }, function(data) {
+                        if(data.Result) {
+                            alert('기본 비용이 지정되었습니다.');
+                            location.reload();
+                        }  else {
+                            alert('오류가 발생하였습니다.');
+                        }
+                    });
+                }
+            });
+        }
+
+        function setOwnerAdFee() {
+            $('#btn-owner-ad').click(function() {
+                const fee=$('#owner-ad-input').val();
+                if(fee=='') {
+                    alert('추가 단가를 입력하세요.');
+                } else if(confirm('추가 단가를 지정하시겠습니까?')) {
+                    $.post('/Manager/ajax/Update/AdFee', {
+                        id: $('#input-id').val(),
+                        fee: fee
+                    }, function(data) {
+                        if(data.Result) {
+                            alert('추가 단가가 지정되었습니다.');
+                            location.reload();
+                        }  else {
+                            alert('오류가 발생하였습니다.');
+                        }
+                    });
+                }
+            });
         }
     </script>
 </head>
 
 <body>
     <%- include('nav') %>
+    <div id="modal">
+        <input id="input-id" hidden>
+        <!-- logi commission -->
+        <div class="popup card" id="popup-commission">
+            <div class="card-body">
+                <div class="horizontal between">
+                    <h4 class="name">물류사</h4>
+                    <img class=" close" src="/public/images/x_icon.png">
+                </div>
+                <br>
+                <label><b>수수료율</b></label>
+                <input id="commission-input" class="box0" style="width: 100%;" type="number"
+                    placeholder="수수료율(%)을 입력하세요.">
+                <br><br>
+                <div class="horizontal between">
+                    <label></label>
+                    <button type="button" class="btn-main" id="btn-commission">확인</button>
+                </div>
+            </div>
+        </div>
+        <!-- logi-ad-fee -->
+        <div class="popup card" id="popup-logi-ad-fee">
+            <div class="card-body">
+                <div class="horizontal between">
+                    <h4 class="name">물류사</h4>
+                    <img class=" close" src="/public/images/x_icon.png">
+                </div>
+                <br>
+                <label><b>단가</b></label>
+                <input id="logi-ad-fee-input" class="box0" style="width: 100%;" type="number"
+                    placeholder="단가(원)를 입력하세요.">
+                <br><br>
+                <div class="horizontal between">
+                    <label></label>
+                    <button type="button" class="btn-main" id="btn-logi-ad-fee">확인</button>
+                </div>
+            </div>
+        </div>
+        <!-- logi-run-fee -->
+        <div class="popup card" id="popup-logi-run-fee">
+            <div class="card-body">
+                <div class="horizontal between">
+                    <h4 class="name">물류사</h4>
+                    <img class=" close" src="/public/images/x_icon.png">
+                </div>
+                <br>
+                <label><b>운임</b></label>
+                <input id="logi-run-fee-input" class="box0" style="width: 100%;" type="number"
+                    placeholder="운임(원)을 입력하세요.">
+                <br><br>
+                <div class="horizontal between">
+                    <label></label>
+                    <button type="button" class="btn-main" id="btn-logi-run-fee">확인</button>
+                </div>
+            </div>
+        </div>
+        <!-- bus run fee -->
+        <div class="popup card" id="popup-bus-fee">
+            <div class="card-body">
+                <div class="horizontal between">
+                    <h4 class="name">물류사</h4>
+                    <img class=" close" src="/public/images/x_icon.png">
+                </div>
+                <br>
+                <label><b>운임</b></label>
+                <input id="bus-fee-input" class="box0" style="width: 100%;" type="number" placeholder="운임(원)을 입력하세요.">
+                <br><br>
+                <div class="horizontal between">
+                    <label></label>
+                    <button type="button" class="btn-main" id="btn-bus-fee">확인</button>
+                </div>
+            </div>
+        </div>
+        <!-- logi defulat fee -->
+        <div class="popup card" id="popup-logi-default">
+            <div class="card-body">
+                <div class="horizontal between">
+                    <h4 class="name">물류사</h4>
+                    <img class=" close" src="/public/images/x_icon.png">
+                </div>
+                <br>
+                <label><b>물류 수거 비용</b></label>
+                <input id="logi-default-input" class="box0" style="width: 100%;" type="number"
+                    placeholder="물류 수거 비용(원)을 입력하세요.">
+                <br><br>
+                <div class="horizontal between">
+                    <label></label>
+                    <button type="button" class="btn-main" id="btn-logi-default">확인</button>
+                </div>
+            </div>
+        </div>
+        <!-- owener default fee -->
+        <div class="popup card" id="popup-owner-default">
+            <div class="card-body">
+                <div class="horizontal between">
+                    <h4 class="name">물류사</h4>
+                    <img class=" close" src="/public/images/x_icon.png">
+                </div>
+                <br>
+                <label><b>기본 비용</b></label>
+                <input id="owner-default-input" class="box0" style="width: 100%;" type="number"
+                    placeholder="기본 비용(원)을 입력하세요.">
+                <br><br>
+                <div class="horizontal between">
+                    <label></label>
+                    <button type="button" class="btn-main" id="btn-owner-default">확인</button>
+                </div>
+            </div>
+        </div>
+        <!-- owner ad fee -->
+        <div class="popup card" id="popup-owner-ad">
+            <div class="card-body">
+                <div class="horizontal between">
+                    <h4 class="name">물류사</h4>
+                    <img class=" close" src="/public/images/x_icon.png">
+                </div>
+                <br>
+                <label><b>추가 단가</b></label>
+                <input id="owner-ad-input" class="box0" style="width: 100%;" type="number"
+                    placeholder="추가 단가(원)을 입력하세요.">
+                <br><br>
+                <div class="horizontal between">
+                    <label></label>
+                    <button type="button" class="btn-main" id="btn-owner-ad">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <section class="container-main">
         <div style="width:95%">
             <br>
@@ -117,13 +454,14 @@
                 <canvas id="myChart" style="width: 100%; height: 200px;"></canvas>
             </div>
             <br>
-            <div class="horizontal between">
+         <div class="horizontal between">
                 <h4>세부 내역</h4>
                 <select class="box0" id="op-month">
                     <% 
                     var year=new Date().getFullYear();
                     var selected='';
-                        for(var m=1; m<13; m++) { 
+                    var month=new Date().getMonth()+2;
+                        for(var m=1; m<month; m++) { 
                             var data=year+'-'+m+'-01';
                             if(data==start) {
                                 selected='selected';
@@ -185,7 +523,8 @@
                                 }
                                 // set status
                                 var status;
-                                if(typeof(stackCnt)=='string'||defaultCnt>stackCnt) {
+                                stackCnt=parseInt(stackCnt);
+                                if(defaultCnt>stackCnt) {
                                     status='기본 물량 미만';
                                 } else if(defaultCnt==stackCnt) {
                                     status='기본 물량';
@@ -195,18 +534,22 @@
                                 // set total fee
                                 var totalFee=defaultFee;
                                 // if fee more
-                                if(typeof(stackCnt)=='number'&&defaultCnt>stackCnt) {
+                                if(typeof(stackCnt)=='number'&&defaultCnt<stackCnt) {
                                     totalFee=defaultFee+(stackCnt-defaultCnt)*adFee;
                                 }
                                 %>
                             <tr>
-                                <td><%=ownerName%></td>
-                                <td><%=defaultCnt.toLocaleString()%>개</td>
-                                <td><%=stackCnt%></td>
-                                <td><%=defaultFee.toLocaleString()%></td>
-                                <td>개당 <%=adFee.toLocaleString()%>원</td>
-                                <td><%=status%></td>
-                                <td><%=totalFee.toLocaleString()%>원</td>
+                                <td><b><%=ownerName%></b></td>
+                                <td><b><span class="price"><%=defaultCnt.toLocaleString()%>개</span></b></td>
+                                <td><b><%=stackCnt%>개</b></td>
+                                <td><b><span class="price" data-cat="owner-default" data-id="<%=ownerFee[i].ID%>"
+                                            data-name="<%=ownerFee[i].Name%>"><%=defaultFee.toLocaleString()%>원</span></b>
+                                </td>
+                                <td><b>개당 <span class="price" data-cat="owner-ad" data-id="<%=ownerFee[i].ID%>"
+                                            data-name="<%=ownerFee[i].Name%>"><%=adFee.toLocaleString()%>원</span></b>
+                                </td>
+                                <td><b><%=status%></b></td>
+                                <td><b><%=totalFee.toLocaleString()%>원</b></td>
                             </tr>
                             <% } %>
                         </tbody>
@@ -234,6 +577,25 @@
                                     <th class="head">비용</th>
                                 </tr>
                             </thead>
+                            <tbody>
+                                <% for(var i=0; i<logiFee.length; i++) { %>
+                                <tr>
+                                    <td><b><%=logiFee[i].Name%></b></td>
+                                    <td><b><span class="price" data-cat="logi-default" data-id="<%=logiFee[i].ID%>"
+                                                data-name="<%=logiFee[i].Name%>"><%=logiFee[i].DefaultFee.toLocaleString()%>원</span></b>
+                                    </td>
+                                    <% var commission='미설정';
+                                            var price=0;
+                                            if(logiFee[i].Commission) {
+                                                commission=logiFee[i].Commission+'%';
+                                                price=(logiFee[i].DefaultFee/100)*logiFee[i].Commission;
+                                            } %>
+                                    <td><b><span class="price" data-cat="commission" data-name="<%=logiFee[i].Name%>"
+                                                data-id="<%=logiFee[i].ID%>"><%=commission%></span></b></td>
+                                    <td><b><%=price.toLocaleString()%>원</b></td>
+                                </tr>
+                                <% } %>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -256,6 +618,18 @@
                                     <th class="head">비용</th>
                                 </tr>
                             </thead>
+                            <tbody>
+                                <% for(var i=0; i<logiFee.length; i++) { %>
+                                <tr>
+                                    <td><b><%=logiFee[i].Name%></b></td>
+                                    <td><b><%=logiFee[i].ItemCnt>0? logiFee[i].ItemCnt.toLocaleString(): 0%>개</b></td>
+                                    <td><b>개당 <span class="price" data-cat="logi-ad-fee" data-id="<%=logiFee[i].ID%>"
+                                                data-name="<%=logiFee[i].Name%>"><%=logiFee[i].AdFee? logiFee[i].AdFee.toLocaleString()+'원': '미설정'%></span></b>
+                                    </td>
+                                    <td><b><%=(logiFee[i].ItemCnt*logiFee[i].AdFee).toLocaleString()%>원</b></td>
+                                </tr>
+                                <% } %>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -281,6 +655,18 @@
                                     <th class="head">비용</th>
                                 </tr>
                             </thead>
+                            <tbody>
+                                <% for(var i=0; i<busFee.length; i++) { %>
+                                <tr>
+                                    <td><b><%=busFee[i].Name%></b></td>
+                                    <td><b><%=busFee[i].Cnt%>개</b></td>
+                                    <td><b>노선당 <span class="price" data-cat="bus" data-id="<%=busFee[i].ID%>"
+                                                data-name="<%=busFee[i].Name%>"><%=busFee[i].DefaultFee.toLocaleString()%>원</span></b>
+                                    </td>
+                                    <td><b><%=(busFee[i].DefaultFee*busFee[i].Cnt).toLocaleString()%>원</b></td>
+                                </tr>
+                                <% } %>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -299,16 +685,31 @@
                         </div>
                         <br>
                         <table style="width: 100%;">
-                        <thead>
-                            <tr>
-                                <th class="head">물류사</th>
-                                <th class="head">노선</th>
-                                <th class="head">운임</th>
-                                <th class="head">비용</th>
-                                <th class="head">중개 수수료</th>
-                                <th class="head">합계</th>
-                            </tr>
-                        </thead>
+                            <thead>
+                                <tr>
+                                    <th class="head">물류사</th>
+                                    <th class="head">노선</th>
+                                    <th class="head">운임</th>
+                                    <th class="head">비용</th>
+                                    <th class="head">중개 수수료</th>
+                                    <th class="head">합계</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for(var i=0; i<logiFee.length; i++) { %>
+                                <tr>
+                                    <td><b><%=logiFee[i].Name%></b></td>
+                                    <td><b><%=logiFee[i].RouteCnt?logiFee[i].RouteCnt:0 %>개</b></td>
+                                    <td><b>노선당 <span class="price" data-cat="logi-run-fee" data-id="<%=logiFee[i].ID%>"
+                                                data-name="<%=logiFee[i].Name%>"><%=logiFee[i].RunFee? logiFee[i].RunFee.toLocaleString()+'원':'미설정'%></span></b>
+                                    </td>
+                                    <td><b><%=(logiFee[i].RouteCnt*logiFee[i].RunFee).toLocaleString()%>원</b></td>
+                                    <td><b><%=((logiFee[i].RouteCnt*logiFee[i].RunFee)/10).toLocaleString()%>원</b></td>
+                                    <td><b><%=((logiFee[i].RouteCnt*logiFee[i].RunFee)-((logiFee[i].RouteCnt*logiFee[i].RunFee)/10)).toLocaleString()%>원</b>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
                         </table>
                     </div>
                 </div>

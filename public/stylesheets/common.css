@@ -485,3 +485,8 @@ div.normal {
     padding-right: 15px;
     padding-top: 30px;
 }
+
+.price {
+    color: #199FEF;
+    cursor: pointer;
+}

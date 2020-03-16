@@ -306,8 +306,12 @@ exports.startManager = (app) => {
                 if (!corp) {
                     corp = logis[0].ID;
                 }
-                sql.getOwnerFee(start, end, corp, (ownerFee) => {
-                    res.render('./Manager/calculate', { user: user, ownerFee: ownerFee, start: start, logis: logis, corp: corp });
+                sql.getOwnerFee(start, end, corp, null, (ownerFee) => {
+                    sql.getBusFee( end, null, (busFee)=>{
+                        sql.getLogiFee(start, end, null, (logiFee)=>{
+                            res.render('./Manager/calculate', { user: user, ownerFee: ownerFee, start: start, logis: logis, corp: corp, busFee: busFee, logiFee: logiFee });
+                        });
+                    });
                 })
             });
 
@@ -333,6 +337,67 @@ exports.startManager = (app) => {
             res.json({
                 Cnt: rs
             })
+        });
+    });
+
+    app.post('/Manager/ajax/Update/Commission', (req, res)=>{
+        const id=req.body['id'];
+        const commission=req.body['commission'];
+        sql.updateCommission(id, commission, (rs)=>{
+            if(rs){
+                res.json(Ok);
+            } else {
+                res.json(Not);
+            }
+        });
+    });
+
+    app.post('/Manager/ajax/Update/AdFee', (req, res)=>{
+        const id=req.body['id'];
+        const fee=req.body['fee'];
+
+        sql.updateAdFee(id, fee, (rs)=>{
+            if(rs) {
+                res.json(Ok);
+            } else {
+                res.json(Not);
+            }
+        });
+    });
+
+    app.post('/Manager/ajax/Update/LogiRunFee', (req, res)=>{
+        const id=req.body['id'];
+        const fee=req.body['fee'];
+        sql.updateLogiRunFee(id, fee, (rs)=>{
+            if(rs) {
+                res.json(Ok);
+            } else {
+                res.json(Not);
+            }
+        });
+    });
+
+    app.post('/Manager/ajax/Update/BusFee', (req, res)=>{
+        const id=req.body['id'];
+        const fee=req.body['fee'];
+        sql.updateBusFee(id, fee, (rs)=>{
+            if(rs) {
+                res.json(Ok);
+            } else {
+                res.json(Not);
+            }
+        });
+    });
+
+    app.post('/Manager/ajax/Update/DefaultFee', (req, res)=>{
+        const id=req.body['id'];
+        const fee=req.body['fee'];
+        sql.updateDefaultFee(id, fee, (rs)=>{
+            if(rs) {
+                res.json(Ok);
+            } else {
+                res.json(Not);
+            }
         });
     });
 }
