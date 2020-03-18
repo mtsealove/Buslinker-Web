@@ -4,7 +4,7 @@
         $(`.nav-top[data-url='${url}']`).addClass('active');
 
         $('.logo-container').click(function() {
-            location.href='/';
+            location.href='/Logistics';
         });
 
         $('#logout-container').hide();
@@ -41,17 +41,15 @@
 
         <div class="nav-container">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item nav-top" data-url="/Logistics">
-                    <a class="nav-link" href="/Logistics">정산관리</a>
-                </li>
-                <li class="nav-item nav-top" data-url="/Manager">
-                    <a class="nav-link" href="/Manager">운행 현황</a>
-                </li>
+                
                 <li class="nav-item nav-top" data-url="/Logistics/Route">
                     <a class="nav-link" href="/Logistics/Route">노선관리</a>
                 </li>
                 <li class="nav-item nav-top" data-url="/Logistics/ItemList">
                     <a class="nav-link" href="/Logistics/ItemList">물량관리</a>
+                </li>
+                <li class="nav-item nav-top" data-url="/Logistics/Calculate">
+                    <a class="nav-link" href="/Logistics/Calculate">정산관리</a>
                 </li>
             </ul>
             <div class="horizontal center">

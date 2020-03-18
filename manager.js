@@ -301,6 +301,20 @@ exports.startManager = (app) => {
             start = date.getFullYear() + '-' + (date.getMonth() + 1) + '-01';
             end = date.getFullYear() + '-' + (date.getMonth() + 2) + '-01';
         }
+        var total=[];
+        const d=new Date();
+        for(var i=1; i<13; i++) {
+            var str=d.getFullYear()+'-';
+            if(i<10) {
+                str+='0';
+            }
+            str+=i+'-01';
+            total.push({
+                Ym: str,
+                price: 0
+            });
+        }
+        console.log(total);
         if (user.userID) {
             sql.getLogis((logis) => {
                 if (!corp) {
@@ -309,11 +323,45 @@ exports.startManager = (app) => {
                 sql.getOwnerFee(start, end, corp, null, (ownerFee) => {
                     sql.getBusFee( end, null, (busFee)=>{
                         sql.getLogiFee(start, end, null, (logiFee)=>{
-                            res.render('./Manager/calculate', { user: user, ownerFee: ownerFee, start: start, logis: logis, corp: corp, busFee: busFee, logiFee: logiFee });
+                            sql.getLogiGraph(null, null, (logi)=>{
+                                sql.getBusGraph(null, (bus)=>{
+                                    // add total fee
+                                    for(var i=0; i<total.length; i++) {
+                                        // sub bus run fee
+                                        for(var j=0; j<bus.length; j++) {
+                                            if(total[i].Ym==bus[j].Ym) {
+                                                total[i].price-=bus[j].RunFee;
+                                            }
+                                        }
+                                        // add logi take fee
+                                        for(var j=0; j<logi.take.length; j++) {
+                                            if(total[i].Ym==logi.take[j].Ym) {
+                                                total[i].price+=logi.take[j].Total;
+                                            }
+                                        }
+                                        // add logi delivery fee
+                                        for(var j=0; j<logi.delivery.length; j++) {
+                                            if(total[i].Ym==logi.delivery[j].Ym) {
+                                                total[i].price+=logi.delivery[j].LogiPrice;
+                                            }
+                                        }
+                                        // add logi run fee
+                                        for(var j=0; j<logi.run.length; j++) {
+                                            if(total[i].Ym==logi.run[j].Ym) {
+                                                total[i].price+=logi.run[j].RunFee;
+                                            }
+                                        }
+                                    }
+                                    console.log(total);
+                                    res.render('./Manager/calculate', { user: user, ownerFee: ownerFee, start: start, logis: logis, corp: corp, busFee: busFee, logiFee: logiFee, total: total });
+                                });
+                            });
                         });
                     });
                 })
             });
+            
+            
 
         } else {
             res.redirect('/');
@@ -393,6 +441,18 @@ exports.startManager = (app) => {
         const id=req.body['id'];
         const fee=req.body['fee'];
         sql.updateDefaultFee(id, fee, (rs)=>{
+            if(rs) {
+                res.json(Ok);
+            } else {
+                res.json(Not);
+            }
+        });
+    });
+
+    app.post('/Manager/ajax/Update/OwnerDefaultCnt', (req, res)=>{
+        const id=req.body['id'];
+        const cnt=req.body['cnt'];
+        sql.updateOwnerCnt(id, cnt, (rs)=>{
             if(rs) {
                 res.json(Ok);
             } else {

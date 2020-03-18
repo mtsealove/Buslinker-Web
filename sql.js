@@ -740,7 +740,6 @@ exports.createItemList = (userID, ids, item_names, names, phones, addrs, callbac
                             });
                         }
                     });
-                    console.log(ids);
                     setItem(addrs, ids);
                 }
             });
@@ -771,7 +770,7 @@ async function setItem(addrs, idTmps) {
             console.error(err);
         } else {
             // update item cluster
-            console.log(cluster);
+            //console.log(cluster);
             UpdateItemCluster(cluster, ids);
         }
     });
@@ -1093,29 +1092,42 @@ exports.getBusFee=(end, bus, callback)=>{
             console.error(e0);
             callback(null);
         } else {
-            console.log(rs);
+            //console.log(rs);
             callback(rs);
         }
     });
 }
 
 exports.getLogiFee=(start, end, logi, callback)=>{
-    var query=`select MMMM.*, LLLL.RouteCnt from 
-    (select MMM.ID, MMM.Name, MMM.Commission, MMM.DefaultFee, MMM.AdFee, MMM.RunFee, RRR.ItemCnt from Members MMM
-    left outer join
-    (select RR.Logi, sum(TT.Cnt) ItemCnt from Route RR
-    left outer join
-    (select RouteID, Cnt from Timeline T
-    join (select ListID ,count(ItemID) Cnt from Item group by ListID) L
-    on T.LogiList=L.ListID
-    where RunDate>='${start}' and RunDate<='${end}') TT 
-    on RR.RouteID=TT.RouteID
-    group by RR.Logi) RRR
-    on MMM.ID=RRR.Logi
-    where MMM.MemberCat=4) MMMM
-    left outer join (
-    select Logi, count(Logi) RouteCnt from Route group by Logi) LLLL
-    on MMMM.ID=LLLL.Logi`;
+    var query=`select MMMMM.*, FFFFF.TotalFee from 
+    (select MMMM.*, LLLL.RouteCnt from 
+        (select MMM.ID, MMM.Name, MMM.Commission, MMM.DefaultFee, MMM.AdFee, MMM.RunFee, RRR.ItemCnt from Members MMM
+        left outer join
+        (select RR.Logi, sum(TT.Cnt) ItemCnt from Route RR
+        left outer join
+        (select RouteID, Cnt from Timeline T
+        join (select ListID ,count(ItemID) Cnt from Item group by ListID) L
+        on T.LogiList=L.ListID
+        where RunDate>='${start}' and RunDate<='${end}') TT 
+        on RR.RouteID=TT.RouteID
+        group by RR.Logi) RRR
+        on MMM.ID=RRR.Logi
+        where MMM.MemberCat=4) MMMM
+        left outer join (
+        select Logi, count(Logi) RouteCnt from Route group by Logi) LLLL
+        on MMMM.ID=LLLL.Logi) MMMMM left outer join
+        (select Corp, sum(TotalFee) TotalFee from 
+        (select Corp, if(TotalFee>DefaultFee, TotalFee, DefaultFee) as TotalFee from
+        (select MM.Corp, (II.ItemCnt-MM.DefaultCnt)*MM.AdFee+MM.DefaultFee TotalFee, MM.DefaultFee from 
+        (select Corp, ID,Name ,AdFee, DefaultFee, DefaultCnt from Members where MemberCat=3 ) MM
+        left outer join (
+        select OwnerID, sum(ItemCnt) ItemCnt from
+        (select IL.*, count(I.ItemID) ItemCnt from ItemList IL join Item I
+        on IL.ListID=I.ListID
+        where IL.SoldDate>='${start}' and SoldDate<'${end}'
+        group by IL.ListID) O
+        group by OwnerID) II on MM.ID=II.OwnerID) MMM) MMMM group by Corp) FFFFF
+        on MMMMM.ID=FFFFF.Corp`;
 
     if(logi) {
         query+=` where ID='${logi}'`;
@@ -1315,8 +1327,8 @@ exports.getRouteItem = (date, logi, callback) => {
                             clearInterval(interval);
                             callback(route);
                         } else {
-                            console.log('itme: total: ' + itemTotal + ' cnt: ' + itemCnt);
-                            console.log('owner: totla: ' + onwerTotal + ' cnt: ' + ownerCnt);
+                           // console.log('itme: total: ' + itemTotal + ' cnt: ' + itemCnt);
+                            //console.log('owner: totla: ' + onwerTotal + ' cnt: ' + ownerCnt);
                         }
                     }, 100);
                 }
@@ -1420,8 +1432,8 @@ async function updatePartTime(routeID, part, callback) {
     for (var i = 0; i < part.length; i++) {
         var id = ((String)(part[i])).split(':')[0];
         var date = ((String)(part[i])).split(':')[1];
-        console.log(id);
-        console.log(date);
+  //      console.log(id);
+        // console.log(date);
         var insertQuery = `insert into TimeLine set RouteID=${routeID}, RunDate='${date}', PTID='${id}'`;
         insertList.push(insertQuery);
         var updateQuery = `update Timeline set PTID='${id}' where RouteID=${routeID} and RunDate='${date}'`;
@@ -1852,4 +1864,140 @@ exports.updateDefaultFee=(id, fee, callback)=>{
             callback(true);
         }
     })
+}
+
+exports.updateOwnerCnt=(id, cnt, callback)=>{
+    const query=`update Members set DefaultCnt=${cnt} where ID='${id}'`;
+    connection.query(query, (e0)=>{
+        if(e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    })
+}
+
+exports.getBusGraph=(bus, callback)=>{
+    var query=`select date_format(R.Month, '%Y-%m-01') Ym, count(R.RouteID)*M.DefaultFee*0.1 RunFee from Members M join
+    (select distinct C.Month, R.RouteID, R.CorpID from Calendar C, Route R
+    where C.Month between R.ContractStart and R.ContractEnd ) R
+    on M.ID=R.CorpID `;
+    if(bus) {
+        query+=`where ID='${bus}'`;
+    }
+    query+=`group by R.Month, R.CorpID`;
+
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
+        }
+    });
+}
+
+exports.getLogiGraph=(logi, owner,callback)=>{
+    var deliveryQuery=`select Ym ,sum(Cnt*AdFee) LogiPrice from 
+    (select MEMB.AdFee, date_format(ROUT.RunDate, '%Y-%m-01') Ym ,ROUT.Cnt from 
+    (select RTE.*, ITL.Cnt from 
+    (select RR.*, TT.LogiList, TT.RunDate from 
+    (select RouteID, Logi from Route where Logi in
+    (select ID from Members where MemberCat=4 `
+    if(logi) {
+        deliveryQuery+=` and ID='${logi}'`;
+    }
+    deliveryQuery+=` )) RR left outer join 
+    (select LogiList, RouteID, RunDate from Timeline ) TT 
+    on RR.RouteID=TT.RouteID where LogiList is not null) RTE join 
+    (select ListID, count(ItemID) Cnt from Item group by ListID) ITL
+    on RTE.LogiList=ITL.ListID) ROUT join 
+    Members MEMB on ROUT.Logi=MEMB.ID) ROUTE group by Ym`;
+
+    var takeQuery=`select Ym, if(sum(TmpFee)>0, sum(TmpFee)+sum(DefaultFee), sum(DefaultFee)) Total from 
+    (select distinct Ym, (Tmp*Commission)/100 TmpFee, (DefaultFee*Commission)/100 DefaultFee from
+    (select TOTAL.Ym, TOTAL.DefaultFee, TOTAL.Tmp, MEMBS.Commission from 
+    (select FEEE.*, ROUT.Logi from 
+    (select MEM.ID, ITL.Ym,(ITL.Cnt-MEM.DefaultCnt)*Mem.AdFee Tmp, DefaultFee from
+    (select ID, AdFee, DefaultFee ,DefaultCnt from Members ) MEM join
+    (select IL.OwnerID, date_format(SoldDate, '%Y-%m-01') Ym, sum(II.Cnt) Cnt from
+    (select * from ItemList where OwnerID in
+    (select ID from Members where MemberCat=3 `;
+    if(owner) {
+        takeQuery+=`and ID like '%${owner}%'`;
+    }
+        takeQuery+=`)) IL left outer join    
+    (select ListID, count(ItemID) Cnt from Item group by ListID) II
+    on IL.ListID=II.ListID group by OwnerID, Ym) ITL
+    on MEM.ID=ITL.OwnerID) FEEE left outer join
+    Route ROUT on ROUT.Owners regexp FEEE.ID) TOTAL left outer join
+    Members MEMBS on TOTAL.Logi=MEMBS.ID) Result) R group by Ym`;
+
+    var runQuery=`select date_format(R.Month, '%Y-%m-01') Ym, count(R.RouteID)*M.RunFee*0.1 RunFee from Members M join
+    (select distinct C.Month, R.RouteID, R.Logi from Calendar C, Route R
+    where C.Month between R.ContractStart and R.ContractEnd) R
+    on M.ID=R.Logi `;
+    if(logi) {
+        runQuery+=`where M.ID='${logi}'`;
+    }    
+    runQuery+=` group by R.Logi, R.Month`;
+
+    connection.query(deliveryQuery, (e0, deliveryRs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            connection.query(takeQuery, (e1, takeRs)=>{
+                if(e1) {
+                    console.error(e1);
+                    callback(null);
+                } else {
+                    connection.query(runQuery, (e2, runRs)=>{
+                        if(e2) {
+                            console.error(e2);
+                            callback(null);
+                        } else {
+                            callback({
+                                delivery: deliveryRs,
+                                take: takeRs,
+                                run:runRs
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
+
+exports.getLogiCnt=(logi, month, date, callback)=>{
+    var query=`select RRRR.Name, sum(LogiCnt) LogiCnt, sum(OwnerCnt) OwnerCnt from
+    (select RRR.*, III.Cnt OwnerCnt from 
+    (select RR.*, II.Cnt LogiCnt from 
+    (select R.Name, T.* from Route R join 
+    (select RouteID, LogiList, ListID from Timeline where RouteID in(
+    select RouteID from Route where Logi='${logi}') and `
+    if(month) {
+        var start=month+'-01';
+        var end=month.split('-')[0]+'-'+(parseInt(month.split('-')[1])+1)+'-01';
+        query+=`RunDate between '${start}' and '${end}'`;
+    } else  {
+        query+=`RunDate='${date}'`;
+    }
+    query+=`) T
+    on R.RouteID=T.RouteID) RR left outer join 
+    (select ListID, count(ItemID) Cnt from Item group by ListID) II
+    on RR.LogiList=II.ListID) RRR left outer join
+    (select ListID, count(ItemID) Cnt from Item group by ListID) III
+    on RRR.ListID=III.ListID) RRRR group by Name`;
+
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
+        }
+    });
 }

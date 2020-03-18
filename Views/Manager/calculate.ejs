@@ -23,11 +23,12 @@
             setLogiDefaultFee();
             setOwnerDefaultFee();
             setOwnerAdFee();
+            setOwnerDefaultCnt();
         });
 
         function setChart() {
             var options = {
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 spanGaps: false,
                 elements: {
                     line: {
@@ -49,7 +50,7 @@
                         display: true,
                         type: 'category',
                         scaleLabel: {
-                            display: true,
+                            display: false,
                             labelString: '월'
                         }
                     }],
@@ -57,35 +58,41 @@
                 tooltips: {
                     callbacks: {
                         title: function (tooltipItems, data) {
-                            return data.datasets[tooltipItems[0].datasetIndex].data[tooltipItems[0].index].x;
+                            const month=data.labels[tooltipItems[0].index];
+                            const title=month.split('-')[0]+'년 '+month.split('-')[1]+'월';
+                            return title;
+                        },
+                        label: function(tooltipItems, data) {
+                            var index=tooltipItems.index;
+                            var value=`₩`+data.datasets[0].data[index].toLocaleString();
+                            return value;
                         }
                     }
+                },
+                legend: {
+                    display: false
                 }
 
             };
             var ctx = document.getElementById('myChart').getContext('2d');
             var gradientAdd = ctx.createLinearGradient(0, 0, 0, 400);
-            gradientAdd.addColorStop(0, 'rgba(250,174,50,1)');
-            gradientAdd.addColorStop(1, 'rgba(250,174,50,0)');
-            var gradientMinus = ctx.createLinearGradient(0, 0, 0, 400);
-            gradientMinus.addColorStop(0, 'rgba(119, 100, 228, 1');
-            gradientMinus.addColorStop(1, 'rgba(119, 100, 228, 0');
+            gradientAdd.addColorStop(0, 'rgba(119,100,228,1)');
+            gradientAdd.addColorStop(1, 'rgba(119,100,228,0)');
+            var label=[], data=[];
+            <% for(var i=0; i<total.length; i++) { %>
+                label.push('<%=total[i].Ym.substring(0, 7)%>');
+                data.push(<%=total[i].price%>);
+            <% } %>
 
             var data = {
-                labels: ['2020-01', '2020-02', '2020-03', '2020-04', '2020-05', '2020-06', '2020-07', '2020-08', '2020-09', '2020-10', '2020-11', '2020-12'],
+                labels: label,
                 datasets: [{
-                    borderColor: '#FB6340',
-                    backgroundColor: gradientAdd,
-                    data: [10, 202, 302, 240, 250, 602, 720, 280, 290, 1200, 1102, 120],
-                    label: '수익',
-
-                },
-                {
                     borderColor: '#7764E4',
-                    backgroundColor: gradientMinus,
-                    data: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120],
-                    label: '비용',
-                }]
+                    backgroundColor: gradientAdd,
+                    data: data,
+                    label: '',
+                },
+              ]
             };
 
             chart = new Chart(ctx, {
@@ -146,6 +153,9 @@
                             break;
                         case 'owner-ad':
                             $('#popup-owner-ad').show();
+                            break;
+                        case 'owner-cnt':
+                            $('#popup-owner-cnt').show();
                             break;
                     }
                 }
@@ -257,11 +267,11 @@
                     $.post('/Manager/ajax/Update/DefaultFee', {
                         id: $('#input-id').val(),
                         fee: fee
-                    }, function(data) {
-                        if(data.Result) {
+                    }, function (data) {
+                        if (data.Result) {
                             alert('물류 수거 비용이 지정되었습니다.');
                             location.reload();
-                        }  else {
+                        } else {
                             alert('오류가 발생하였습니다.');
                         }
                     });
@@ -279,11 +289,11 @@
                     $.post('/Manager/ajax/Update/DefaultFee', {
                         id: $('#input-id').val(),
                         fee: fee
-                    }, function(data) {
-                        if(data.Result) {
+                    }, function (data) {
+                        if (data.Result) {
                             alert('기본 비용이 지정되었습니다.');
                             location.reload();
-                        }  else {
+                        } else {
                             alert('오류가 발생하였습니다.');
                         }
                     });
@@ -292,19 +302,40 @@
         }
 
         function setOwnerAdFee() {
-            $('#btn-owner-ad').click(function() {
-                const fee=$('#owner-ad-input').val();
-                if(fee=='') {
+            $('#btn-owner-ad').click(function () {
+                const fee = $('#owner-ad-input').val();
+                if (fee == '') {
                     alert('추가 단가를 입력하세요.');
-                } else if(confirm('추가 단가를 지정하시겠습니까?')) {
+                } else if (confirm('추가 단가를 지정하시겠습니까?')) {
                     $.post('/Manager/ajax/Update/AdFee', {
                         id: $('#input-id').val(),
                         fee: fee
-                    }, function(data) {
-                        if(data.Result) {
+                    }, function (data) {
+                        if (data.Result) {
                             alert('추가 단가가 지정되었습니다.');
                             location.reload();
-                        }  else {
+                        } else {
+                            alert('오류가 발생하였습니다.');
+                        }
+                    });
+                }
+            });
+        }
+
+        function setOwnerDefaultCnt() {
+            $('#btn-owner-cnt').click(function () {
+                const cnt = $('#owner-cnt-input').val();
+                if (cnt == '') {
+                    alert('기본 물량을 입력하세요.');
+                } else if (confirm('추가 단가를 지정하시겠습니까?')) {
+                    $.post('/Manager/ajax/Update/OwnerDefaultCnt', {
+                        id: $('#input-id').val(),
+                        cnt: cnt
+                    }, function (data) {
+                        if (data.Result) {
+                            alert('기본 물량이 지정되었습니다.');
+                            location.reload();
+                        } else {
                             alert('오류가 발생하였습니다.');
                         }
                     });
@@ -443,6 +474,23 @@
                 </div>
             </div>
         </div>
+        <!-- owner defulat cnt -->
+        <div class="popup card" id="popup-owner-cnt">
+            <div class="card-body">
+                <div class="horizontal between">
+                    <h4 class="name">물류사</h4>
+                    <img class=" close" src="/public/images/x_icon.png">
+                </div>
+                <br>
+                <label><b>기본 물량</b></label>
+                <input id="owner-cnt-input" class="box0" style="width: 100%;" type="number" placeholder="기본 물량을 입력하세요.">
+                <br><br>
+                <div class="horizontal between">
+                    <label></label>
+                    <button type="button" class="btn-main" id="btn-owner-cnt">확인</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <section class="container-main">
@@ -450,11 +498,13 @@
             <br>
             <h4>손익 그래프</h4>
             <br>
-            <div class="card" style="width: 100%; height: 200px;">
-                <canvas id="myChart" style="width: 100%; height: 200px;"></canvas>
+            <div class="card" style="width: 100%; ">
+                <div class="card-body">
+                <canvas id="myChart" style="width: 100%; height: 300px;"></canvas>
+            </div>
             </div>
             <br>
-         <div class="horizontal between">
+            <div class="horizontal between">
                 <h4>세부 내역</h4>
                 <select class="box0" id="op-month">
                     <% 
@@ -540,7 +590,9 @@
                                 %>
                             <tr>
                                 <td><b><%=ownerName%></b></td>
-                                <td><b><span class="price"><%=defaultCnt.toLocaleString()%>개</span></b></td>
+                                <td><b><span class="price" data-cat="owner-cnt" data-id="<%=ownerFee[i].ID%>"
+                                            data-name="<%=ownerFee[i].Name%>"><%=defaultCnt.toLocaleString()%>개</span></b>
+                                </td>
                                 <td><b><%=stackCnt%>개</b></td>
                                 <td><b><span class="price" data-cat="owner-default" data-id="<%=ownerFee[i].ID%>"
                                             data-name="<%=ownerFee[i].Name%>"><%=defaultFee.toLocaleString()%>원</span></b>
@@ -581,14 +633,13 @@
                                 <% for(var i=0; i<logiFee.length; i++) { %>
                                 <tr>
                                     <td><b><%=logiFee[i].Name%></b></td>
-                                    <td><b><span class="price" data-cat="logi-default" data-id="<%=logiFee[i].ID%>"
-                                                data-name="<%=logiFee[i].Name%>"><%=logiFee[i].DefaultFee.toLocaleString()%>원</span></b>
+                                    <td><b><%=logiFee[i].TotalFee? logiFee[i].TotalFee.toLocaleString():0%>원</b>
                                     </td>
                                     <% var commission='미설정';
                                             var price=0;
                                             if(logiFee[i].Commission) {
                                                 commission=logiFee[i].Commission+'%';
-                                                price=(logiFee[i].DefaultFee/100)*logiFee[i].Commission;
+                                                price=(logiFee[i].TotalFee/100)*logiFee[i].Commission;
                                             } %>
                                     <td><b><span class="price" data-cat="commission" data-name="<%=logiFee[i].Name%>"
                                                 data-id="<%=logiFee[i].ID%>"><%=commission%></span></b></td>
@@ -606,7 +657,7 @@
                                 <h4 class="card-title">물류 배송 비용</h4>
                                 <img src="/public/images/calculate_info.png" class="calculate-info">
                             </div>
-                            <img src="/public/images/calculate_minus.png" class="calculate-icon">
+                            <img src="/public/images/calculate_plus.png" class="calculate-icon">
                         </div>
                         <br>
                         <table style="width: 100%;">
@@ -643,7 +694,7 @@
                                 <h4 class="card-title">물류 노선 비용</h4>
                                 <img src="/public/images/calculate_info.png" class="calculate-info">
                             </div>
-                            <img src="/public/images/calculate_plus.png" class="calculate-icon">
+                            <img src="/public/images/calculate_minus.png" class="calculate-icon">
                         </div>
                         <br>
                         <table style="width: 100%;">
@@ -677,11 +728,7 @@
                                 <h4 class="card-title">통근 노선 비용</h4>
                                 <img src="/public/images/calculate_info.png" class="calculate-info">
                             </div>
-                            <div class="horizontal">
-                                <img src="/public/images/calculate_plus.png" class="calculate-icon">
-                                <div style="width: 10px;"></div>
-                                <img src="/public/images/calculate_minus.png" class="calculate-icon">
-                            </div>
+                            <img src="/public/images/calculate_plus.png" class="calculate-icon">
                         </div>
                         <br>
                         <table style="width: 100%;">

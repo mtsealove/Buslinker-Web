@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>정산관리</title>
+    <%- include('config')%>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
+    <script>
+        $(function() {
+            setChart();
+        });
+
+        function setChart() {
+            var options = {
+                maintainAspectRatio: true,
+                spanGaps: false,
+                elements: {
+                    line: {
+                        tension: 0.4
+                    }
+                },
+                scales: {
+                    yAxes: [{
+                        stacked: false,
+                        ticks: {
+                            beginAtZero: true
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: '금액'
+                        }
+                    }],
+                    xAxes: [{
+                        display: true,
+                        type: 'category',
+                        scaleLabel: {
+                            display: false,
+                            labelString: '월'
+                        }
+                    }],
+                },
+                tooltips: {
+                    callbacks: {
+                        title: function (tooltipItems, data) {
+                            const month=data.labels[tooltipItems[0].index];
+                            const title=month.split('-')[0]+'년 '+month.split('-')[1]+'월';
+                            return title;
+                        },
+                        label: function(tooltipItems, data) {
+                            var index=tooltipItems.index;
+                            var value=`₩`+data.datasets[0].data[index].toLocaleString();
+                            return value;
+                        }
+                    }
+                },
+                legend: {
+                    display: false
+                }
+
+            };
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var gradientAdd = ctx.createLinearGradient(0, 0, 0, 400);
+            gradientAdd.addColorStop(0, 'rgba(119,100,228,1)');
+            gradientAdd.addColorStop(1, 'rgba(119,100,228,0)');
+            var label=[], data=[];
+            <% for(var i=0; i<total.length; i++) { %>
+                label.push('<%=total[i].Ym%>');
+                data.push(<%=total[i].price%>);
+            <% } %>
+        
+            var data = {
+                labels: label,
+                datasets: [{
+                    borderColor: '#7764E4',
+                    backgroundColor: gradientAdd,
+                    data: data,
+                    label: '',
+                },
+              ]
+            };
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: options
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <%- include('nav')%>
+    <section class="container-main">
+        <div class="normal">
+            <!-- 전체 그래프 -->
+            <h5><b>손익 그래프</b></h5>
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="myChart" style="width: 100%; height: 300px;"></canvas>
+                </div>
+            </div>
+            <br>
+            <!-- 물류 수거 비용 -->
+            <div class="horizontal between">
+                <h5><b>세부 내역</b></h5>
+                <select class="box0">
+                    <% for(var i=1; i<=(new Date().getMonth())+1; i++) {
+                        var d=new Date();
+                        var str=d.getFullYear()+'-';
+                        if(i<10) {
+                            str+='0';
+                        }
+                        str+=i; %>
+                        <option value="<%=str+'-01'%>"><%=str%></option>
+                    <% } %>
+                </select>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <div class="horizontal between">
+                        <h3 class="card-title"><b>물류 수거 비용</b></h3>
+                        <img src="/public/images/calculate_plus.png" class="calculate-icon">
+                    </div>
+                    <br>
+                    <table>
+                        <thead>
+                            <th class="head">화주</th>
+                            <th class="head">기본물량</th>
+                            <th class="head">누적물량</th>
+                            <th class="head">기본비용</th>
+                            <th class="head">추가단가</th>
+                            <th class="head">상태</th>
+                            <th class="head">비용</th>
+                        </thead>
+                        <tbody>
+                            <% for(var i=0; i<owner.length; i++) { %>
+                            <tr>
+                                <td><%=owner[i].Name%></td>
+                                <td><%=owner[i].DefaultCnt?owner[i].DefaultCnt.toLocaleString():0%>개</td>
+                                <td><%=owner[i].ItemCnt?owner[i].ItemCnt.toLocaleString():0%>개</td>
+                                <td><%=owner[i].DefaultFee.toLocaleString()%>원</td>
+                                <td><%=owner[i].AdFee.toLocaleString()%>원</td>
+                                <td><%=owner[i].ItemCnt>owner[i].DefaultCnt?owner[i].ItemCnt-owner[i].DefaultCnt+'개 초과':'기본 물량 이하'%>
+                                </td>
+                                <% var finalFee;
+                                    if(owner[i].ItemCnt>owner[i].DefaultCnt) {
+                                        finalFee=(owner[i].DefaultFee+(owner[i].ItemCnt-owner[i].DefaultCnt)*owner[i].AdFee).toLocaleString();
+                                    } else {
+                                        finalFee=owner[i].DefaultFee.toLocaleString();
+                                    } %>
+                                <td><%=finalFee%>원</td>
+                            </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br>
+            <div class="horizontal between">
+                <!--물류 수거 수수료-->
+                <div class="card" style="width: 32%;">
+                    <div class="card-body">
+                        <div class="horizontal between">
+                            <h4 class="card-title"><b>물류 수거 수수료</b></h4>
+                            <img src="/public/images/calculate_minus.png" class="calculate-icon">
+                        </div>
+                        <table>
+                            <thead>
+                                <th class="head">물류 수거 비용</th>
+                                <th class="head">수수료율</th>
+                                <th class="head">비용</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><%=logi[0].TotalFee.toLocaleString()%>원</td>
+                                    <td><%=logi[0].Commission%>%</td>
+                                    <td><%=((logi[0].TotalFee/100)*logi[0].Commission).toLocaleString()%>원</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--물류 배송 비용-->
+                <div class="card" style="width: 32%;">
+                    <div class="card-body">
+                        <div class="horizontal between">
+                            <h4 class="card-title"><b>물류 배송 비용</b></h4>
+                            <img src="/public/images/calculate_minus.png" class=" calculate-icon" >
+                        </div>
+                        <table>
+                            <thead>
+                                <th class="head">배송 물량</th>
+                                <th class="head">단가</th>
+                                <th class="head">비용</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><%=logi[0].ItemCnt.toLocaleString()%> 개</td>
+                                    <td>개당 <%=logi[0].AdFee.toLocaleString()%>원</td>
+                                    <td><%=(logi[0].ItemCnt*logi[0].AdFee).toLocaleString()%>원</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--물류 통근 노선 비용-->
+                <div class="card" style="width: 32%;">
+                    <div class="card-body">
+                        <div class="horizontal between">
+                            <h4 class="card-title"><b>통근 노선 비용</b></h4>
+                            <img src="/public/images/calculate_minus.png" class="calculate-icon">
+                        </div>
+                        <table>
+                            <thead>
+                                <th class="head">노선</th>
+                                <th class="head">운임</th>
+                                <th class="head">비용</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><%=logi[0].RouteCnt%>개</td>
+                                    <td>개당 <%=logi[0].RunFee.toLocaleString()%>원</td>
+                                    <td><%=(logi[0].RunFee*logi[0].RouteCnt).toLocaleString()%>원</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

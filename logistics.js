@@ -8,9 +8,6 @@ const Not = {
 const sql = require('./sql');
 
 exports.startLogistics = (app) => {
-    app.get('/Logistics', (req, res) => {
-        res.render('./Logi/index', { user: auth.getUser(req) });
-    });
 
     app.get('/Logistics/ItemList', (req, res) => {
         const user = auth.getUser(req);
@@ -138,6 +135,94 @@ exports.startLogistics = (app) => {
         sql.getTimelineShort(routeID, (timeline)=>{
             res.render('./Logi/schedule', {timeline:timeline});
         });
+    });
+
+    app.get('/Logistics/', (req, res)=>{
+        const user=auth.getUser(req);
+        var start=req.query.start;
+        var end=req.query.end;
+        if(!start) {
+            var d=new Date();
+            start=d.getFullYear()+'-'+(d.getMonth()+1)+'-1';
+            end=d.getFullYear()+'-'+(d.getMonth()+2)+'-1';
+        }
+        
+        if(user.userID) {
+            sql.getLogiFee(start, end, user.userID, (logi)=>{
+                sql.getOwnerFee(start, end, user.userID, null, (owner)=>{
+                    res.render('./Logi/index', {user: user, logi:logi, owner:owner});
+                });
+            })
+        } else {
+            res.redirect('/');
+        }
+    });
+
+    app.get('/Logistics/ajax/ItemCnt', (req, res)=>{
+        var month=req.query.month;
+        var date=req.query.date;
+        const user=auth.getUser(req);
+        sql.getLogiCnt(user.userID, month, date, (rs)=>{
+            res.json(rs);
+        });
+    });
+
+    app.get('/Logistics/Calculate', (req, res)=>{
+        const user=auth.getUser(req);
+        var start=req.query.start;
+        var end;
+        if(!start) {
+            start=getDate();
+            start=start.substring(0,8)+'01';
+            console.log(start);
+        }
+        end=start.split('-')[0]+'-'+(parseInt(start.split('-')[1])+1)+'-01';
+        if(user.userID) {
+            var total=[];
+            var date=new Date();
+            for(var i=1; i<=12; i++) {
+                var str=date.getFullYear()+'-';
+                if(i<9) {
+                    str+='0';
+                }
+                str+=i+'-01';
+                total.push({
+                    Ym:str,
+                    price:0
+                });
+            }
+            sql.getLogiFee(start, end, user.userID, (logi)=>{
+                console.log(logi);
+                sql.getLogiGraph(user.userID, null, (graph)=>{
+                    console.log(graph);
+                    
+                    sql.getOwnerFee(start, end, user.userID, null, (owner)=>{
+                        console.log(owner);
+                        for(var i=0; i<total.length; i++) {
+                            for(var j=0; j<graph.take.length; j++) {
+                                if(total[i].Ym==graph.take[j].Ym) {
+                                    total[i].price+=graph.take[j].Total*((100-logi[0].Commission)/100);
+                                }
+                            }
+                            for(var j=0; j<graph.delivery.length; j++) {
+                                if(total[i].Ym==graph.delivery[j].Ym) {
+                                    total[i].price-=graph.delivery[j].LogiPrice;
+                                }
+                            }
+                            for(var j=0; j<graph.run.length; j++) {
+                                if(total[i].Ym==graph.run[j].Ym) {
+                                    total[i].price-=graph.run[j].RunFee;
+                                }
+                            }
+                        }    
+                        console.log(total);
+                        res.render('./Logi/calculate', {user:user, owner:owner, logi: logi, total: total});
+                    });
+                });
+            });
+        } else {    
+            res.redirect('/');
+        }
     });
 }
 

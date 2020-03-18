@@ -490,3 +490,12 @@ div.normal {
     color: #199FEF;
     cursor: pointer;
 }
+
+.quarter {
+    width: 24%;
+}
+
+.calculate-icon {
+    width: 40px;
+    height: 40px;
+}
