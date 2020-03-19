@@ -323,7 +323,7 @@ exports.startManager = (app) => {
                 sql.getOwnerFee(start, end, corp, null, (ownerFee) => {
                     sql.getBusFee( end, null, (busFee)=>{
                         sql.getLogiFee(start, end, null, (logiFee)=>{
-                            sql.getLogiGraph(null, null, (logi)=>{
+                            sql.getLogiGraph(null, null, null, (logi)=>{
                                 sql.getBusGraph(null, (bus)=>{
                                     // add total fee
                                     for(var i=0; i<total.length; i++) {
@@ -352,7 +352,6 @@ exports.startManager = (app) => {
                                             }
                                         }
                                     }
-                                    console.log(total);
                                     res.render('./Manager/calculate', { user: user, ownerFee: ownerFee, start: start, logis: logis, corp: corp, busFee: busFee, logiFee: logiFee, total: total });
                                 });
                             });

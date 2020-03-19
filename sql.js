@@ -1084,7 +1084,7 @@ exports.getBusFee=(end, bus, callback)=>{
     on M.ID=R.CorpID
     where M.MemberCat=2`;
     if(bus) {
-        query+=` where ID='${bus}'`;
+        query+=` and M.ID='${bus}'`;
     }
 
     connection.query(query, (e0, rs)=>{
@@ -1114,7 +1114,9 @@ exports.getLogiFee=(start, end, logi, callback)=>{
         on MMM.ID=RRR.Logi
         where MMM.MemberCat=4) MMMM
         left outer join (
-        select Logi, count(Logi) RouteCnt from Route group by Logi) LLLL
+        select Logi, count(Logi) RouteCnt from Route 
+        where ContractStart<='${start}' and ContractEnd>'${end}'
+        group by Logi) LLLL
         on MMMM.ID=LLLL.Logi) MMMMM left outer join
         (select Corp, sum(TotalFee) TotalFee from 
         (select Corp, if(TotalFee>DefaultFee, TotalFee, DefaultFee) as TotalFee from
@@ -1768,7 +1770,7 @@ exports.getStatus=(date, bus, logi, callback)=>{
     if(bus) {
        timelineQuery+=` where CorpID='${bus}'`;
     } else  if(logi) {
-        timelineQuery+=`where Logi='${logi}'`;
+        timelineQuery+=` where Logi='${logi}'`;
     }
 
     var total=0, cnt=0;
@@ -1879,14 +1881,14 @@ exports.updateOwnerCnt=(id, cnt, callback)=>{
 }
 
 exports.getBusGraph=(bus, callback)=>{
-    var query=`select date_format(R.Month, '%Y-%m-01') Ym, count(R.RouteID)*M.DefaultFee*0.1 RunFee from Members M join
+    var query=`select date_format(R.Month, '%Y-%m-01') Ym, count(R.RouteID)*M.DefaultFee RunFee from Members M join
     (select distinct C.Month, R.RouteID, R.CorpID from Calendar C, Route R
     where C.Month between R.ContractStart and R.ContractEnd ) R
-    on M.ID=R.CorpID `;
+    on M.ID=R.CorpID`;
     if(bus) {
-        query+=`where ID='${bus}'`;
+        query+=` and M.ID='${bus}'`;
     }
-    query+=`group by R.Month, R.CorpID`;
+    query+=` group by R.Month, R.CorpID`;
 
     connection.query(query, (e0, rs)=>{
         if(e0) {
@@ -1898,7 +1900,7 @@ exports.getBusGraph=(bus, callback)=>{
     });
 }
 
-exports.getLogiGraph=(logi, owner,callback)=>{
+exports.getLogiGraph=(logi, owner, bus,callback)=>{
     var deliveryQuery=`select Ym ,sum(Cnt*AdFee) LogiPrice from 
     (select MEMB.AdFee, date_format(ROUT.RunDate, '%Y-%m-01') Ym ,ROUT.Cnt from 
     (select RTE.*, ITL.Cnt from 
@@ -1936,7 +1938,11 @@ exports.getLogiGraph=(logi, owner,callback)=>{
 
     var runQuery=`select date_format(R.Month, '%Y-%m-01') Ym, count(R.RouteID)*M.RunFee*0.1 RunFee from Members M join
     (select distinct C.Month, R.RouteID, R.Logi from Calendar C, Route R
-    where C.Month between R.ContractStart and R.ContractEnd) R
+    where C.Month between R.ContractStart and R.ContractEnd`
+    if(bus) {
+        runQuery+=` and CorpID='${bus}' `;
+    }
+    runQuery+=`) R
     on M.ID=R.Logi `;
     if(logi) {
         runQuery+=`where M.ID='${logi}'`;

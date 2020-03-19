@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>정산관리</title>
+        <%- include('config') %>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
+        <script>
+            $(function(){
+                setChart();
+            });
+
+            function setChart() {
+            var options = {
+                maintainAspectRatio: true,
+                spanGaps: false,
+                elements: {
+                    line: {
+                        tension: 0.4
+                    }
+                },
+                scales: {
+                    yAxes: [{
+                        stacked: false,
+                        ticks: {
+                            beginAtZero: true
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: '금액'
+                        }
+                    }],
+                    xAxes: [{
+                        display: true,
+                        type: 'category',
+                        scaleLabel: {
+                            display: false,
+                            labelString: '월'
+                        }
+                    }],
+                },
+                tooltips: {
+                    callbacks: {
+                        title: function (tooltipItems, data) {
+                            const month = data.labels[tooltipItems[0].index];
+                            const title = month.split('-')[0] + '년 ' + month.split('-')[1] + '월';
+                            return title;
+                        },
+                        label: function (tooltipItems, data) {
+                            var index = tooltipItems.index;
+                            var value = `₩` + data.datasets[0].data[index].toLocaleString();
+                            return value;
+                        }
+                    }
+                },
+                legend: {
+                    display: false
+                }
+
+            };
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var gradientAdd = ctx.createLinearGradient(0, 0, 0, 400);
+            gradientAdd.addColorStop(0, 'rgba(119,100,228,1)');
+            gradientAdd.addColorStop(1, 'rgba(119,100,228,0)');
+            var label = [], data = [];
+        <% for(var i=0; i<total.length; i++) { %>
+            label.push('<%=total[i].Ym.substring(0, 7)%>');
+            data.push(<%=total[i].price%>);
+        <% } %>
+            var data = {
+                labels: label,
+                datasets: [{
+                    borderColor: '#7764E4',
+                    backgroundColor: gradientAdd,
+                    data: data,
+                    label: '',
+                },
+                ]
+            };
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: options
+            });
+        }
+        </script>
+    </head>
+    <body>
+        <%- include('nav') %>
+        <section class="container-main">
+            <div class="normal">
+                <h4><b>수익 그래프</b></h4>
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="myChart" style="width: 100%; height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>

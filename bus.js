@@ -7,7 +7,8 @@ const Not = {
 };
 const multer = require('multer');
 const upload = multer({ dest: 'public/uploads/' });
-exports.startBus = (app, sql) => {
+const sql = require('./sql');
+exports.startBus = (app) => {
     // Bus
     app.get('/Bus/Status', (req, res) => {
         const user = auth.getUser(req);
@@ -131,7 +132,7 @@ exports.startBus = (app, sql) => {
                     res.render('./Bus/viewSchedule', { event: event, cat: 'bus' });
                 });
             } else if (part) {
-                sql.getPartTimeEvent(part, (event)=> {
+                sql.getPartTimeEvent(part, (event) => {
                     res.render('./Bus/viewSchedule', { event: event, cat: 'part' });
                 });
             } else {
@@ -221,5 +222,54 @@ exports.startBus = (app, sql) => {
 
     app.get('/Bus/Get/Drivers', (req, res) => {
 
+    });
+
+    app.get('/Bus/Calculate', (req, res) => {
+        const user = auth.getUser(req);
+        var end = req.query.end;
+        if (user.userID) {
+            if (!end) {
+                var date = new Date();
+                end = date.getFullYear() + '-';
+                if (date.getMonth() + 1 < 9) {
+                    end += '0';
+                }
+                end += (date.getMonth() + 2) + '-01';
+            }
+            var total = [];
+            var year = new Date().getFullYear();
+            for (var i = 1; i <= 12; i++) {
+                var str = year + '-';
+                if (i < 10) {
+                    str += '0';
+                }
+                str += i + '-01';
+                total.push({
+                    Ym: str,
+                    price: 0
+                });
+            }
+            sql.getBusGraph(user.userID, (graph) => {
+                sql.getLogiGraph(null, null, user.userID, (run) => {
+                    for (var i = 0; i < total.length; i++) {
+                        for (var j = 0; j < graph.length; j++) {
+                            if (total[i].Ym == graph[j].Ym) {
+                                total[i].price += graph[j].RunFee;
+                            }
+                        }
+                        for (var j = 0; j < run.run.length; j++) {
+                            if (total[i].Ym == run.run[j].Ym) {
+                                total[i].price += run.run[j].RunFee * 9;
+                            }
+                        }
+                    }
+                    console.log('total');
+                    console.log(total);
+                    res.render('./Bus/calculate', { user: user, total: total });
+                });
+            });
+        } else {
+            res.redirect('/');
+        }
     });
 }

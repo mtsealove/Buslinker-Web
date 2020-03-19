@@ -38,7 +38,7 @@ exports.startApp = (port) => {
     })
 
     manager.startManager(app);
-    bus.startBus(app, sql);
+    bus.startBus(app);
     owenr.startOwner(app, sql);
     logistics.startLogistics(app);
 

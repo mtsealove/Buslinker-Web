@@ -182,7 +182,7 @@ exports.startLogistics = (app) => {
             var date=new Date();
             for(var i=1; i<=12; i++) {
                 var str=date.getFullYear()+'-';
-                if(i<9) {
+                if(i<10) {
                     str+='0';
                 }
                 str+=i+'-01';
@@ -193,15 +193,13 @@ exports.startLogistics = (app) => {
             }
             sql.getLogiFee(start, end, user.userID, (logi)=>{
                 console.log(logi);
-                sql.getLogiGraph(user.userID, null, (graph)=>{
+                sql.getLogiGraph(user.userID, null, null, (graph)=>{
                     console.log(graph);
-                    
                     sql.getOwnerFee(start, end, user.userID, null, (owner)=>{
-                        console.log(owner);
                         for(var i=0; i<total.length; i++) {
                             for(var j=0; j<graph.take.length; j++) {
                                 if(total[i].Ym==graph.take[j].Ym) {
-                                    total[i].price+=graph.take[j].Total*((100-logi[0].Commission)/100);
+                                    total[i].price+=graph.take[j].Total*((100-logi[0].Commission)/10);
                                 }
                             }
                             for(var j=0; j<graph.delivery.length; j++) {
@@ -211,12 +209,12 @@ exports.startLogistics = (app) => {
                             }
                             for(var j=0; j<graph.run.length; j++) {
                                 if(total[i].Ym==graph.run[j].Ym) {
-                                    total[i].price-=graph.run[j].RunFee;
+                                    total[i].price-=graph.run[j].RunFee*10;
                                 }
                             }
                         }    
                         console.log(total);
-                        res.render('./Logi/calculate', {user:user, owner:owner, logi: logi, total: total});
+                        res.render('./Logi/calculate', {user:user, owner:owner, logi: logi, total: total, month:start});
                     });
                 });
             });
@@ -224,6 +222,18 @@ exports.startLogistics = (app) => {
             res.redirect('/');
         }
     });
+
+    app.get('/Logistics/Status', (req, res)=>{
+        const user=auth.getUser(req);
+        if(user.userID) {
+            sql.getStatus(getDate(), null, user.userID, (timeline)=>{
+                console.log(timeline);
+                res.render('./Logi/status', {user:user, timeline:timeline});
+            });
+        } else {
+            res.redirect('/');
+        }
+    })
 }
 
 function getDate() {

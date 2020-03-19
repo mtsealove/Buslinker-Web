@@ -61,6 +61,9 @@
                     }
                     startProgress(ids.length);
                     $('#popup-position').fadeOut(300);
+                    $(window).on("beforeunload", function(){
+                        return "페이지를 나가도 변경사항은 적용됩니다.";
+                    });
 
                     $.ajax({
                         url: '/Logistics/ajax/ItemList',
@@ -175,42 +178,6 @@
         }
 
         function setItemCnt() {
-            /*
-            const cntList = $('.cnt');
-            var total = 0;
-            for (var i = 0; i < cntList.length; i++) {
-                total += parseInt($(cntList[i]).text());
-            }
-            if (total) {
-                $('#total-cnt').text('배송 ' + total + '상자');
-            } else {
-                $('#total-cnt').text('배송 0상자');
-            }
-            
-            const cnts=$('.cnt');
-            const gus=$('.gu-cnt');
-            const guCnt=[];
-            for(var i=0; i<gus.length; i++) {
-                guCnt.push({
-                    gu: $(gus[i]).data('gu'),
-                    total: 0
-                })
-            }
-
-            for(var i=0; i<cnts.length; i++) {
-                for(var j=0; j<guCnt.length; j++) {
-                    if(guCnt[j].gu==$(cnts[i]).data('gu')) {
-                        guCnt[i].total+=parseInt($(cnts[i]).text());
-                    }
-                }
-            }
-            for(var i=0; i<gus.length; i++) {
-                for(var j=0; j<guCnt.length; j++) {
-                    if(guCnt[j].gu==$(gus[i]).data('gu')&&guCnt[j].total) {
-                        $(gus[i]).text(guCnt[j].total);
-                    }
-                }
-            } */
             const gus = $('.gu-cnt');
             const guArr = [];
             for (var i = 0; i < gus.length; i++) {
@@ -238,9 +205,9 @@
                 for (var j = 0; j < guArr.length; j++) {
                     if (guArr[j].gu == gu) {
                         if(guArr[j].divide!=1) {
-                            $(child[i]).text('약 '+Math.round(guArr[j].cnt/guArr[j].divide));
+                            $(child[i]).text(Math.round(guArr[j].cnt/guArr[j].divide)?'약 '+Math.round(guArr[j].cnt/guArr[j].divide):0);
                         } else {
-                            $(child[i]).text(guArr[j].cnt/guArr[j].divide);
+                            $(child[i]).text(guArr[j].cnt/guArr[j].divide?guArr[j].cnt/guArr[j].divide:0);
                         }
                     }
                 }
