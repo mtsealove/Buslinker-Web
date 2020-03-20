@@ -14,8 +14,9 @@
         <b><label style="color: #186AA5;">로그인</label></b>
         <br>
         <form>
-            <input class="form-control" type="email" name="email" placeholder="Email" id="input_email"><br>
-            <input class="form-control" type="password" name="pw" placeholder="Password" id="input_pw"><br>
+            <input class="form-control" type="email" name="email" placeholder="Email" id="input_email" value="<%=id?id:''%>"><br>
+            <input class="form-control" type="password" name="pw" placeholder="Password" id="input_pw" value="<%=pw?pw:''%>"><br>
+            <input type="checkbox" id="keep" checked><label for="keep" style="margin-left: 10px;">아이디 저장</label><br>
             <button class="btn btn-primary btn-block" type="button" id="login-btn">로그인</button>
         </form>
         <br>

@@ -10,12 +10,83 @@ exports.startManager = (app) => {
     const multer = require('multer');
     const upload = multer({ dest: 'public/uploads/' });
     // index
-    app.get('/Manager', (req, res) => {
+
+    app.get('/Manager', (req, res)=>{
+        const user=auth.getUser(req);
+        var cat=req.query.cat;
+        var start=req.query.start;
+        var end;
+        if(!cat) {
+            cat='date';
+        }
+
+        if(cat=='date') {
+            if(!start) {
+                start=getDate();
+            }
+            var todayTime=new Date(start).getTime()+(60*60*24*1000);
+            var tommorow=new Date(new Date().setTime(todayTime));
+            console.log(tommorow);
+            end=tommorow.getFullYear()+'-';
+            if(tommorow.getMonth()<9) {
+                end+='0';
+            }
+            end+=(tommorow.getMonth()+1)+'-';
+            if(tommorow.getDate()<10) {
+                end+='0';
+            }
+            end+=tommorow.getDate();
+        } else {    //month
+            if(!start) {
+                var date=new Date();
+                start=date.getFullYear()+'-';
+                if(date.getMonth()<9) {
+                    start+='0';
+                }
+                start+=(date.getMonth()+1)+'-01';
+            }
+            end=start.split('-')[0]+'-';
+            if(parseInt(start.split('-')[1])<9) {
+                end+='0';
+            }
+            end+=(parseInt(start.split('-')[1])+1)+'-01';
+        }
+        
+        if(user.userID) {
+            sql.getLogiFee(start, end, null, (logi)=>{
+                console.log(logi);
+                var routeCnt=0, logiItemCnt=0;
+                for(var i=0; i<logi.length; i++) {
+                    if(logi[i].RouteCnt) {
+                        routeCnt+=logi[i].RouteCnt;
+                    }
+                    if(logi[i].ItemCnt) {
+                        logiItemCnt+=logi[i].ItemCnt;
+                    }
+                }
+                sql.getOwnerFee(start, end, null, null, (owner)=>{
+                    var ownerItemCnt=0;
+                    for(var i=0; i<owner.length; i++) {
+                        if(owner[i].ItemCnt) {
+                            ownerItemCnt+=owner[i].ItemCnt;
+                        }
+                    }
+                    res.render('./Manager/index', {user:user, routeCnt:routeCnt, ownerItemCnt:ownerItemCnt, logiItemCnt:logiItemCnt});
+                })
+                
+            });
+            
+        } else {
+            res.redirect('/');
+        }
+    });
+
+    app.get('/Manager/Status', (req, res) => {
         const user = auth.getUser(req);
         if (user.userID) {
             sql.getStatus(getDate(),null, null, (timeline)=>{
                 console.log(timeline);
-                res.render('./Manager/index', { user: user, timeline:timeline });
+                res.render('./Manager/status', { user: user, timeline:timeline });
             });
         } else {
             res.redirect('/');

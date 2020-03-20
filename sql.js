@@ -646,7 +646,7 @@ exports.getItemList = (userID, yyyymm, callback) => {
 
     const query = `select L.ListID, L.SoldDate, count(I.ListID) as Count, L.Deadline
     from ItemList L join Item I 
-    on L.ListID=I.ListID 
+    on L.ListID regexp(I.ListID)
     where L.OwnerID='${userID}'
     and L.SoldDate>='${startDate}'
     and L.SoldDate<'${endDate}'
@@ -726,8 +726,12 @@ exports.createItemList = (userID, ids, item_names, names, phones, addrs, callbac
                                 } else {
                                     const routeID = route[0].RouteID;
                                     //update route timeline
-                                    const udpateTimeline = `update Timeline set ListID=${listID} where RouteID=${routeID} and RunDate='${dateStr}';`
-                                    connection.query(udpateTimeline, (e4) => {
+                                    const updateTimeline=` update Timeline a
+                                    left join (select ListID, RouteID, RunDate from Timeline
+                                    where RouteID=${routeID} and RunDate='${dateStr}') b 
+                                    on a.RouteID=b.RouteID and a.RunDate=b.RunDate
+                                    set a.ListID= concat(b.ListID, '|', ${listID})`;
+                                    connection.query(updateTimeline, (e4) => {
                                         if (e4) {
                                             console.error('e4');
                                             console.error(e4);
@@ -1053,7 +1057,11 @@ exports.getPartTimeEvent = (id, callback) => {
 // get ownwer's delivery fee by manage
 exports.getOwnerFee = (start, end, corp, owner, callback) => {
     var query = `select MM.*, II.ItemCnt from 
-    (select ID,Name ,AdFee, DefaultFee, DefaultCnt from Members where MemberCat=3 and Corp='${corp}') MM
+    (select ID,Name ,AdFee, DefaultFee, DefaultCnt from Members where MemberCat=3`;
+    if(corp) {
+        query+=` and Corp='${corp}'`;
+    }
+    query+=`) MM
     left outer join (
     select OwnerID, sum(ItemCnt) ItemCnt from
     (select IL.*, count(I.ItemID) ItemCnt from ItemList IL join Item I
@@ -1996,7 +2004,27 @@ exports.getLogiCnt=(logi, month, date, callback)=>{
     (select ListID, count(ItemID) Cnt from Item group by ListID) II
     on RR.LogiList=II.ListID) RRR left outer join
     (select ListID, count(ItemID) Cnt from Item group by ListID) III
-    on RRR.ListID=III.ListID) RRRR group by Name`;
+    on III.ListID regexp(RRR.ListID)) RRRR group by Name`;
+
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
+        }
+    });
+}
+
+exports.getBusCalc=(bus, start, end, callback)=>{
+    const query=`select LogiName,count(LogiID) RouteCnt, sum(DefaultFee) DefaultFeeTotal, sum(RunFee) RunFeeTotal, RunFee, DefaultFee from 
+    (select RR.*, BB.DefaultFee from 
+    (select  R.CorpID, L.Name LogiName, L.ID LogiID, L.RunFee from 
+    (select * from Route where CorpID='${bus}' 
+    and ContractStart<='${start}' and ContractEnd>'${end}') R left outer join
+    Members L
+    on R.Logi=L.ID) RR join Members BB
+    on RR.CorpID=BB.ID) RRR group by LogiID`;
 
     connection.query(query, (e0, rs)=>{
         if(e0) {

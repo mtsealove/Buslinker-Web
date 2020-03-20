@@ -8,6 +8,11 @@ $(function () {
             login();
         }
     });
+    $('#input_email').keydown(function (key) {
+        if (key.keyCode == 13) {
+            login();
+        }
+    });
     $('#input_email').focus();
 });
 
@@ -26,7 +31,8 @@ function login() {
             type: "post",
             data: {
                 email: $('#input_email').val(),
-                pw: $('#input_pw').val()
+                pw: $('#input_pw').val(),
+                keep: $('#keep').is(':checked')
             },
             dataType: "json",
             success: function (data) {

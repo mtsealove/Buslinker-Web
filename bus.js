@@ -13,7 +13,9 @@ exports.startBus = (app) => {
     app.get('/Bus/Status', (req, res) => {
         const user = auth.getUser(req);
         if (user.userID) {
-            res.render('./Bus/status', { user: user });
+            sql.getStatus(getDate(), user.userID, null, (timeline)=>{
+                res.render('./Bus/status', {user:user, timeline:timeline});
+            });
         } else {
             res.redirect('/');
         }
@@ -236,6 +238,8 @@ exports.startBus = (app) => {
                 }
                 end += (date.getMonth() + 2) + '-01';
             }
+
+            var start=end.split('-')[0]+'-'+(parseInt(end.split('-')[1])-1)+'-01';
             var total = [];
             var year = new Date().getFullYear();
             for (var i = 1; i <= 12; i++) {
@@ -263,13 +267,30 @@ exports.startBus = (app) => {
                             }
                         }
                     }
-                    console.log('total');
-                    console.log(total);
-                    res.render('./Bus/calculate', { user: user, total: total });
+                    sql.getBusCalc(user.userID, start, end, (bus)=>{
+                        console.log(bus);
+                        res.render('./Bus/calculate', { user: user, total: total, bus:bus, end: end });
+                    });
+                    
                 });
             });
         } else {
             res.redirect('/');
         }
     });
+}
+
+function getDate() {
+    var date = new Date();
+    var str = date.getUTCFullYear() + '-';
+    if (date.getMonth() < 9) {
+        str += '0';
+    }
+    str += (date.getMonth() + 1) + '-';
+    if (date.getDate() < 10) {
+        str += '0';
+    }
+    str += date.getDate();
+
+    return str;
 }

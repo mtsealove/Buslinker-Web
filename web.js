@@ -1,6 +1,7 @@
 exports.startApp = (port) => {
     const express = require('express');
     const body_parser = require('body-parser');
+    const cookie_parser=require('cookie-parser');
     const session = require('express-session');
     const app = express();
     const sql = require('./sql');
@@ -24,6 +25,7 @@ exports.startApp = (port) => {
         }
     }));
     app.use('/public', express.static('public'));
+    app.use(cookie_parser());
 
     app.use((req, res, next)=>{
         req.setTimeout(600000, ()=>{
@@ -79,7 +81,9 @@ exports.startApp = (port) => {
         if (auth.getUser(req).userID) {  //already logined
             res.send('<script>alert("잘못된 접근입니다");history.go(-1)</script>');
         } else {
-            res.render('login');
+            const id=req.cookies.id;
+            const pw=req.cookies.pw;
+            res.render('login', {id: id, pw:pw});
         }
     });
 
@@ -87,6 +91,9 @@ exports.startApp = (port) => {
     app.post('/Login', (req, res) => {
         const email = req.body['email'];
         const pw = req.body['pw'];
+        const keep=req.body['keep'];
+        console.log('keep: '+keep);
+        console.log(typeof(keep));
 
         sql.login(email, pw, (results) => {
             if (results) {
@@ -101,6 +108,14 @@ exports.startApp = (port) => {
                 req.session.userID = user.userID;
                 req.session.userCat = user.userCat;
                 req.session.profile = user.profile;
+                if(keep=='true') {
+                    res.cookie('id', email);
+                    res.cookie('pw', pw);
+                } else {
+                    res.cookie('id', '');
+                    res.cookie('pw', '');
+                }
+                
 
                 // return to client
                 res.json(user);
