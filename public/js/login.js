@@ -48,7 +48,7 @@ function login() {
                             location.href = '/Bus/Status';
                             break;
                         case 3:
-                            location.href = '/Owner/ItemList';
+                            location.href = '/Owner';
                             break;
                         case 4:
                             location.href = '/Logistics';

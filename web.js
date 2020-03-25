@@ -41,7 +41,7 @@ exports.startApp = (port) => {
 
     manager.startManager(app);
     bus.startBus(app);
-    owenr.startOwner(app, sql);
+    owenr.startOwner(app);
     logistics.startLogistics(app);
 
     // index page

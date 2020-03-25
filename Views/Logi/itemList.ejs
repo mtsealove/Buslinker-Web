@@ -150,7 +150,14 @@
             <% for (var i = 0; i < items.length; i++) {
                 if (i == 0 || (i != 0 && items[i].ListID != items[i - 1].ListID)) { %>
                     items.push([['송장번호', '품목명', '이름', '전화번호', '도착지']]);
-                    names.push('<%=items[i].DesAddr%>'.split(' ')[1]);
+                    var num=1;
+                    for(var j=0; j<names.length; j++){
+                        if(names[j].indexOf('<%=items[i].DesAddr%>'.split(' ')[1])!=-1) {
+                            num++;
+                        }
+                    }
+                    names.push('<%=items[i].DesAddr%>'.split(' ')[1]+num);
+                    
                 <% } %>
                     items[items.length - 1].push([
                         '<%=items[i].ItemID%>',
@@ -178,40 +185,29 @@
         }
 
         function setItemCnt() {
-            const gus = $('.gu-cnt');
-            const guArr = [];
-            for (var i = 0; i < gus.length; i++) {
-                const gu = $(gus[i]).data('gu');
-                const cnt = parseInt($(gus[i]).text());
-                guArr.push({
-                    gu: gu,
-                    cnt: cnt,
-                    divide: 0
-                });
-            }
-            console.log(guArr);
-
-            const child = $('.cnt');
-            for (var i = 0; i < child.length; i++) {
-                const gu = $(child[i]).data('gu');
-                for (var j = 0; j < guArr.length; j++) {
-                    if (guArr[j].gu == gu) {
-                        guArr[j].divide++;
-                    }
-                }
-            }
-            for (var i = 0; i < child.length; i++) {
-                const gu = $(child[i]).data('gu');
-                for (var j = 0; j < guArr.length; j++) {
-                    if (guArr[j].gu == gu) {
-                        if(guArr[j].divide!=1) {
-                            $(child[i]).text(Math.round(guArr[j].cnt/guArr[j].divide)?'약 '+Math.round(guArr[j].cnt/guArr[j].divide):0);
-                        } else {
-                            $(child[i]).text(guArr[j].cnt/guArr[j].divide?guArr[j].cnt/guArr[j].divide:0);
-                        }
-                    }
-                }
-            }
+           var cnts=$('.cnt');
+           const gus=$('.gu-cnt');
+           const guArr=[];
+           for(var i=0; i<gus.length; i++) {
+               guArr.push({
+                gu:$(gus[i]).data('gu'),
+                cnt:0
+               });
+           }
+           for(var i=0; i<guArr.length; i++) {
+               for(var j=0; j<cnts.length; j++) {
+                   if(guArr[i].gu==$(cnts[j]).data('gu')) {
+                       guArr[i].cnt+=$(cnts[j]).data('cnt');
+                   }
+               }
+           }
+           for(var i=0; i<guArr.length; i++) {
+               for(var j=0; j<gus.length; j++) {
+                   if(guArr[i].gu==$(gus[j]).data('gu')) {
+                    $(gus[j]).text(guArr[i].cnt);
+                   }
+               }
+           }
         }
     </script>
 </head>
@@ -335,11 +331,11 @@
                     <th class="head">물량</th>
                 </thead>
                 <tbody>
-                    <% for(var i=0; i<route.length; i++) { %>
+                    <% for(var i=0; i<route.length; i++) {     %>
                     <% if(i==0 ||(i!=0&&route[i].Gu!=route[i-1].Gu)) { %>
                     <tr>
                         <td colspan="4"><%=route[i].Gu%></td>
-                        <td class="gu-cnt" data-gu="<%=route[i].Gu%>"><%=route[i].ItemCnt%></td>
+                        <td class="gu-cnt" data-gu="<%=route[i].Gu%>"></td>
                     </tr>
                     <% } %>
                     <!-- logi title -->
@@ -367,7 +363,7 @@
                                     else
                                         status='상품 미배정'; %>
                         <td><%=status%></td>
-                        <td class="cnt" data-gu="<%=route[i].Gu%>"></td>
+                        <td class="cnt" data-gu="<%=route[i].Gu%>" data-cnt="<%=route[i].ItemCnt%>"><%=route[i].ItemCnt%></td>
                     </tr>
                     <% } %>
                 </tbody>

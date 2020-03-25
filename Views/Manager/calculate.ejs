@@ -567,13 +567,14 @@
                                 // mayne not exist
                                 var stackCnt=ownerFee[i].ItemCnt;
                                 if(stackCnt) {
-                                    stackCnt=stackCnt.toLocaleString()+'개';
+                                    //stackCnt=stackCnt.toLocaleString();
                                 } else {
                                     stackCnt='누적물량 없음';
                                 }
                                 // set status
                                 var status;
                                 stackCnt=parseInt(stackCnt);
+                                
                                 if(defaultCnt>stackCnt) {
                                     status='기본 물량 미만';
                                 } else if(defaultCnt==stackCnt) {
@@ -593,7 +594,7 @@
                                 <td><b><span class="price" data-cat="owner-cnt" data-id="<%=ownerFee[i].ID%>"
                                             data-name="<%=ownerFee[i].Name%>"><%=defaultCnt.toLocaleString()%>개</span></b>
                                 </td>
-                                <td><b><%=stackCnt%>개</b></td>
+                                <td><b><%=ownerFee[i].ItemCnt?ownerFee[i].ItemCnt.toLocaleString():0%>개</b></td>
                                 <td><b><span class="price" data-cat="owner-default" data-id="<%=ownerFee[i].ID%>"
                                             data-name="<%=ownerFee[i].Name%>"><%=defaultFee.toLocaleString()%>원</span></b>
                                 </td>

@@ -7,8 +7,42 @@ const Not = {
 const multer = require('multer');
 const upload = multer({ dest: 'public/uploads/' });
 const auth=require('./auth');
-exports.startOwner=(app, sql)=> {
+const sql=require('./sql');
+exports.startOwner=(app)=> {
  // owner
+ app.get('/Owner', (req, res)=>{
+     const user=auth.getUser(req);
+     var start=req.query.start;
+     var end;
+     
+     if(!start) {
+        var date=new Date();
+        start=date.getFullYear()+'-';
+        if(date.getMonth()<9) {
+            start+='0';
+        }
+        start+=(date.getMonth()+1)+'-01';
+     }
+     var endDate=new Date(start);
+     var month=endDate.getMonth()+1;
+     endDate.setMonth(month);
+     
+     end=endDate.getFullYear()+'-';
+     if(endDate.getMonth()<9) {
+         end+='0';
+     }
+     end+=(endDate.getMonth()+1)+'-01';
+     if(user.userID) {
+        sql.getOwnerFee(start, end, null, user.userID, (cnt)=>{
+            sql.getOwnerCnt(user.userID, start, end, (table)=>{
+                res.render('./Owner/index', {user:user, cnt:cnt, table:table, start:start});
+            })
+        });
+     } else {
+         res.redirect('/');
+     }
+    
+ });
  app.get('/Owner/ItemList', (req, res)=> {
     const user=auth.getUser(req); 
     var yyyymm=req.query.yymm;
@@ -18,7 +52,19 @@ exports.startOwner=(app, sql)=> {
             yyyymm=date.getFullYear()+'-'+(date.getMonth()+1);
         }
         sql.getItemList(user.userID, yyyymm, (results)=>{
-            res.render('./Owner/itemList', {user: user, itemList:results, yyyymm:yyyymm});
+            var endDate=new Date(yyyymm+'-01');
+            var endMonth=endDate.getMonth()+1;
+            endDate.setMonth(endMonth);
+            var end=endDate.getFullYear()+'-';
+            if(endMonth<10) {
+                end+='0';
+            }
+            end+=(endDate.getMonth()+1)+'-01';
+            
+            sql.getOwnerCnt(user.userID, yyyymm+'-01', end, (table)=>{
+                res.render('./Owner/itemList', {user: user, itemList:results, yyyymm:yyyymm, table:table});
+            });
+            
         });    
     } else {
         res.redirect('/');

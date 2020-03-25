@@ -18,8 +18,9 @@ exports.startLogistics = (app) => {
 
         if (user.userID) {
             sql.getRouteItem(date, user.userID, (route) => {
+                console.log(route);
                 sql.getLogiItemList(user.userID, date, (itemRs)=>{
-                    console.log(itemRs);
+                    //console.log(itemRs);
                     res.render('./Logi/itemList', { user: user, route: route, current: date, items: itemRs });
                 });
             });
@@ -101,6 +102,9 @@ exports.startLogistics = (app) => {
             cluster.reverse();
             cluster.pop();
             cluster.reverse();
+            console.log(cluster[0]);
+            var fs=require('fs');
+            //fs.writeFileSync('test.json', JSON.stringify(cluster));
 
             sql.createLogiItemList(user.userID, date, cluster, (result)=>{
                 if(result) {
@@ -151,6 +155,7 @@ exports.startLogistics = (app) => {
             sql.getLogiFee(start, end, user.userID, (logi)=>{
                 sql.getOwnerFee(start, end, user.userID, null, (owner)=>{
                     res.render('./Logi/index', {user: user, logi:logi, owner:owner});
+                    console.log(logi);
                 });
             })
         } else {

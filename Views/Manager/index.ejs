@@ -3,10 +3,94 @@
     <head>
         <title>Buslinker</title>
         <%- include('config')%>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
         <script>
             $(function() {
                 setCat();
+                setChart();
             });
+
+            
+            function setChart() {
+            var options = {
+                maintainAspectRatio: true,
+                spanGaps: false,
+                elements: {
+                    line: {
+                        tension: 0.4
+                    }
+                },
+                scales: {
+                    yAxes: [{
+                        stacked: true,
+                        ticks: {
+                            beginAtZero: true
+                        },
+                        scaleLabel: {
+                            display: true,
+                        }
+                    }],
+                    xAxes: [{
+                        display: true,
+                        type: 'category',
+                        stacked: true,
+                        scaleLabel: {
+                            display: false,
+                            labelString: '월'
+                        },
+                        maxBarThickness: 80
+                    }],
+                },
+                tooltips: {
+                    mode: 'index',
+						intersect: false,
+                    callbacks: {
+                        title: function (tooltipItems, data) {
+                            const label=data.labels[tooltipItems[0].index];
+                            return label;
+                        },
+                        
+                    }
+                }
+
+            };
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var gradientAdd = ctx.createLinearGradient(0, 0, 0, 400);
+            gradientAdd.addColorStop(0, 'rgba(119,100,228,1)');
+            gradientAdd.addColorStop(1, 'rgba(119,100,228,0)');
+            var label=[], owner=[], logi=[];
+            <% for(var i=0; i<table.length; i++) { %>
+                label.push('<%=table[i].Name%>');
+                owner.push(<%=table[i].OwnerCnt%>);
+                logi.push(<%=table[i].LogiCnt%>);
+            <% } %>
+
+            var data = {
+                labels: label,
+                datasets: [
+                {
+                    borderColor: '#FB6740',
+                    backgroundColor: '#FB6740',
+                    data: owner,
+                    label: '수거',
+                },{
+                    borderColor: '#7764E4',
+                    backgroundColor: '#7764E4',
+                    data: logi,
+                    label: '배송',
+                }
+              ]
+            };
+
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: options
+            });
+            console.log(label);
+            console.log(logi);
+            console.log(owner);
+        }
 
             function setCat() {
                 $('#select-cat').change(function(){
@@ -20,7 +104,7 @@
                                 month+='0';
                             }
                             month+=i;
-                            html+=`<option value='${month}'>${month}</option>`;
+                            html+=`<option value='${month}-01'>${month}</option>`;
                         }
                     } else {
                         for(var i=1; i<=date.getDate(); i++) {
@@ -38,7 +122,13 @@
                     }
                     $('#select-divide').html(html);
                 }); 
-                //$('#select-cat').val();
+                $('#select-cat').val('<%=cat%>').trigger('change');
+                
+                $('#select-divide').val('<%=divide%>').trigger('change');
+                $('#select-divide').change(function(){
+                    const divide=$(this).val();
+                    location.href=`?cat=${$('#select-cat').val()}&start=${divide}`;
+                });
             }
         </script>
     </head>
@@ -51,11 +141,11 @@
                     <div class="horizontal">
                         <!-- 일/월 -->
                     <select class="box0" id="select-cat">
-                        <option value="month">월별</option>
                         <option value="date">일별</option>
+                        <option value="month">월별</option>
                     </select>
                     <!-- 날짜/달 -->
-                    <select class="box0" id="select-divide">
+                    <select class="box0" id="select-divide" style="margin-left: 20px;">
 
                     </select>
                     </div>
@@ -112,9 +202,38 @@
                         </div>
                     </div>
                 </div>
+                <br>
                 <!-- 배송 및 수거 현황 -->
                     <h4><b>배송 및 수거 현황</b></h4>
-                
+                    <br>
+                    <div class="horizontal between">
+                        <div class="card" style="width: 24%;">
+                            <div class="card-body">
+                                <table style="height: 300px;">
+                                    <thead>
+                                        <th class="head">노선</th>
+                                        <th class="head">배송</th>
+                                        <th class="head">수거</th>
+                                    </thead>
+                                    <tbody>
+                                       <% for(var i=0; i<table.length; i++) { %>
+                                        <tr>
+                                            <td><%=table[i].Name%></td>
+                                            <td><%=table[i].LogiCnt?(Math.round(table[i].LogiCnt)).toLocaleString():0%></td>
+                                            <td><%=table[i].OwnerCnt? table[i].OwnerCnt.toLocaleString():0%></td>
+                                        </tr>
+                                       <% } %> 
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- grapgh -->
+                        <div class="card" style="width:75%">
+                            <div class="card-body">
+                                <canvas id="myChart" style="width: 100%; height: 300px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
             </div>
         </section>
     </body>

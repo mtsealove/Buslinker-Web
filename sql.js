@@ -433,7 +433,7 @@ exports.createRoute = (corp, name, station, logi, empty, owner, contract, gu, ca
                                                                                                                                 } else {
                                                                                                                                     console.log('e14 pass');
                                                                                                                                     console.log('success');
-                                                                                                                                    var year=new Date().getFullYear();
+                                                                                                                                    var year = new Date().getFullYear();
                                                                                                                                     setFullTimeline(year);
                                                                                                                                     callback(true);
                                                                                                                                 }
@@ -539,7 +539,7 @@ exports.getRoute = (order, current, bus, callback) => {
     });
 }
 
-exports.getLogiRoute= (order, current, logi, callback) => {
+exports.getLogiRoute = (order, current, logi, callback) => {
     var date = new Date();
     var year = date.getFullYear();
     var month = date.getMonth() + 1;
@@ -726,11 +726,12 @@ exports.createItemList = (userID, ids, item_names, names, phones, addrs, callbac
                                 } else {
                                     const routeID = route[0].RouteID;
                                     //update route timeline
-                                    const updateTimeline=` update Timeline a
+                                    const updateTimeline = `update Timeline a
                                     left join (select ListID, RouteID, RunDate from Timeline
                                     where RouteID=${routeID} and RunDate='${dateStr}') b 
                                     on a.RouteID=b.RouteID and a.RunDate=b.RunDate
-                                    set a.ListID= concat(b.ListID, '|', ${listID})`;
+                                    set a.ListID= concat(ifnull(b.ListID, ''), '|', ${listID}, '|')
+                                    where a.RouteID=${routeID} and a.RunDate='${dateStr}'`;
                                     connection.query(updateTimeline, (e4) => {
                                         if (e4) {
                                             console.error('e4');
@@ -744,7 +745,7 @@ exports.createItemList = (userID, ids, item_names, names, phones, addrs, callbac
                             });
                         }
                     });
-                    setItem(addrs, ids);
+                    //setItem(addrs, ids);
                 }
             });
         }
@@ -1058,10 +1059,10 @@ exports.getPartTimeEvent = (id, callback) => {
 exports.getOwnerFee = (start, end, corp, owner, callback) => {
     var query = `select MM.*, II.ItemCnt from 
     (select ID,Name ,AdFee, DefaultFee, DefaultCnt from Members where MemberCat=3`;
-    if(corp) {
-        query+=` and Corp='${corp}'`;
+    if (corp) {
+        query += ` and Corp='${corp}'`;
     }
-    query+=`) MM
+    query += `) MM
     left outer join (
     select OwnerID, sum(ItemCnt) ItemCnt from
     (select IL.*, count(I.ItemID) ItemCnt from ItemList IL join Item I
@@ -1070,10 +1071,11 @@ exports.getOwnerFee = (start, end, corp, owner, callback) => {
     group by IL.ListID) O
     group by OwnerID) II on MM.ID=II.OwnerID`;
 
-    if(owner) {
-        query+=` where ID='${owner}'`;
+    if (owner) {
+        query += ` where ID='${owner}'`;
     }
-    
+    console.log(query);
+
     connection.query(query, (err, result) => {
         if (err) {
             console.error(err);
@@ -1084,19 +1086,19 @@ exports.getOwnerFee = (start, end, corp, owner, callback) => {
     });
 }
 
-exports.getBusFee=(end, bus, callback)=>{
-    var query=`select ID, Name ,DefaultFee, Cnt from Members M join
+exports.getBusFee = (end, bus, callback) => {
+    var query = `select ID, Name ,DefaultFee, Cnt from Members M join
     (select CorpID, count(RouteID) Cnt from Route 
     where ContractEnd>='${end}'
     group by CorpID) R
     on M.ID=R.CorpID
     where M.MemberCat=2`;
-    if(bus) {
-        query+=` and M.ID='${bus}'`;
+    if (bus) {
+        query += ` and M.ID='${bus}'`;
     }
 
-    connection.query(query, (e0, rs)=>{
-        if(e0) {
+    connection.query(query, (e0, rs) => {
+        if (e0) {
             console.error(e0);
             callback(null);
         } else {
@@ -1106,44 +1108,43 @@ exports.getBusFee=(end, bus, callback)=>{
     });
 }
 
-exports.getLogiFee=(start, end, logi, callback)=>{
-    var query=`select MMMMM.*, FFFFF.TotalFee from 
-    (select MMMM.*, LLLL.RouteCnt from 
-        (select MMM.ID, MMM.Name, MMM.Commission, MMM.DefaultFee, MMM.AdFee, MMM.RunFee, RRR.ItemCnt from Members MMM
-        left outer join
-        (select RR.Logi, sum(TT.Cnt) ItemCnt from Route RR
-        left outer join
-        (select RouteID, Cnt from Timeline T
-        join (select ListID ,count(ItemID) Cnt from Item group by ListID) L
-        on T.LogiList=L.ListID
-        where RunDate>='${start}' and RunDate<='${end}') TT 
-        on RR.RouteID=TT.RouteID
-        group by RR.Logi) RRR
-        on MMM.ID=RRR.Logi
-        where MMM.MemberCat=4) MMMM
-        left outer join (
-        select Logi, count(Logi) RouteCnt from Route 
-        where ContractStart<='${start}' and ContractEnd>'${end}'
-        group by Logi) LLLL
-        on MMMM.ID=LLLL.Logi) MMMMM left outer join
-        (select Corp, sum(TotalFee) TotalFee from 
-        (select Corp, if(TotalFee>DefaultFee, TotalFee, DefaultFee) as TotalFee from
-        (select MM.Corp, (II.ItemCnt-MM.DefaultCnt)*MM.AdFee+MM.DefaultFee TotalFee, MM.DefaultFee from 
-        (select Corp, ID,Name ,AdFee, DefaultFee, DefaultCnt from Members where MemberCat=3 ) MM
-        left outer join (
-        select OwnerID, sum(ItemCnt) ItemCnt from
-        (select IL.*, count(I.ItemID) ItemCnt from ItemList IL join Item I
-        on IL.ListID=I.ListID
-        where IL.SoldDate>='${start}' and SoldDate<'${end}'
-        group by IL.ListID) O
-        group by OwnerID) II on MM.ID=II.OwnerID) MMM) MMMM group by Corp) FFFFF
-        on MMMMM.ID=FFFFF.Corp`;
+exports.getLogiFee = (start, end, logi, callback) => {
+    var query = `select RESULT.*, OWNERS.TotalFee from 
+    (select Result.*, ROUTE.RouteCnt from 
+    (select MEMB.ID, MEMB.Name, MEMB.Commission, MEMB.DefaultFee, MEMB.AdFee, MEMB.RunFee, ROUT.ItemCnt, ROUT.Owners from
+    (select Logi, sum(Cnt) ItemCnt, count(RouteID) RouteCnt, Owners from 
+    (select TT.Logi, TT.RouteID, TT.Owners,IT.Cnt from 
+    (select R.RouteID, R.Owners ,R.Logi, T.LogiList from
+     (select * from Route 
+     where ContractStart<='${start}' and ContractEnd>='${end}'
+     ) R left outer join 
+    (select * from Timeline where RunDate>='${start}' and RunDate<'${end}')T
+     on R.RouteID=T.RouteID)TT left outer join (
+     select ListID, count(ItemID) Cnt from Item
+     group by ListID) IT on TT.LogiList=IT.ListID) TIM
+     group by Logi, Owners) ROUT join Members MEMB
+     on MEMB.ID=ROUT.Logi ) Result left outer join
+     (select Logi, count(RouteID) RouteCnt from Route 
+     where ContractStart<='${start}' and ContractEnd>='${end}'
+     group by Logi) ROUTE on Result.ID=ROUTE.Logi) RESULT left outer join 
+     (select ID, if(AdFee>0, AdFee+DefaultFee, DefaultFee) TotalFee from 
+     (select ID, (sum(ItemCnt)-DefaultCnt)*AdFee AdFee, DefaultFee from 
+     (select OW.ID, OW.DefaultCnt,OW.DefaultFee, OW.AdFee, ItemCnt from 
+     (select M.ID, M.DefaultCnt, M.DefaultFee, M.AdFee, L.ListID from Members M 
+     left outer join ItemList L
+     on M.ID=L.OwnerID
+     where M.MemberCat=3 and L.SoldDate>='${start}' and L.SoldDate<'${end}') OW left outer join 
+     (select ListID, count(ItemID) ItemCnt from Item 
+     group by ListID) IL
+     on OW.ListID=IL.ListID) OWN 
+     group by ID)OWNE) OWNERS 
+     on RESULT.Owners like concat('%',OWNERS.ID, '%')`
+     if(logi) {
+         query+=` where RESULT.ID='${logi}'`;
+     }
 
-    if(logi) {
-        query+=` where ID='${logi}'`;
-    }
-    connection.query(query, (e0, rs)=>{
-        if(e0) {
+    connection.query(query, (e0, rs) => {
+        if (e0) {
             console.error(e0);
             callback(null);
         } else {
@@ -1302,7 +1303,7 @@ exports.getRouteItem = (date, logi, callback) => {
                                 route[j].DriverName = timeline[i].DriverName;
                                 route[j].BusNum = timeline[i].Num;
                                 route[j].listID = timeline[i].ListID;
-                                route[j].ItemCnt=timeline[i].ItemCnt;
+                                route[j].ItemCnt = timeline[i].ItemCnt;
                             }
                         }
                     }
@@ -1337,7 +1338,7 @@ exports.getRouteItem = (date, logi, callback) => {
                             clearInterval(interval);
                             callback(route);
                         } else {
-                           // console.log('itme: total: ' + itemTotal + ' cnt: ' + itemCnt);
+                            // console.log('itme: total: ' + itemTotal + ' cnt: ' + itemCnt);
                             //console.log('owner: totla: ' + onwerTotal + ' cnt: ' + ownerCnt);
                         }
                     }, 100);
@@ -1442,7 +1443,7 @@ async function updatePartTime(routeID, part, callback) {
     for (var i = 0; i < part.length; i++) {
         var id = ((String)(part[i])).split(':')[0];
         var date = ((String)(part[i])).split(':')[1];
-  //      console.log(id);
+        //      console.log(id);
         // console.log(date);
         var insertQuery = `insert into TimeLine set RouteID=${routeID}, RunDate='${date}', PTID='${id}'`;
         insertList.push(insertQuery);
@@ -1467,7 +1468,7 @@ async function updatePartTime(routeID, part, callback) {
     callback(true);
 }
 
-function setFullTimeline (year)  {
+function setFullTimeline(year) {
     const routeQuery = `select RouteID from Route where RouteID!=0`;
     var cnt = 0;
     connection.query(routeQuery, (e0, route) => {
@@ -1604,6 +1605,7 @@ exports.updateDeliverySchedule = (id, remove, add, callback) => {
 exports.getDong = (items, callback) => {
     const total = items.length;
     var cnt = 0;
+    var gus=[], dongs=[];
 
     for (var i = 0; i < total; i++) {
         var line = items[i].addr.split(' ');
@@ -1614,6 +1616,8 @@ exports.getDong = (items, callback) => {
         addr = addr.split('(')[0];
         addr = addr.replace('지하', '');
         addr = addr.split('-')[0];
+        gus.push(line[1]);
+        dongs.push(line[2]);
         const query = `select Gu, Dong from AddrMatch where Addr like '%${addr}%'`;
         connection.query(query, (e0, rs) => {
             if (e0) {
@@ -1624,6 +1628,9 @@ exports.getDong = (items, callback) => {
                     const gu = rs[0].Gu;
                     items[cnt].dong = dong;
                     items[cnt].gu = gu;
+                } else {
+                    items[cnt].dong = dongs[cnt];
+                    items[cnt].gu = gus[cnt];
                 }
             }
             cnt++;
@@ -1643,81 +1650,208 @@ exports.createLogiItemList = (logiId, date, cluster, callback) => {
     var total = 0, cnt = 0;
     var listQuery = `insert into ItemList(OwnerID, SoldDate) values `;
     // divide gu | create list insert query
-    for (var i = 0; i < cluster.length; i++) {
-        listQuery += `('${logiId}', '${date}')`;
-        if (i != cluster.length - 1) {
-            listQuery += ',';
-        }
-    }
-    // create each item list
-    connection.query(listQuery, (e0) => {
-        if (e0) {
-            console.error(e0);
-            callback(false);
-        } else {
-            // get all item ids
-            const getListQuery = `select * from
-            (select ListID from ItemList 
-            where OwnerID='${logiId}' 
-            order by ListID desc limit ${cluster.length}) I order by ListID asc`;
+    var guQuery = `select Gu, count(RouteID) GuCnt from Route
+    where Logi='${logiId}'
+    group by Gu`;
 
-            connection.query(getListQuery, (e1, listRs) => {
-                if (e1) {
-                    console.error(e1);
-                    callback(false);
-                } else {
-                    for (var i = 0; i < listRs.length; i++) {
-                        const listID = listRs[i].ListID;
-                        // divied dong
-                        const gu = cluster[i].gu;
-                        for (var j = 0; j < cluster[i].Items.length; j++) {
-                            const dong = cluster[i].Items[j].dong;
-                            for (var x = 0; x < cluster[i].Items[j].Items.length; x++) {
-                                const item = cluster[i].Items[j].Items[x];
-                                total++;
-                                const itemQuery = `insert into Item set ItemID='${item.id}', ListID=${listID}, ItemName='${item.name}', 
-                                DesAddr='${item.addr}', DesName='${item.des_name}', DesPhone='${item.des_phone}', Gu='${gu}', Dong='${dong}'`;
-                                connection.query(itemQuery, (e2) => {
-                                    if (e2) {
+    const itemDeleteQuery=`delete from Item where ListID in
+    (select ListID from ItemList where SoldDate='${date}' and OwnerID='${logiId}')`;
+    const listDeleteQuery=`delete from ItemList where SoldDate='${date}' and OwnerID='${logiId}'`;
+
+    connection.query(itemDeleteQuery, (e5)=>{
+        if(e5) {
+            console.error(e5);
+        } else {
+        connection.query(listDeleteQuery, (e6)=>{
+            if(e6) {
+                console.error(e6);
+            } else {
+                connection.query(guQuery, (e4, guRs) => {
+                    if (e4) {
+                        console.error(e4);
+                        callback(false);
+                    } else {
+                        var guTotal = 0;
+                        for (var i = 0; i < guRs.length; i++) {
+                            guTotal += guRs[i].GuCnt;
+                        }
+                        for (var i = 0; i < guTotal; i++) {
+                            listQuery += `('${logiId}', '${date}')`;
+                            if (i != guTotal - 1) {
+                                listQuery += ',';
+                            }
+                        }
+                        // create each item list
+                        connection.query(listQuery, (e0) => {
+                            if (e0) {
+                                console.error(e0);
+                                callback(false);
+                            } else {
+                                // get all item ids
+                                const getListQuery = `select * from
+                                (select ListID from ItemList 
+                                where OwnerID='${logiId}' 
+                                order by ListID desc limit ${guTotal}) I order by ListID asc`;
+            
+                                connection.query(getListQuery, (e1, listRs) => {
+                                    if (e1) {
+                                        console.error(e1);
                                         callback(false);
                                     } else {
-                                        cnt++;
+                                        for(var i=0; i<guRs.length; i++) {
+                                            guRs[i].ListID=[];
+                                            for(var j=0; j<guRs[i].GuCnt; j++) {
+                                                guRs[i].ListID.push(listRs.pop().ListID);
+                                            }
+                                        }
+                                        console.log(guRs);
+                                        var items=[];
+                                        for(var i=0; i<cluster.length; i++) {
+                                            items.push({gu:cluster[i].gu, items:[]});
+                                            for(var j=0; j<cluster[i].Items.length; j++) {
+                                                //console.log(cluster[i].Items[j].Items);
+                                                for(var x=0; x<cluster[i].Items[j].Items.length; x++) {
+                                                    items[i].items.push(cluster[i].Items[j].Items[x]);
+                                                }
+                                            }
+                                        }
+                                        var fs=require('fs');
+                                        fs.writeFileSync('test.json', JSON.stringify(items));
+                                        for(var i=0; i<items.length; i++) {
+                                            var listIDs=[];
+                                            // get List id
+                                            console.log(items[i].gu);
+                                            for(var j=0; j<guRs.length; j++) {
+                                                
+                                                if(guRs[j].Gu==items[i].gu) {
+                                                    listIDs=guRs[j].ListID;
+                                                }
+                                            }
+                                            console.log(listIDs);
+                                            var listIndex=0;
+                                            for(var j=0; j<items[i].items.length; j++){
+                                                var item=items[i].items[j];
+                                                var listID=listIDs[listIndex];
+                                                const itemQuery = `insert into Item set ItemID='${item.id}', ListID=${listID}, ItemName='${item.name}', 
+                                                        DesAddr='${item.addr}', DesName='${item.des_name}', DesPhone='${item.des_phone}', Gu='${items[i].gu}', Dong='${item.dong}'`;
+                                                        total++;
+                                                        connection.query(itemQuery, (e2)=>{
+                                                            if(e2) {
+                                                                console.error(e2);
+                                                            }
+                                                            cnt++;
+                                                        });
+                                                listIndex++;
+                                                if(listIndex>=listIDs.length) {
+                                                    listIndex=0;
+                                                }
+                                                //console.log(listID);
+                                            }
+                                            for(var j=0; j<listIDs.length; j++) {
+
+                                                const updateQuery = `update Timeline set LogiList=${listIDs[j]}
+                                                    where RunDate='${date}' and RouteID in (
+                                                    select RouteID from Route where Gu='${items[i].gu}'
+                                                    ) order by RouteID limit ${listIDs.length-j}`;
+                                                    // console.log(updateQuery);
+                                                total++;
+                                                connection.query(updateQuery, (e3)=>{
+                                                    if(e3) {
+                                                        console.error(e3);
+                                                    }
+                                                    cnt++;
+                                                });
+                                            }
+                                        }
+
+                                        var interval = setInterval(() => {
+                                            if (total == cnt) {
+                                                clearInterval(interval);
+                                                callback(true);
+                                            }
+                                        });
+                                        /*
+
+            
+                                            var listID = listRs[listIndex].ListID;
+                                                    console.log(listID);
+                                                    listIndex++;
+                                                    console.log('divide');
+                                            for (var j = 0; j < cluster[i].Items.length; j++) {
+                                                const dong = cluster[i].Items[j].dong;
+                                                
+                                                for (var y = 0; y < guCnt; y++) {
+                                                    var start = y * (Math.floor(cluster[i].Items[j].Items.length / guCnt));
+                                                    var end = (y + 1) * Math.floor(cluster[i].Items[j].Items.length / guCnt);
+                                                    if (guCnt - 1 == y) {
+                                                        end += cluster[i].Items[j].Items.length % guCnt;
+                                                    }
+            
+                                                    
+                                                    console.log(guCnt);
+                                                    console.log('start: '+start+' end: '+end);
+                                                    
+                                                    const updateQuery = `update Timeline set LogiList=${listID}
+                                                    where RunDate='${date}' and RouteID in (
+                                                    select RouteID from Route where Gu='${gu}'
+                                                    ) order by RouteID limit ${guCnt - y}`;
+                                                    
+                                                    total++;
+                                                    connection.query(updateQuery, (e3) => {
+                                                        if (e3) {
+                                                            callback(false);
+                                                        } else {
+                                                            cnt++;
+                                                        }
+                                                    });
+                                                    for (var x = start; x < end; x++) {
+                                                        //console.log(x);
+                                                        const item = cluster[i].Items[j].Items[x];
+                                                        total++;
+                                                        //console.log(item);
+                                                        const itemQuery = `insert into Item set ItemID='${item.id}', ListID=${listID}, ItemName='${item.name}', 
+                                                        DesAddr='${item.addr}', DesName='${item.des_name}', DesPhone='${item.des_phone}', Gu='${gu}', Dong='${dong}'`;
+                                                        connection.query(itemQuery, (e2) => {
+                                                            if (e2) {
+                                                                callback(false);
+                                                            } else {
+                                                                cnt++;
+                                                            }
+                                                        });
+            
+                                                    }
+                                                }
+                                            }
+            
+                                        }
+                                        var interval = setInterval(() => {
+                                            if (total == cnt) {
+                                                clearInterval(interval);
+                                                callback(true);
+                                            }
+                                        }); */
                                     }
                                 });
                             }
-                        }
-                        const updateQuery=`update Timeline set LogiList=${listID}
-                        where RunDate='${date}' and RouteID in (
-                            select RouteID from Route where Gu='${gu}'
-                        )`;
-                        total++;
-                        connection.query(updateQuery, (e3)=>{
-                            if(e3) {
-                                callback(false);
-                            } else {
-                                cnt++;
-                            }
                         });
                     }
-                    var interval = setInterval(() => {
-                        if (total == cnt) {
-                            clearInterval(interval);
-                            callback(true);
-                        }
-                    });
-                }
-            });
-        }
+                });   
+            }
+        });
+    }
     });
+    
+
+
 }
-exports.getLogiItemList=(logiId, date, callback)=>{
-    const query=`select * from Item where ListID in 
+exports.getLogiItemList = (logiId, date, callback) => {
+    const query = `select * from Item where ListID in 
     (select LogiList from Timeline where RouteID in (
     select RouteID from Route where Logi='${logiId}')
     and RunDate='${date}') order by ListID`;
 
-    connection.query(query, (e0, itmeRs)=>{
-        if(e0) {
+    connection.query(query, (e0, itmeRs) => {
+        if (e0) {
             callback(null);
         } else {
             callback(itmeRs);
@@ -1725,13 +1859,13 @@ exports.getLogiItemList=(logiId, date, callback)=>{
     })
 }
 
-exports.getGu=(route, callback)=>{
-    const query=`select Gu from Route where RouteID=${route}`;
-    connection.query(query, (e0, rs)=>{
-        if(e0) {
+exports.getGu = (route, callback) => {
+    const query = `select Gu from Route where RouteID=${route}`;
+    connection.query(query, (e0, rs) => {
+        if (e0) {
             callback(null);
         } else {
-            if(rs[0]) {
+            if (rs[0]) {
                 callback(rs[0].Gu);
             } else {
                 callback(null);
@@ -1740,10 +1874,10 @@ exports.getGu=(route, callback)=>{
     });
 }
 
-exports.updateGu=(route, gu, callback)=>{
-    const query=`update Route set Gu='${gu}' where RouteID=${route}`;
-    connection.query(query, (e0)=>{
-        if(e0) {
+exports.updateGu = (route, gu, callback) => {
+    const query = `update Route set Gu='${gu}' where RouteID=${route}`;
+    connection.query(query, (e0) => {
+        if (e0) {
             callback(false);
         } else {
             callback(true);
@@ -1751,10 +1885,10 @@ exports.updateGu=(route, gu, callback)=>{
     });
 }
 
-exports.getGuCnt=(gu, callback)=>{
-    const query=`select count(RouteID) Cnt from Route where Gu='${gu}'`;
-    connection.query(query, (e0, rs)=>{
-        if(e0) {
+exports.getGuCnt = (gu, callback) => {
+    const query = `select count(RouteID) Cnt from Route where Gu='${gu}'`;
+    connection.query(query, (e0, rs) => {
+        if (e0) {
             console.error(e0);
             callback(null);
         } else {
@@ -1764,8 +1898,8 @@ exports.getGuCnt=(gu, callback)=>{
 }
 
 // manager, bus, logi all accept
-exports.getStatus=(date, bus, logi, callback)=>{
-    var timelineQuery=`select TTTT.*, Buss.Num from 
+exports.getStatus = (date, bus, logi, callback) => {
+    var timelineQuery = `select TTTT.*, Buss.Num from 
     (select TTT.*, DRV.Name DriverName from 
    (select TT.*, PT.Name PtName, PT.Phone PtPhone from
    (select R.*,T.BusID, T.DriverID, T.PTID, T.ActionID, T.Lat, T.Lng from Timeline T 
@@ -1775,26 +1909,26 @@ exports.getStatus=(date, bus, logi, callback)=>{
     on TTT.DriverID=DRV.ID) TTTT left outer join Bus Buss
     on TTTT.BusID=Buss.ID`;
 
-    if(bus) {
-       timelineQuery+=` where CorpID='${bus}'`;
-    } else  if(logi) {
-        timelineQuery+=` where Logi='${logi}'`;
+    if (bus) {
+        timelineQuery += ` where CorpID='${bus}'`;
+    } else if (logi) {
+        timelineQuery += ` where Logi='${logi}'`;
     }
 
-    var total=0, cnt=0;
-    var locArr=[];
+    var total = 0, cnt = 0;
+    var locArr = [];
 
-    connection.query(timelineQuery, (e0, timelineRs)=>{
-        if(e0) {
+    connection.query(timelineQuery, (e0, timelineRs) => {
+        if (e0) {
             console.error(e0);
             callback(null);
         } else {
-            for(var i=0; i<timelineRs.length; i++) {
-                const locations=timelineRs[i].Locations;
-                const locationQuery=`select * from Location where LocID in (${locations}) order by RcTime`;
+            for (var i = 0; i < timelineRs.length; i++) {
+                const locations = timelineRs[i].Locations;
+                const locationQuery = `select * from Location where LocID in (${locations}) order by RcTime`;
                 total++;
-                connection.query(locationQuery, (e1, locationRs)=>{
-                    if(e1) {
+                connection.query(locationQuery, (e1, locationRs) => {
+                    if (e1) {
                         console.error(e1);
                         locArr.push([]);
                     } else {
@@ -1803,11 +1937,11 @@ exports.getStatus=(date, bus, logi, callback)=>{
                     cnt++;
                 });
             }
-            var interval=setInterval(()=>{
-                if(cnt==total) {
+            var interval = setInterval(() => {
+                if (cnt == total) {
                     clearInterval(interval);
-                    for(var i=0; i<timelineRs.length; i++) {
-                        timelineRs[i].Loc=locArr[i];
+                    for (var i = 0; i < timelineRs.length; i++) {
+                        timelineRs[i].Loc = locArr[i];
                     }
                     callback(timelineRs);
                 }
@@ -1816,10 +1950,10 @@ exports.getStatus=(date, bus, logi, callback)=>{
     });
 }
 
-exports.updateCommission=(id, commission, callback)=>{
-    const query=`update Members set Commission=${commission} where ID='${id}'`;
-    connection.query(query, (e0)=>{
-        if(e0) {
+exports.updateCommission = (id, commission, callback) => {
+    const query = `update Members set Commission=${commission} where ID='${id}'`;
+    connection.query(query, (e0) => {
+        if (e0) {
             console.error(e0);
             callback(false);
         } else {
@@ -1828,10 +1962,10 @@ exports.updateCommission=(id, commission, callback)=>{
     });
 }
 
-exports.updateAdFee=(id, fee, callback)=>{
-    const query=`update Members set AdFee=${fee} where ID='${id}'`;
-    connection.query(query, (e0)=>{
-        if(e0) {
+exports.updateAdFee = (id, fee, callback) => {
+    const query = `update Members set AdFee=${fee} where ID='${id}'`;
+    connection.query(query, (e0) => {
+        if (e0) {
             console.error(e0);
             callback(false);
         } else {
@@ -1840,10 +1974,10 @@ exports.updateAdFee=(id, fee, callback)=>{
     });
 }
 
-exports.updateLogiRunFee=(id, fee, callback)=>{
-    const query=`update Members set RunFee=${fee} where ID='${id}'`;
-    connection.query(query, (e0)=>{
-        if(e0) {
+exports.updateLogiRunFee = (id, fee, callback) => {
+    const query = `update Members set RunFee=${fee} where ID='${id}'`;
+    connection.query(query, (e0) => {
+        if (e0) {
             console.error(e0);
             callback(false);
         } else {
@@ -1852,10 +1986,10 @@ exports.updateLogiRunFee=(id, fee, callback)=>{
     });
 }
 
-exports.updateBusFee=(id, fee, callback)=>{
-    const query=`update Members set DefaultFee=${fee} where ID='${id}'`;
-    connection.query(query, (e0)=>{
-        if(e0) {
+exports.updateBusFee = (id, fee, callback) => {
+    const query = `update Members set DefaultFee=${fee} where ID='${id}'`;
+    connection.query(query, (e0) => {
+        if (e0) {
             console.error(e0);
             callback(false);
         } else {
@@ -1864,10 +1998,10 @@ exports.updateBusFee=(id, fee, callback)=>{
     });
 }
 
-exports.updateDefaultFee=(id, fee, callback)=>{
-    const query=`update Members set DefaultFee=${fee} where ID='${id}'`;
-    connection.query(query, (e0)=>{
-        if(e0) {
+exports.updateDefaultFee = (id, fee, callback) => {
+    const query = `update Members set DefaultFee=${fee} where ID='${id}'`;
+    connection.query(query, (e0) => {
+        if (e0) {
             console.error(e0);
             callback(false);
         } else {
@@ -1876,10 +2010,10 @@ exports.updateDefaultFee=(id, fee, callback)=>{
     })
 }
 
-exports.updateOwnerCnt=(id, cnt, callback)=>{
-    const query=`update Members set DefaultCnt=${cnt} where ID='${id}'`;
-    connection.query(query, (e0)=>{
-        if(e0) {
+exports.updateOwnerCnt = (id, cnt, callback) => {
+    const query = `update Members set DefaultCnt=${cnt} where ID='${id}'`;
+    connection.query(query, (e0) => {
+        if (e0) {
             console.error(e0);
             callback(false);
         } else {
@@ -1888,18 +2022,18 @@ exports.updateOwnerCnt=(id, cnt, callback)=>{
     })
 }
 
-exports.getBusGraph=(bus, callback)=>{
-    var query=`select date_format(R.Month, '%Y-%m-01') Ym, count(R.RouteID)*M.DefaultFee RunFee from Members M join
+exports.getBusGraph = (bus, callback) => {
+    var query = `select date_format(R.Month, '%Y-%m-01') Ym, count(R.RouteID)*M.DefaultFee RunFee from Members M join
     (select distinct C.Month, R.RouteID, R.CorpID from Calendar C, Route R
     where C.Month between R.ContractStart and R.ContractEnd ) R
     on M.ID=R.CorpID`;
-    if(bus) {
-        query+=` and M.ID='${bus}'`;
+    if (bus) {
+        query += ` and M.ID='${bus}'`;
     }
-    query+=` group by R.Month, R.CorpID`;
+    query += ` group by R.Month, R.CorpID`;
 
-    connection.query(query, (e0, rs)=>{
-        if(e0) {
+    connection.query(query, (e0, rs) => {
+        if (e0) {
             console.error(e0);
             callback(null);
         } else {
@@ -1908,24 +2042,24 @@ exports.getBusGraph=(bus, callback)=>{
     });
 }
 
-exports.getLogiGraph=(logi, owner, bus,callback)=>{
-    var deliveryQuery=`select Ym ,sum(Cnt*AdFee) LogiPrice from 
+exports.getLogiGraph = (logi, owner, bus, callback) => {
+    var deliveryQuery = `select Ym ,sum(Cnt*AdFee) LogiPrice from 
     (select MEMB.AdFee, date_format(ROUT.RunDate, '%Y-%m-01') Ym ,ROUT.Cnt from 
     (select RTE.*, ITL.Cnt from 
     (select RR.*, TT.LogiList, TT.RunDate from 
     (select RouteID, Logi from Route where Logi in
     (select ID from Members where MemberCat=4 `
-    if(logi) {
-        deliveryQuery+=` and ID='${logi}'`;
+    if (logi) {
+        deliveryQuery += ` and ID='${logi}'`;
     }
-    deliveryQuery+=` )) RR left outer join 
+    deliveryQuery += ` )) RR left outer join 
     (select LogiList, RouteID, RunDate from Timeline ) TT 
     on RR.RouteID=TT.RouteID where LogiList is not null) RTE join 
     (select ListID, count(ItemID) Cnt from Item group by ListID) ITL
     on RTE.LogiList=ITL.ListID) ROUT join 
     Members MEMB on ROUT.Logi=MEMB.ID) ROUTE group by Ym`;
 
-    var takeQuery=`select Ym, if(sum(TmpFee)>0, sum(TmpFee)+sum(DefaultFee), sum(DefaultFee)) Total from 
+    var takeQuery = `select Ym, if(sum(TmpFee)>0, sum(TmpFee)+sum(DefaultFee), sum(DefaultFee)) Total from 
     (select distinct Ym, (Tmp*Commission)/100 TmpFee, (DefaultFee*Commission)/100 DefaultFee from
     (select TOTAL.Ym, TOTAL.DefaultFee, TOTAL.Tmp, MEMBS.Commission from 
     (select FEEE.*, ROUT.Logi from 
@@ -1934,48 +2068,48 @@ exports.getLogiGraph=(logi, owner, bus,callback)=>{
     (select IL.OwnerID, date_format(SoldDate, '%Y-%m-01') Ym, sum(II.Cnt) Cnt from
     (select * from ItemList where OwnerID in
     (select ID from Members where MemberCat=3 `;
-    if(owner) {
-        takeQuery+=`and ID like '%${owner}%'`;
+    if (owner) {
+        takeQuery += `and ID like '%${owner}%'`;
     }
-        takeQuery+=`)) IL left outer join    
+    takeQuery += `)) IL left outer join    
     (select ListID, count(ItemID) Cnt from Item group by ListID) II
     on IL.ListID=II.ListID group by OwnerID, Ym) ITL
     on MEM.ID=ITL.OwnerID) FEEE left outer join
     Route ROUT on ROUT.Owners regexp FEEE.ID) TOTAL left outer join
     Members MEMBS on TOTAL.Logi=MEMBS.ID) Result) R group by Ym`;
 
-    var runQuery=`select date_format(R.Month, '%Y-%m-01') Ym, count(R.RouteID)*M.RunFee*0.1 RunFee from Members M join
+    var runQuery = `select date_format(R.Month, '%Y-%m-01') Ym, count(R.RouteID)*M.RunFee*0.1 RunFee from Members M join
     (select distinct C.Month, R.RouteID, R.Logi from Calendar C, Route R
     where C.Month between R.ContractStart and R.ContractEnd`
-    if(bus) {
-        runQuery+=` and CorpID='${bus}' `;
+    if (bus) {
+        runQuery += ` and CorpID='${bus}' `;
     }
-    runQuery+=`) R
+    runQuery += `) R
     on M.ID=R.Logi `;
-    if(logi) {
-        runQuery+=`where M.ID='${logi}'`;
-    }    
-    runQuery+=` group by R.Logi, R.Month`;
+    if (logi) {
+        runQuery += `where M.ID='${logi}'`;
+    }
+    runQuery += ` group by R.Logi, R.Month`;
 
-    connection.query(deliveryQuery, (e0, deliveryRs)=>{
-        if(e0) {
+    connection.query(deliveryQuery, (e0, deliveryRs) => {
+        if (e0) {
             console.error(e0);
             callback(null);
         } else {
-            connection.query(takeQuery, (e1, takeRs)=>{
-                if(e1) {
+            connection.query(takeQuery, (e1, takeRs) => {
+                if (e1) {
                     console.error(e1);
                     callback(null);
                 } else {
-                    connection.query(runQuery, (e2, runRs)=>{
-                        if(e2) {
+                    connection.query(runQuery, (e2, runRs) => {
+                        if (e2) {
                             console.error(e2);
                             callback(null);
                         } else {
                             callback({
                                 delivery: deliveryRs,
                                 take: takeRs,
-                                run:runRs
+                                run: runRs
                             });
                         }
                     });
@@ -1985,29 +2119,34 @@ exports.getLogiGraph=(logi, owner, bus,callback)=>{
     });
 }
 
-exports.getLogiCnt=(logi, month, date, callback)=>{
-    var query=`select RRRR.Name, sum(LogiCnt) LogiCnt, sum(OwnerCnt) OwnerCnt from
+exports.getLogiCnt = (logi, month, date, callback) => {
+    var query = `select RRRR.Name, sum(LogiCnt) LogiCnt, sum(OwnerCnt) OwnerCnt from
     (select RRR.*, III.Cnt OwnerCnt from 
     (select RR.*, II.Cnt LogiCnt from 
     (select R.Name, T.* from Route R join 
     (select RouteID, LogiList, ListID from Timeline where RouteID in(
-    select RouteID from Route where Logi='${logi}') and `
-    if(month) {
-        var start=month+'-01';
-        var end=month.split('-')[0]+'-'+(parseInt(month.split('-')[1])+1)+'-01';
-        query+=`RunDate between '${start}' and '${end}'`;
-    } else  {
-        query+=`RunDate='${date}'`;
+    select RouteID from Route `;
+    if(logi){
+        query+=` where Logi='${logi}'`;
     }
-    query+=`) T
-    on R.RouteID=T.RouteID) RR left outer join 
+    query+=`) and `
+    if (month) {
+        var start = month + '-01';
+        var end = month.split('-')[0] + '-' + (parseInt(month.split('-')[1]) + 1) + '-01';
+        query += `RunDate between '${start}' and '${end}'`;
+    } else {
+        query += `RunDate='${date}'`;
+    }
+    query += `) T
+    on R.RouteID=T.RouteID where R.Name!='') RR left outer join 
     (select ListID, count(ItemID) Cnt from Item group by ListID) II
     on RR.LogiList=II.ListID) RRR left outer join
     (select ListID, count(ItemID) Cnt from Item group by ListID) III
-    on III.ListID regexp(RRR.ListID)) RRRR group by Name`;
+    on RRR.ListID like concat('%|',III.ListID, '|%') ) RRRR group by Name order by Name`;
+    console.log(query);
 
-    connection.query(query, (e0, rs)=>{
-        if(e0) {
+    connection.query(query, (e0, rs) => {
+        if (e0) {
             console.error(e0);
             callback(null);
         } else {
@@ -2016,8 +2155,8 @@ exports.getLogiCnt=(logi, month, date, callback)=>{
     });
 }
 
-exports.getBusCalc=(bus, start, end, callback)=>{
-    const query=`select LogiName,count(LogiID) RouteCnt, sum(DefaultFee) DefaultFeeTotal, sum(RunFee) RunFeeTotal, RunFee, DefaultFee from 
+exports.getBusCalc = (bus, start, end, callback) => {
+    const query = `select LogiName,count(LogiID) RouteCnt, sum(DefaultFee) DefaultFeeTotal, sum(RunFee) RunFeeTotal, RunFee, DefaultFee from 
     (select RR.*, BB.DefaultFee from 
     (select  R.CorpID, L.Name LogiName, L.ID LogiID, L.RunFee from 
     (select * from Route where CorpID='${bus}' 
@@ -2025,6 +2164,56 @@ exports.getBusCalc=(bus, start, end, callback)=>{
     Members L
     on R.Logi=L.ID) RR join Members BB
     on RR.CorpID=BB.ID) RRR group by LogiID`;
+
+    connection.query(query, (e0, rs) => {
+        if (e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
+        }
+    });
+}
+
+exports.getItemCntbyRoute = (start, end, callback) => {
+    const query = `select Name, sum(LogiCnt) LogiCnt, sum(OwnerCnt) OwnerCnt from
+    (select RRRR.Name, RRRR.Gu, RRRR.OwnerCnt,RRRR.LogiCnt/ROGU.GuCnt LogiCnt  from 
+    (select RRR.*, ITL.OwnerCnt from 
+    (select RR.*, IL.LogiCnt from
+    (select R.Name, R.Gu, T.LogiList, T.ListID from Route R
+    join Timeline T on R.RouteID=T.RouteID
+    where T.RunDate>='${start}' and T.RunDate<'${end}') RR left outer join (
+    select ListID, count(ItemID) LogiCnt from Item group by ListID) IL
+    on RR.LogiList=IL.ListID) RRR left outer join
+    (select IL.ListID, II.OwnerCnt from ItemList IL join
+    (select ListID, count(ItemID) OwnerCnt from Item group by ListID) II on
+    IL.ListID=II.ListID
+    where IL.SoldDate>='${start}' and IL.SoldDate<'${end}') ITL
+    on RRR.ListID like concat('%', ITL.ListID,'%')) RRRR left outer join
+    (select Gu, count(RouteID) GuCnt from Route
+    where ContractStart<='${start}' and ContractEnd>='${end}'
+    group by Gu) ROGU on RRRR.Gu=ROGU.Gu ) RRRRR 
+    where Name!=''
+    group by Name
+    order by Name`;
+
+    connection.query(query, (e0, rs) => {
+        if (e0) {
+            callback(null);
+            console.error(e0);
+        } else {
+            callback(rs);
+        }
+    });
+}
+
+exports.getOwnerCnt=(owner, start, end , callback)=>{
+    const query=`select date_format(SoldDate, '%m-%d') Date, ItemCnt from     
+    (select SoldDate, ListID from ItemList
+    where OwnerID='${owner}' and SoldDate>='${start}' and SoldDate<='${end}') IL join
+    (select ListID, count(ItemID) ItemCnt from Item
+    group by ListID) IT
+    on IL.ListID=IT.ListID order by Date`;
 
     connection.query(query, (e0, rs)=>{
         if(e0) {

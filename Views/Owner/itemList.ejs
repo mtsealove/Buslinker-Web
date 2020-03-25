@@ -3,6 +3,13 @@
 <head>
     <%- include('config')%>
     <title>물량 관리</title>
+    <script src="/public/js/fullcalendar/core.js"></script>
+    <script src="/public/js/fullcalendar/timegrid.js"></script>
+    <script src="/public/js/fullcalendar/daygrid.js"></script>
+    <script src="/public/js/fullcalendar/interaction.js"></script>
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/core.css" />
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/timegrid.css" />
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/daygrid.css" />
     <script>
         $(function () {
             $('#modal').hide();
@@ -46,7 +53,46 @@
             setMonth();
             setFirst();
             setContentHeight();
+            var year=new Date().getFullYear();
+            <%for(var i=0; i<table.length; i++) { %>
+                addEvent(<%=table[i].ItemCnt%> , year+'-<%=table[i].Date%>');
+                console.log('<%=table[i].Date%>');
+            <% } %>
         });
+        document.addEventListener('DOMContentLoaded', function () {
+            var Calendar = FullCalendar.Calendar;
+
+            var calendarEl = document.getElementById('calendar');
+            calendar = new Calendar(calendarEl, {
+                plugins: ['interaction', 'dayGrid', 'timeGrid'],
+                header: {
+                    left: 'prev',
+                    center: 'title',
+                    right: 'next'
+                },
+                editable: false,
+                droppable: false, // this allows things to be dropped onto the calendar
+                locale: 'ko',
+                eventLimit: true, // for all non-TimeGrid views
+                views: {
+                    month: {
+                        eventLimit: 2 // adjust to 6 only for timeGridWeek/timeGridDay
+                    }
+                }
+            });
+
+            calendar.render();
+        });
+
+        function addEvent(cnt, date) {
+            calendar.addEvent({
+                title: cnt+' 박스',
+                start: date,
+                allDay: true,
+                color: '#011942',
+                textColor: '#ffffff',
+            });
+        }
 
         function getItemList() {
             $('.item-sm').click(function () {
@@ -172,7 +218,44 @@
         </div>
     </div>
     <section class="container-main">
+        <div class="normal"style="padding-left: 100px; padding-right: 100px;padding-top: 50px;">
+            <h5>오늘의 물량 현황</h5>
+            <div class="horizontal between">
+                <h3><b><%=itemList.length?itemList.length.toLocaleString():0%>개</b></h3>
+                <% if(itemList.length==0) { %>
+                    <button type="button" class=" btn-blue">물량 업로드</button>
+                <% } %>
+                
+            </div>
+            <br>
+            <div class="horizontal between">
+                <!-- route info -->
+                <div class="card" style="width: 39%;">
+                    <div class="card-body">
+                        <div class="horizontal between">                            
+                            <div class="horizontal">
+                                <img src="/public/images/logo_512x512.png" width="45" height="45">
+                                <label class=" logo-txt" style="margin-top: 15px;">Bus<b>Linker</b></label>
+                            </div>
+                            
+                            <p><%=yyyymm%></p>
+                        </div>
+                        <h3 style="text-align: center;"><b>routename</b></h3>
+                        <div class="horizontal between">
+                            
+                        </div>
+                    </div>
+                </div>
+                <!-- calendar -->
+                <div class="card" style="width: 59%;">
+                    <div class="card-body">
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- summuary view -->
+        <!-- 
         <div id="item_sum">
             <select id="period">
                 <% var year=new Date().getFullYear();
@@ -237,8 +320,9 @@
                 }
             } %>
             <label id="alert"><%=deadStr%></label>
-        </div>
+        </div>-->
         <!-- each detail view -->
+        <!--
         <div id="item_detail">
             <label class="font-white size-15">물량 현황</label><br>
             <label class="font-white size-15" id="count"></label>
@@ -261,7 +345,8 @@
                 <button class="btn-sec" style="margin-right: 20px;" id="cancel-btn" type="button">취소</button>
                 <button class="btn-main" id="confirm-btn" type="button">확인</button>
             </div>
-        </div>
+        </div>-->
+
     </section>
 </body>
 

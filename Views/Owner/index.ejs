@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%-include('config') %>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script> 
+    <title>Buslinker</title>
+    <script>
+        $(function() {
+            setChart();
+            setSelect();
+        });
+
+        function setSelect() {
+            $('#select-month').val('<%=start%>');
+            $('#select-month').change(function() {
+                const start=$(this).val();
+                location.href=`?start=${start}`;
+            });
+        }
+        function setChart() {
+            var options = {
+                maintainAspectRatio: true,
+                spanGaps: false,
+                elements: {
+                    line: {
+                        tension: 0.4
+                    }
+                },
+                scales: {
+                    yAxes: [{
+                        stacked: true,
+                        ticks: {
+                            beginAtZero: true
+                        },
+                        scaleLabel: {
+                            display: true,
+                        }
+                    }],
+                    xAxes: [{
+                        display: true,
+                        type: 'category',
+                        stacked: true,
+                        scaleLabel: {
+                            display: false,
+                            labelString: '월'
+                        },
+                        maxBarThickness: 60
+                    }],
+                },
+                tooltips: {
+                    mode: 'index',
+						intersect: false,
+                    callbacks: {
+                        title: function (tooltipItems, data) {
+                            const label=data.labels[tooltipItems[0].index];
+                            return label;
+                        },
+                        
+                    }
+                }
+
+            };
+            var label=[], cnt=[];
+            <% for(var i=0; i<table.length; i++) { %>
+                label.push('<%=table[i].Date%>');
+                cnt.push(<%=table[i].ItemCnt%>);
+            <% } %>
+
+            var data = {
+                labels: label,
+                datasets: [
+                {
+                    borderColor: '#FB6740',
+                    backgroundColor: '#FB6740',
+                    data: cnt,
+                    label: '수거',
+                }
+              ]
+            };
+
+            var ctx = document.getElementById('myChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: options
+            });
+        } 
+    </script>
+</head>
+
+<body>
+    <%-include('nav') %>
+    <section class="container-main">
+        <div class="normal">
+            <h3><b>종합</b></h3><br>
+            <div class="horizontal"
+                style="width: 90%; justify-content: space-evenly; margin-left: 5%; margin-right: 5%;">
+                <!-- 기본 물량 -->
+                <div class="card" style="width: 25%;">
+                    <div class="card-body horizontal">
+                        <img width="100" height="100">
+                        <div style="margin-left: 20px;">
+                            <h2><b><%=cnt[0].DefaultCnt?cnt[0].DefaultCnt.toLocaleString():0%></b></h2>
+                            <p>기본 물량</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- 누적 물량 -->
+                <div class="card" style="width: 25%;">
+                    <div class="card-body horizontal">
+                        <img width="100" height="100">
+                        <div style="margin-left: 20px;">
+                            <h2><b><%=cnt[0].ItemCnt?cnt[0].ItemCnt.toLocaleString():0%></b></h2>
+                            <p>누적 물량</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- 초과 물량 -->
+                <div class="card" style="width: 25%;">
+                    <div class="card-body horizontal">
+                        <img width="100" height="100">
+                        <div style="margin-left: 20px;">
+                            <h2><b><%=cnt[0].DefaultCnt-cnt[0].ItemCnt<0?(cnt[0].ItemCnt-cnt[0].DefaultCnt).toLocaleString():0%></b>
+                            </h2>
+                            <p>초과 물량</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class=" horizontal between">
+                <h3><b>수거 현황</b></h3>
+                <select class="box0" id="select-month">
+                    <% var year=new Date().getFullYear();
+                        var month=new Date().getMonth()+1;
+                        %>
+                    <%for(var i=month; i>=1; i--) { %>
+                    <% var date=year+'-';
+                        if(i<10){
+                            date+='0';
+                        } date+=i;
+                        %>
+                    <option value="<%=date+'-01'%>"><%=date%></option>
+                    <% }%>
+                </select>
+            </div>
+            <br>
+            <div class=" horizontal between">
+                <div class="card" style="width: 24%;">
+                    <div class="card-body">
+                        <div style="height: 300px;">
+                        <table >
+                            <thead>
+                                <th class="head">일시</th>
+                                <th class="head">물량</th>
+                            </thead>
+                            <tbody>
+                                <% for(var i=0; i<table.length; i++) { %>
+                                    <tr>
+                                        <td><%=table[i].Date%></td>
+                                        <td><%=table[i].ItemCnt?table[i].ItemCnt.toLocaleString():0%></td>
+                                    </tr>
+                                <% }%>
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                </div>
+                <div class="card" style="width: 75%;">
+                    <div class="card-body">
+                        <canvas id="myChart" style="width: 100%; height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

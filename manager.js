@@ -71,7 +71,20 @@ exports.startManager = (app) => {
                             ownerItemCnt+=owner[i].ItemCnt;
                         }
                     }
-                    res.render('./Manager/index', {user:user, routeCnt:routeCnt, ownerItemCnt:ownerItemCnt, logiItemCnt:logiItemCnt});
+                    if(cat=='date') {
+                        sql.getLogiCnt(null, null, start, (table)=>{
+                            res.render('./Manager/index', {user:user, routeCnt:routeCnt, ownerItemCnt:ownerItemCnt, logiItemCnt:logiItemCnt, cat:cat, divide:start, table:table});
+                            console.log(table);
+                        });
+                    } else {
+                        sql.getLogiCnt(null, start, null, (table)=>{
+                            res.render('./Manager/index', {user:user, routeCnt:routeCnt, ownerItemCnt:ownerItemCnt, logiItemCnt:logiItemCnt, cat:cat, divide:start, table:table});
+                            console.log(table);
+                        });
+                    }
+                    
+                   
+                    
                 })
                 
             });
@@ -424,6 +437,7 @@ exports.startManager = (app) => {
                                         }
                                     }
                                     res.render('./Manager/calculate', { user: user, ownerFee: ownerFee, start: start, logis: logis, corp: corp, busFee: busFee, logiFee: logiFee, total: total });
+                                    console.log(logiFee);
                                 });
                             });
                         });
