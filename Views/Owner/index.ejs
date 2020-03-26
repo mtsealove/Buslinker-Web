@@ -3,19 +3,20 @@
 
 <head>
     <%-include('config') %>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
     <title>Buslinker</title>
     <script>
-        $(function() {
+        $(function () {
             setChart();
             setSelect();
+            setDoughut();
         });
 
         function setSelect() {
             $('#select-month').val('<%=start%>');
-            $('#select-month').change(function() {
-                const start=$(this).val();
-                location.href=`?start=${start}`;
+            $('#select-month').change(function () {
+                const start = $(this).val();
+                location.href = `?start=${start}`;
             });
         }
         function setChart() {
@@ -50,33 +51,33 @@
                 },
                 tooltips: {
                     mode: 'index',
-						intersect: false,
+                    intersect: false,
                     callbacks: {
                         title: function (tooltipItems, data) {
-                            const label=data.labels[tooltipItems[0].index];
+                            const label = data.labels[tooltipItems[0].index];
                             return label;
                         },
-                        
+
                     }
                 }
 
             };
-            var label=[], cnt=[];
-            <% for(var i=0; i<table.length; i++) { %>
+            var label = [], cnt = [];
+            <% for (var i = 0; i < table.length; i++) { %>
                 label.push('<%=table[i].Date%>');
-                cnt.push(<%=table[i].ItemCnt%>);
+                cnt.push(<%=table[i].ItemCnt %>);
             <% } %>
 
             var data = {
                 labels: label,
                 datasets: [
-                {
-                    borderColor: '#FB6740',
-                    backgroundColor: '#FB6740',
-                    data: cnt,
-                    label: '수거',
-                }
-              ]
+                    {
+                        borderColor: '#FB6740',
+                        backgroundColor: '#FB6740',
+                        data: cnt,
+                        label: '수거',
+                    }
+                ]
             };
 
             var ctx = document.getElementById('myChart').getContext('2d');
@@ -86,6 +87,46 @@
                 options: options
             });
         } 
+
+        function setDoughut() {
+            var config = {
+			type: 'doughnut',
+			data: {
+				datasets: [{
+					data: [
+						100
+					],
+					backgroundColor: [
+						'#001F46'
+					],
+					label: 'Dataset 1'
+				}],
+				labels: [
+					'Red',
+				]
+			},
+			options: {
+				responsive: true,
+				legend: {
+					position: 'top',
+				},
+				title: {
+					display: false,
+				},
+				animation: {
+					animateScale: true,
+					animateRotate: true
+                }
+                ,circumference :  Math.PI,
+                rotation :-Math.PI
+			}
+		};
+
+		window.onload = function() {
+			var ctx = document.getElementById('chart-area').getContext('2d');
+			window.myDoughnut = new Chart(ctx, config);
+        };
+        }
     </script>
 </head>
 
@@ -145,32 +186,61 @@
                     <% }%>
                 </select>
             </div>
-            <br>
-            <div class=" horizontal between">
-                <div class="card" style="width: 24%;">
-                    <div class="card-body">
-                        <div style="height: 300px;">
-                        <table >
-                            <thead>
-                                <th class="head">일시</th>
-                                <th class="head">물량</th>
-                            </thead>
-                            <tbody>
-                                <% for(var i=0; i<table.length; i++) { %>
-                                    <tr>
-                                        <td><%=table[i].Date%></td>
-                                        <td><%=table[i].ItemCnt?table[i].ItemCnt.toLocaleString():0%></td>
-                                    </tr>
-                                <% }%>
-                            </tbody>
-                        </table>
+            <div class="horizontal">
+                <div class="card" style="width: 40%;">
+                    <div class=" horizontal">
+                        <div id="receipt-left">
+                            <div style="text-align: center;">
+                                <h4><b>물류 수거 비용</b></h4>
+                                <p>① 기본 비용 + ③ 추가 비용</p>
+                            </div>
+                            <label>① 기본 비용</label><br>
+                            <label style="margin-left: 20px; font-size: small;"><b><%=cnt[0].DefaultFee.toLocaleString()%>원</b></label><br>
+                            <label>② 기본 물량</label><br>
+                            <label style="margin-left: 20px; font-size: small;"><b><%=cnt[0].DefaultCnt.toLocaleString()%>개</b></label><br>
+                            <label>③ 추가 비용</label><br>
+                            <label style="margin-left: 20px; font-size: small;"><b><%=cnt[0].AdFee.toLocaleString()%>원 X (<%=cnt[0].ItemCnt?cnt[0].ItemCnt.toLocaleString():0%> - <%=cnt[0].DefaultCnt.toLocaleString()%>)개</b></label><br>
+                            <label style="font-size: small;">* 추가 비용이 음수일경우, 0으로 처리</label>
+                        </div>
+                        <div id="receipt-right">
+                            <div class="horizontal between" style="width: 100%;">
+                                <label class=" logo-txt">Bus<b>Linker</b></label>
+                                <label><%=start%></label>
+                            </div>
+                            <br>
+                            <div class=" horizontal between">
+                                <label>기본 비용</label>
+                                <label><%=cnt[0].DefaultFee.toLocaleString()%>원</label>
+                            </div>
+                            <div class=" horizontal between">
+                                <label>추가 비용</label>
+                                <% var adFee=0;  %>
+                                <% if(cnt[0].ItemCnt&&cnt[0].ItemCnt>cnt[0].DefaultCnt) {
+                                    adFee=(cnt[0].ItemCnt-cnt[0].DefaultCnt)*cnt[0].AdFee;
+                                } %>
+                                <label><%=adFee.toLocaleString()%>원</label>
+                            </div>
+                            <hr><br>
+                            <div class=" horizontal between">
+                                <label>Total</label>
+                                <label><%=(cnt[0].DefaultFee+adFee).toLocaleString()%>원</label>
+                            </div>
+                        </div>
                     </div>
+                   
+                </div>
+                <div class="card" style="width: 30%; margin-left: 20px;" >
+                    <div class="card-body" style="text-align: center;">
+                        <canvas id="chart-area" style="height: 200px;"></canvas>
+                        <label><%=cnt[0].DefaultCnt.toLocaleString()%>개 중 <%=cnt[0].ItemCnt?cnt[0].ItemCnt.toLocaleString():0%>개 수거</label>
                     </div>
                 </div>
-                <div class="card" style="width: 75%;">
-                    <div class="card-body">
-                        <canvas id="myChart" style="width: 100%; height: 300px;"></canvas>
-                    </div>
+            </div>
+            
+            <br>
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="myChart" style="width: 100%; height: 300px;"></canvas>
                 </div>
             </div>
         </div>

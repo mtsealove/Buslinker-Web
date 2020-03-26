@@ -2208,9 +2208,13 @@ exports.getItemCntbyRoute = (start, end, callback) => {
 }
 
 exports.getOwnerCnt=(owner, start, end , callback)=>{
-    const query=`select date_format(SoldDate, '%m-%d') Date, ItemCnt from     
+    var query=`select date_format(SoldDate, '%m-%d') Date, ItemCnt from     
     (select SoldDate, ListID from ItemList
-    where OwnerID='${owner}' and SoldDate>='${start}' and SoldDate<='${end}') IL join
+    where OwnerID='${owner}' `;
+    if(start&&end) {
+        query+=` and SoldDate>='${start}' and SoldDate<='${end}' `;
+    }
+    query+=`) IL join
     (select ListID, count(ItemID) ItemCnt from Item
     group by ListID) IT
     on IL.ListID=IT.ListID order by Date`;
@@ -2221,6 +2225,83 @@ exports.getOwnerCnt=(owner, start, end , callback)=>{
             callback(null);
         } else {
             callback(rs);
+        }
+    });
+}
+
+exports.getOwnerCntbyDate=(owner, date, callback)=>{
+    const query=`select I.* from ItemList L  left outer join
+    (select ListID, count(ItemID) ItemCnt from Item
+    group by ListID) I
+    on L.ListID=I.ListID where L.OwnerID='${owner}' and L.SoldDate='${date}'`;
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            callback(null);
+        } else {
+            callback(rs);
+        }
+    });
+}
+
+exports.getOnwerTimeline=(owner, today, startDay, endDay, callback)=>{
+    const timelineQuery=`select ROUTEE.*, BUSSSS.Num from 
+    (select ROUTE.*, CORPR.Name BusName from 
+    (select ROUT.*, PTTM.Name PtName, PTTM.Phone PtPhone, PTTM.ProfilePath PtProfile from 
+    (select ROT. *, DRV.Name DriverName, DRV.Phone DriverPhone, DRV.ProfilePath DriverProfile from 
+    (select RR.RouteID, RR.Name, RR.Locations, RR.BusID, date_format(RR.ContractStart, '%Y-%m-%d') ContractStart, date_format(RR.ContractEnd, '%Y-%m-%d') ContractEnd, LG.Name LogiName, RR.PTID, RR.DriverID, RR.CorpID from
+    (select R.Name, R.Logi,R.Locations, R.CorpID, R.ContractStart,R.ContractEnd, T.* from 
+    (select *  from Route 
+    where Owners like '%${owner}%') R left outer join
+    Timeline T on R.RouteID=T.RouteID
+    where T.RunDate='${today}') RR join Members LG
+    on RR.Logi=LG.ID) ROT left outer join 
+    Members DRV on ROT.DriverID=DRV.ID) ROUT left outer join
+    Members PTTM on  ROUT.PTID=PTTM.ID) ROUTE left outer join 
+    Members CORPR on ROUTE.CorpID=CORPR.ID) ROUTEE left outer join
+    Bus BUSSSS on ROUTEE.BusID=BUSSSS.ID`;
+    var results={
+        timeline:null,
+        item: null, 
+        loc: null
+    };
+
+    const itemQuery=`select OWN.DefaultCnt, ITL.ItemCnt from 
+    (select ID, DefaultCnt from Members 
+    where ID='${owner}') OWN left outer join
+    (select OwnerID, sum(ItemCnt) ItemCnt from 
+    (select IL.*, II.ItemCnt from 
+    (select OwnerID, ListID from ItemList 
+    where SoldDate>='${startDay}' and Solddate<'${endDay}') IL left outer join
+    (select ListID, count(ItemID) ItemCnt from Item
+    group by ListID) II on IL.ListID=II.ListID) IT group by OwnerID) ITL
+    on OWN.ID=ITl.OwnerID`;
+
+    connection.query(timelineQuery, (e0, timeline)=>{
+        if(e0) {
+            callback(results);
+            console.error(e0);
+        } else {
+            results.timeline=timeline[0];
+            connection.query(itemQuery, (e1, item)=>{
+                if(e1) {
+                    console.error(e1);
+                    callback(results);
+                } else {
+                    results.item=item[0];
+                    const locQuery=`select * from Location 
+                    where LocID in(${timeline[0].Locations}) 
+                    order by RcTime asc`;
+                    connection.query(locQuery, (e2, loc)=>{
+                        if(e2) {
+                            console.error(e2);
+                            callback(results);
+                        } else {
+                            results.loc=loc;
+                            callback(results);
+                        }
+                    });
+                }
+            });
         }
     });
 }

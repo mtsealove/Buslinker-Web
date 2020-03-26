@@ -88,3 +88,53 @@ tr.item {
     border-bottom: 1px solid #021B46;
     cursor: pointer;
 }
+
+.route-left {
+    text-align: left;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: #011D46;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    color: white;
+    font-size: small;
+    width: 35%;
+}
+
+.route-right {
+    text-align: right;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: #011D46;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    font-size: small;
+    color: white;
+    width: 35%;
+}
+
+.route-middle {
+    padding-top: 5px;
+    padding-right: 15px;
+    padding-left: 15px;
+    text-align: center;
+    border: 2px solid #011D46;
+    background-color: white;
+    color: #011D46;
+    border-radius: 10px;
+    width: 30%;
+}
+
+#receipt-left {
+    background-color: #3F3F8E;
+    padding: 30px 20px 30px 20px;
+    width: 40%;
+    color: white;
+}
+
+#receipt-right {
+    width: 60%;
+    padding: 20px 50px 20px 50px;
+}

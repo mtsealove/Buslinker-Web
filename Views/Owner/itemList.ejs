@@ -38,7 +38,7 @@
                 }
             });
 
-            $('#upload-a').click(function () {
+            $('#upload-btn0').click(function () {
                 $('#modal').fadeIn(400);
             })
 
@@ -52,10 +52,10 @@
             setClose();
             setMonth();
             setFirst();
-            setContentHeight();
-            var year=new Date().getFullYear();
-            <%for(var i=0; i<table.length; i++) { %>
-                addEvent(<%=table[i].ItemCnt%> , year+'-<%=table[i].Date%>');
+            setLeftHeight();
+            var year = new Date().getFullYear();
+            <%for (var i = 0; i < table.length; i++) { %>
+                addEvent(<%=table[i].ItemCnt %> , year + '-<%=table[i].Date%>');
                 console.log('<%=table[i].Date%>');
             <% } %>
         });
@@ -86,7 +86,7 @@
 
         function addEvent(cnt, date) {
             calendar.addEvent({
-                title: cnt+' 박스',
+                title: cnt + ' 박스',
                 start: date,
                 allDay: true,
                 color: '#011942',
@@ -133,17 +133,6 @@
                 , success: function (json) {
                     $("#detail-contents").html('');
                     for (var i = 0; i < json.length; i++) {
-                        console.log(i);
-                        $("#detail-contents").append(`
-                        <tr class='item'>
-                        <td class='font-white'>${i + 2}</td>
-                        <td class='font-white'>${json[i].송장번호}</td>
-                        <td class='font-white'>${json[i].품목명}</td>
-                        <td class='font-white'>${json[i].이름}</td>
-                        <td class='font-white'>${json[i].전화번호}</td>
-                        <td class='font-white'>${json[i].도착지}</td>
-                        </tr>
-                        `);
                         $('#item-form').append(`
                     <input hidden name='id' value='${json[i].송장번호}'>
                     <input hidden name='item_name' value='${json[i].품목명}'>
@@ -152,10 +141,12 @@
                     <input hidden name='addr' value='${json[i].도착지}'>
                     `);
                     }
-                    $('#count').text(`총 ${json.length}건`);
-                    $("#detail-contents").append(`<tr style="height:80px"></tr>`);
+                    //$('#count').text(`총 ${json.length}건`);
+                    // $("#detail-contents").append(`<tr style="height:80px"></tr>`);
                     $('#modal').hide();
-                    $('#check-div').show();
+                    // $('#check-div').show();
+                    console.log($('#item-form'));
+                    $('#item-form').submit();
                 }
             });
         }
@@ -187,10 +178,10 @@
             }
         }
 
-        function setContentHeight() {
-            const height = $(window).outerHeight() - 62;
-
-            $('#item_detail').height(height);
+        function setLeftHeight() {
+            var height=$('#calendar').outerHeight();
+            
+            $('#left-div').height(height);
         }
     </script>
 
@@ -218,31 +209,135 @@
         </div>
     </div>
     <section class="container-main">
-        <div class="normal"style="padding-left: 100px; padding-right: 100px;padding-top: 50px;">
+        <form id="item-form" hidden action="/Owner/Create/ItemList" method="POST"></form>
+        <div class="normal" style="padding-left: 100px; padding-right: 100px;padding-top: 50px;">
             <h5>오늘의 물량 현황</h5>
             <div class="horizontal between">
-                <h3><b><%=itemList.length?itemList.length.toLocaleString():0%>개</b></h3>
-                <% if(itemList.length==0) { %>
-                    <button type="button" class=" btn-blue">물량 업로드</button>
+                <h3><b><%=ItemCnt!=0?ItemCnt.toLocaleString()+'개':'물량 등록 안됨'%></b></h3>
+                <% if(ItemCnt==0) { %>
+                <button type="button" class="btn-blue" id="upload-btn0">물량 업로드</button>
                 <% } %>
-                
             </div>
             <br>
             <div class="horizontal between">
                 <!-- route info -->
                 <div class="card" style="width: 39%;">
                     <div class="card-body">
-                        <div class="horizontal between">                            
+                        <div id="left-div">
+                        <div class="horizontal between">
                             <div class="horizontal">
                                 <img src="/public/images/logo_512x512.png" width="45" height="45">
                                 <label class=" logo-txt" style="margin-top: 15px;">Bus<b>Linker</b></label>
                             </div>
-                            
+
                             <p><%=yyyymm%></p>
                         </div>
-                        <h3 style="text-align: center;"><b>routename</b></h3>
-                        <div class="horizontal between">
-                            
+                        <div style="width: 70%; margin-left: 15%;">
+                            <h3 style="text-align: center;"><b><%=routeTimeline.timeline.Name%></b></h3><br>
+                            <!-- route design -->
+                            <% var current=new Date();
+                            var currentStr=current.getFullYear()+'-';
+                            if(current.getHours()<10) {
+                                currentStr+='0';
+                            }
+                            currentStr+=current.getHours()+'-';
+                            if(current.getMinutes()<10) {
+                                currentStr+='0';
+                            }
+                            currentStr+=current.getMinutes();
+                            var lastLoc={
+                                LocName:null,
+                                RcTime:null
+                            },
+                            currentLoc={
+                                LocName:null,
+                                RcTime:null
+                            }, nextLoc= {
+                                LocName:null,
+                                RcTime:null
+                            }
+                            var currentIndex=0;
+                             for(var i=0; i<routeTimeline.loc.length; i++) {
+                                if(routeTimeline.loc[i].RcTime<=currentStr) {
+                                    currentIndex=i+1;
+                                }
+                            } 
+                            if(routeTimeline.loc[currentIndex-1]) {
+                                lastLoc=routeTimeline.loc[currentIndex-1];
+                            }
+                            if(routeTimeline.loc[currentIndex]) {
+                                currentLoc=routeTimeline.loc[currentIndex];
+                            }
+                            if(routeTimeline.loc[currentIndex+1]) {
+                                nextLoc=routeTimeline.loc[currentIndex+1];
+                            }
+                            %>
+                            <div class="horizontal">
+                                <div class="route-left">
+                                    <%=lastLoc.LocName%>
+                                </div>
+                                <div class="route-middle">
+                                    <h5><b><%=currentLoc.LocName%></b></h5>
+                                    <label style="font-size: small; margin-top: -10px;"><%=currentLoc.RcTime.substring(0, 5)%></label>
+                                </div>
+                                <div class="route-right">
+                                    <%=nextLoc.LocName%>
+                                </div>
+                            </div>
+                            <div class=" horizontal between" style="margin-top: -10px; padding-left: 10px; padding-right: 10px;">
+                                <label style="font-size: smaller;"><%=lastLoc.RcTime.substring(0, 5)%></label>
+                                <label style="font-size: smaller;"><%=nextLoc.RcTime.substring(0, 5)%></label>
+                            </div>
+                            <br>
+                            <div class="horizontal between" style="margin-top: -10px;">
+                                <label></label>
+                            <label style="margin-left: auto; margin-right: auto;" ><b><%=lastLoc.LocName+'에서 '+currentLoc.LocName+'(으)로 이동중'%></b></label>
+                            <label></label>
+                            </div>
+                            <p><b>노선정보</b></p>
+                            <div class="horizontal between">
+                                <label>계약 기간</label>
+                                <label><b><%=routeTimeline.timeline.ContractStart+' ~ '+routeTimeline.timeline.ContractEnd%></b></label>
+                            </div>
+                            <div class="horizontal between">
+                                <label>기본 물량</label>
+                                <label><b><%=routeTimeline.item.DefaultCnt.toLocaleString()%>개</b></label>
+                            </div>
+                            <div class="horizontal between">
+                                <label>누적 물량</label>
+                                <label><b><%=routeTimeline.item.ItemCnt?routeTimeline.item.ItemCnt.toLocaleString():0%>개</b></label>
+                            </div><br>
+                            <p><b>차량정보</b></p>
+                            <div class="horizontal between">
+                                <label>물류사</label>
+                                <label><b><%=routeTimeline.timeline.LogiName%></b></label>
+                            </div>
+                            <div class="horizontal between">
+                                <label>버스사</label>
+                                <label><b><%=routeTimeline.timeline.BusName%></b></label>
+                            </div>
+                            <div class="horizontal between">
+                                <label>차량 번호</label>
+                                <label><b><%=routeTimeline.timeline.Num?routeTimeline.timeline.Num:'차량 미배정'%></b></label>
+                            </div>
+                            <br>
+                            <div class="horizontal between">
+                                <div style="width: 50%;" class="horizontal">
+                                    <img src="<%=routeTimeline.timeline.DriverPath%>" width="40" height="40">
+                                    <div style="margin-left: 10px;">
+                                        <label><b><%=routeTimeline.timeline.DriverName?routeTimeline.timeline.DriverName+'기사':'기사 미배정'%></b></label>
+                                        <label><%=routeTimeline.timeline.DriverPhone?routeTimeline.timeline.DriverPhone:''%></label>
+                                    </div>
+                                </div>
+                                <div style="width: 50%;" class="horizontal">
+                                    <img src="<%=routeTimeline.timeline.PtPath%>" width="40" height="40">
+                                    <div style="margin-left: 10px;">
+                                        <label><b><%=routeTimeline.timeline.PtName?routeTimeline.timeline.PtName+'알바':'알바 미배정'%></b></label>
+                                        <label><%=routeTimeline.timeline.PtPhone?routeTimeline.timeline.PtPhone:''%></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -254,98 +349,7 @@
                 </div>
             </div>
         </div>
-        <!-- summuary view -->
-        <!-- 
-        <div id="item_sum">
-            <select id="period">
-                <% var year=new Date().getFullYear();
-                    for(var i=1; i<13; i++) { 
-                        var print=year+'-';
-                        if(i<10)
-                            print+='0';
-                        print+=i;
-                        var value=year+'-'+i;
-                        var select='';
-                        if(value==yyyymm)
-                        select='selected';
-                        %>
-                <option value="<%=value%>" <%=select%>><%=print%></option>
-                <% } %>
-            </select>
-            <table id="item-table">
-                <thead>
-                    <th class="head">날짜</th>
-                    <th class="head">물량</th>
-                </thead>
-                <tbody>
-                    <% 
-                    const today=new Date();
-                    const todayStr=today.getFullYear()+'년 '+(today.getMonth()+1)+'월 '+today.getDate()+'일';
-                    if(itemList.length==0) {  %>
-                    <tr class="item-sm" data-list-id="none">
-                        <td><%=todayStr%></td>
-                        <td><a id="upload-a" href="#">물량 업로드</a></td>
-                    </tr>
-                    <% } else {
-                                const lastDate=new Date(itemList[0].SoldDate);
-                               if(today.getFullYear()>=lastDate.getFullYear()&&
-                                today.getMonth()>=lastDate.getMonth()&&
-                                today.getDate()>lastDate.getDate()) { %>
-                    <tr class="item-sm" data-list-id="none">
-                        <td><%=todayStr%></td>
-                        <td><a id="upload-a" href="#">물량 업로드</a></td>
-                    </tr>
-                    <% }
-                           }
-                           
-                           for(var i=0; i<itemList.length; i++) { 
-                            const date=new Date(itemList[i].SoldDate);
-                            const dateStr=date.getFullYear()+'년 '+(date.getMonth()+1)+'월 '+date.getDate()+'일';
-                            %>
-                    <tr class="item-sm" data-list-id="<%=itemList[i].ListID%>">
-                        <td><%=dateStr%></td>
-                        <td><%=itemList[i].Count%></td>
-                    </tr>
-                    <% } %>
-                </tbody>
-            </table>
-            <%  var deadStr='';
-            if(itemList[0]!=null&&itemList[0].Deadline) {
-                var dDate=new Date(itemList[0].Deadline);
-                var currentDate=new Date();
-                if(dDate.getDate()==currentDate.getDate()) {
-                    deadStr=(dDate.getMonth()+1)+'월 '+dDate.getDate()+'일 '+dDate.getHours()+'시 '+dDate.getMinutes()+'초 물량 마감 완료';    
-                } else {
-                    
-                }
-            } %>
-            <label id="alert"><%=deadStr%></label>
-        </div>-->
-        <!-- each detail view -->
-        <!--
-        <div id="item_detail">
-            <label class="font-white size-15">물량 현황</label><br>
-            <label class="font-white size-15" id="count"></label>
 
-            <table style="width: 100%;">
-                <thead>
-                    <th class="head-blue">#</th>
-                    <th class="head-blue">송장번호</th>
-                    <th class="head-blue">품목명</th>
-                    <th class="head-blue">받는이</th>
-                    <th class="head-blue">전화번호</th>
-                    <th class="head-blue">도착지</th>
-                </thead>
-                <tbody id="detail-contents">
-
-                </tbody>
-            </table>
-            <form method="POST" action="/Owner/Create/ItemList" id="item-form"></form>
-            <div id="check-div">
-                <button class="btn-sec" style="margin-right: 20px;" id="cancel-btn" type="button">취소</button>
-                <button class="btn-main" id="confirm-btn" type="button">확인</button>
-            </div>
-        </div>-->
 
     </section>
 </body>
