@@ -580,7 +580,7 @@
                                 } else if(defaultCnt==stackCnt) {
                                     status='기본 물량';
                                 } else {
-                                    status=(stackCnt-defaultCnt)+'개 초과';
+                                    status=(stackCnt-defaultCnt).toLocaleString()+'개 초과';
                                 }
                                 // set total fee
                                 var totalFee=defaultFee;

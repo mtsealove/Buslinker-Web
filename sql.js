@@ -1139,9 +1139,9 @@ exports.getLogiFee = (start, end, logi, callback) => {
      on OW.ListID=IL.ListID) OWN 
      group by ID)OWNE) OWNERS 
      on RESULT.Owners like concat('%',OWNERS.ID, '%')`
-     if(logi) {
-         query+=` where RESULT.ID='${logi}'`;
-     }
+    if (logi) {
+        query += ` where RESULT.ID='${logi}'`;
+    }
 
     connection.query(query, (e0, rs) => {
         if (e0) {
@@ -1508,7 +1508,7 @@ function setFullTimeline(year) {
                             if (e1) {
                                 console.error(e1);
                             } else {
-                                //console.log('update: ' + cnt++);
+                                console.log('update: ' + cnt++);
                             }
                         });
                     }
@@ -1605,7 +1605,7 @@ exports.updateDeliverySchedule = (id, remove, add, callback) => {
 exports.getDong = (items, callback) => {
     const total = items.length;
     var cnt = 0;
-    var gus=[], dongs=[];
+    var gus = [], dongs = [];
 
     for (var i = 0; i < total; i++) {
         var line = items[i].addr.split(' ');
@@ -1654,193 +1654,193 @@ exports.createLogiItemList = (logiId, date, cluster, callback) => {
     where Logi='${logiId}'
     group by Gu`;
 
-    const itemDeleteQuery=`delete from Item where ListID in
+    const itemDeleteQuery = `delete from Item where ListID in
     (select ListID from ItemList where SoldDate='${date}' and OwnerID='${logiId}')`;
-    const listDeleteQuery=`delete from ItemList where SoldDate='${date}' and OwnerID='${logiId}'`;
+    const listDeleteQuery = `delete from ItemList where SoldDate='${date}' and OwnerID='${logiId}'`;
 
-    connection.query(itemDeleteQuery, (e5)=>{
-        if(e5) {
+    connection.query(itemDeleteQuery, (e5) => {
+        if (e5) {
             console.error(e5);
         } else {
-        connection.query(listDeleteQuery, (e6)=>{
-            if(e6) {
-                console.error(e6);
-            } else {
-                connection.query(guQuery, (e4, guRs) => {
-                    if (e4) {
-                        console.error(e4);
-                        callback(false);
-                    } else {
-                        var guTotal = 0;
-                        for (var i = 0; i < guRs.length; i++) {
-                            guTotal += guRs[i].GuCnt;
-                        }
-                        for (var i = 0; i < guTotal; i++) {
-                            listQuery += `('${logiId}', '${date}')`;
-                            if (i != guTotal - 1) {
-                                listQuery += ',';
+            connection.query(listDeleteQuery, (e6) => {
+                if (e6) {
+                    console.error(e6);
+                } else {
+                    connection.query(guQuery, (e4, guRs) => {
+                        if (e4) {
+                            console.error(e4);
+                            callback(false);
+                        } else {
+                            var guTotal = 0;
+                            for (var i = 0; i < guRs.length; i++) {
+                                guTotal += guRs[i].GuCnt;
                             }
-                        }
-                        // create each item list
-                        connection.query(listQuery, (e0) => {
-                            if (e0) {
-                                console.error(e0);
-                                callback(false);
-                            } else {
-                                // get all item ids
-                                const getListQuery = `select * from
+                            for (var i = 0; i < guTotal; i++) {
+                                listQuery += `('${logiId}', '${date}')`;
+                                if (i != guTotal - 1) {
+                                    listQuery += ',';
+                                }
+                            }
+                            // create each item list
+                            connection.query(listQuery, (e0) => {
+                                if (e0) {
+                                    console.error(e0);
+                                    callback(false);
+                                } else {
+                                    // get all item ids
+                                    const getListQuery = `select * from
                                 (select ListID from ItemList 
                                 where OwnerID='${logiId}' 
                                 order by ListID desc limit ${guTotal}) I order by ListID asc`;
-            
-                                connection.query(getListQuery, (e1, listRs) => {
-                                    if (e1) {
-                                        console.error(e1);
-                                        callback(false);
-                                    } else {
-                                        for(var i=0; i<guRs.length; i++) {
-                                            guRs[i].ListID=[];
-                                            for(var j=0; j<guRs[i].GuCnt; j++) {
-                                                guRs[i].ListID.push(listRs.pop().ListID);
-                                            }
-                                        }
-                                        console.log(guRs);
-                                        var items=[];
-                                        for(var i=0; i<cluster.length; i++) {
-                                            items.push({gu:cluster[i].gu, items:[]});
-                                            for(var j=0; j<cluster[i].Items.length; j++) {
-                                                //console.log(cluster[i].Items[j].Items);
-                                                for(var x=0; x<cluster[i].Items[j].Items.length; x++) {
-                                                    items[i].items.push(cluster[i].Items[j].Items[x]);
-                                                }
-                                            }
-                                        }
-                                        var fs=require('fs');
-                                        fs.writeFileSync('test.json', JSON.stringify(items));
-                                        for(var i=0; i<items.length; i++) {
-                                            var listIDs=[];
-                                            // get List id
-                                            console.log(items[i].gu);
-                                            for(var j=0; j<guRs.length; j++) {
-                                                
-                                                if(guRs[j].Gu==items[i].gu) {
-                                                    listIDs=guRs[j].ListID;
-                                                }
-                                            }
-                                            console.log(listIDs);
-                                            var listIndex=0;
-                                            for(var j=0; j<items[i].items.length; j++){
-                                                var item=items[i].items[j];
-                                                var listID=listIDs[listIndex];
-                                                const itemQuery = `insert into Item set ItemID='${item.id}', ListID=${listID}, ItemName='${item.name}', 
-                                                        DesAddr='${item.addr}', DesName='${item.des_name}', DesPhone='${item.des_phone}', Gu='${items[i].gu}', Dong='${item.dong}'`;
-                                                        total++;
-                                                        connection.query(itemQuery, (e2)=>{
-                                                            if(e2) {
-                                                                console.error(e2);
-                                                            }
-                                                            cnt++;
-                                                        });
-                                                listIndex++;
-                                                if(listIndex>=listIDs.length) {
-                                                    listIndex=0;
-                                                }
-                                                //console.log(listID);
-                                            }
-                                            for(var j=0; j<listIDs.length; j++) {
 
-                                                const updateQuery = `update Timeline set LogiList=${listIDs[j]}
+                                    connection.query(getListQuery, (e1, listRs) => {
+                                        if (e1) {
+                                            console.error(e1);
+                                            callback(false);
+                                        } else {
+                                            for (var i = 0; i < guRs.length; i++) {
+                                                guRs[i].ListID = [];
+                                                for (var j = 0; j < guRs[i].GuCnt; j++) {
+                                                    guRs[i].ListID.push(listRs.pop().ListID);
+                                                }
+                                            }
+                                            console.log(guRs);
+                                            var items = [];
+                                            for (var i = 0; i < cluster.length; i++) {
+                                                items.push({ gu: cluster[i].gu, items: [] });
+                                                for (var j = 0; j < cluster[i].Items.length; j++) {
+                                                    //console.log(cluster[i].Items[j].Items);
+                                                    for (var x = 0; x < cluster[i].Items[j].Items.length; x++) {
+                                                        items[i].items.push(cluster[i].Items[j].Items[x]);
+                                                    }
+                                                }
+                                            }
+                                            var fs = require('fs');
+                                            fs.writeFileSync('test.json', JSON.stringify(items));
+                                            for (var i = 0; i < items.length; i++) {
+                                                var listIDs = [];
+                                                // get List id
+                                                console.log(items[i].gu);
+                                                for (var j = 0; j < guRs.length; j++) {
+
+                                                    if (guRs[j].Gu == items[i].gu) {
+                                                        listIDs = guRs[j].ListID;
+                                                    }
+                                                }
+                                                console.log(listIDs);
+                                                var listIndex = 0;
+                                                for (var j = 0; j < items[i].items.length; j++) {
+                                                    var item = items[i].items[j];
+                                                    var listID = listIDs[listIndex];
+                                                    const itemQuery = `insert into Item set ItemID='${item.id}', ListID=${listID}, ItemName='${item.name}', 
+                                                        DesAddr='${item.addr}', DesName='${item.des_name}', DesPhone='${item.des_phone}', Gu='${items[i].gu}', Dong='${item.dong}'`;
+                                                    total++;
+                                                    connection.query(itemQuery, (e2) => {
+                                                        if (e2) {
+                                                            console.error(e2);
+                                                        }
+                                                        cnt++;
+                                                    });
+                                                    listIndex++;
+                                                    if (listIndex >= listIDs.length) {
+                                                        listIndex = 0;
+                                                    }
+                                                    //console.log(listID);
+                                                }
+                                                for (var j = 0; j < listIDs.length; j++) {
+
+                                                    const updateQuery = `update Timeline set LogiList=${listIDs[j]}
                                                     where RunDate='${date}' and RouteID in (
                                                     select RouteID from Route where Gu='${items[i].gu}'
-                                                    ) order by RouteID limit ${listIDs.length-j}`;
+                                                    ) order by RouteID limit ${listIDs.length - j}`;
                                                     // console.log(updateQuery);
-                                                total++;
-                                                connection.query(updateQuery, (e3)=>{
-                                                    if(e3) {
-                                                        console.error(e3);
-                                                    }
-                                                    cnt++;
-                                                });
-                                            }
-                                        }
-
-                                        var interval = setInterval(() => {
-                                            if (total == cnt) {
-                                                clearInterval(interval);
-                                                callback(true);
-                                            }
-                                        });
-                                        /*
-
-            
-                                            var listID = listRs[listIndex].ListID;
-                                                    console.log(listID);
-                                                    listIndex++;
-                                                    console.log('divide');
-                                            for (var j = 0; j < cluster[i].Items.length; j++) {
-                                                const dong = cluster[i].Items[j].dong;
-                                                
-                                                for (var y = 0; y < guCnt; y++) {
-                                                    var start = y * (Math.floor(cluster[i].Items[j].Items.length / guCnt));
-                                                    var end = (y + 1) * Math.floor(cluster[i].Items[j].Items.length / guCnt);
-                                                    if (guCnt - 1 == y) {
-                                                        end += cluster[i].Items[j].Items.length % guCnt;
-                                                    }
-            
-                                                    
-                                                    console.log(guCnt);
-                                                    console.log('start: '+start+' end: '+end);
-                                                    
-                                                    const updateQuery = `update Timeline set LogiList=${listID}
-                                                    where RunDate='${date}' and RouteID in (
-                                                    select RouteID from Route where Gu='${gu}'
-                                                    ) order by RouteID limit ${guCnt - y}`;
-                                                    
                                                     total++;
                                                     connection.query(updateQuery, (e3) => {
                                                         if (e3) {
-                                                            callback(false);
-                                                        } else {
-                                                            cnt++;
+                                                            console.error(e3);
                                                         }
+                                                        cnt++;
                                                     });
-                                                    for (var x = start; x < end; x++) {
-                                                        //console.log(x);
-                                                        const item = cluster[i].Items[j].Items[x];
+                                                }
+                                            }
+
+                                            var interval = setInterval(() => {
+                                                if (total == cnt) {
+                                                    clearInterval(interval);
+                                                    callback(true);
+                                                }
+                                            });
+                                            /*
+    
+                
+                                                var listID = listRs[listIndex].ListID;
+                                                        console.log(listID);
+                                                        listIndex++;
+                                                        console.log('divide');
+                                                for (var j = 0; j < cluster[i].Items.length; j++) {
+                                                    const dong = cluster[i].Items[j].dong;
+                                                    
+                                                    for (var y = 0; y < guCnt; y++) {
+                                                        var start = y * (Math.floor(cluster[i].Items[j].Items.length / guCnt));
+                                                        var end = (y + 1) * Math.floor(cluster[i].Items[j].Items.length / guCnt);
+                                                        if (guCnt - 1 == y) {
+                                                            end += cluster[i].Items[j].Items.length % guCnt;
+                                                        }
+                
+                                                        
+                                                        console.log(guCnt);
+                                                        console.log('start: '+start+' end: '+end);
+                                                        
+                                                        const updateQuery = `update Timeline set LogiList=${listID}
+                                                        where RunDate='${date}' and RouteID in (
+                                                        select RouteID from Route where Gu='${gu}'
+                                                        ) order by RouteID limit ${guCnt - y}`;
+                                                        
                                                         total++;
-                                                        //console.log(item);
-                                                        const itemQuery = `insert into Item set ItemID='${item.id}', ListID=${listID}, ItemName='${item.name}', 
-                                                        DesAddr='${item.addr}', DesName='${item.des_name}', DesPhone='${item.des_phone}', Gu='${gu}', Dong='${dong}'`;
-                                                        connection.query(itemQuery, (e2) => {
-                                                            if (e2) {
+                                                        connection.query(updateQuery, (e3) => {
+                                                            if (e3) {
                                                                 callback(false);
                                                             } else {
                                                                 cnt++;
                                                             }
                                                         });
-            
+                                                        for (var x = start; x < end; x++) {
+                                                            //console.log(x);
+                                                            const item = cluster[i].Items[j].Items[x];
+                                                            total++;
+                                                            //console.log(item);
+                                                            const itemQuery = `insert into Item set ItemID='${item.id}', ListID=${listID}, ItemName='${item.name}', 
+                                                            DesAddr='${item.addr}', DesName='${item.des_name}', DesPhone='${item.des_phone}', Gu='${gu}', Dong='${dong}'`;
+                                                            connection.query(itemQuery, (e2) => {
+                                                                if (e2) {
+                                                                    callback(false);
+                                                                } else {
+                                                                    cnt++;
+                                                                }
+                                                            });
+                
+                                                        }
                                                     }
                                                 }
+                
                                             }
-            
+                                            var interval = setInterval(() => {
+                                                if (total == cnt) {
+                                                    clearInterval(interval);
+                                                    callback(true);
+                                                }
+                                            }); */
                                         }
-                                        var interval = setInterval(() => {
-                                            if (total == cnt) {
-                                                clearInterval(interval);
-                                                callback(true);
-                                            }
-                                        }); */
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });   
-            }
-        });
-    }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
     });
-    
+
 
 
 }
@@ -1914,6 +1914,8 @@ exports.getStatus = (date, bus, logi, callback) => {
     } else if (logi) {
         timelineQuery += ` where Logi='${logi}'`;
     }
+
+    console.log(timelineQuery);
 
     var total = 0, cnt = 0;
     var locArr = [];
@@ -2126,10 +2128,10 @@ exports.getLogiCnt = (logi, month, date, callback) => {
     (select R.Name, T.* from Route R join 
     (select RouteID, LogiList, ListID from Timeline where RouteID in(
     select RouteID from Route `;
-    if(logi){
-        query+=` where Logi='${logi}'`;
+    if (logi) {
+        query += ` where Logi='${logi}'`;
     }
-    query+=`) and `
+    query += `) and `
     if (month) {
         var start = month + '-01';
         var end = month.split('-')[0] + '-' + (parseInt(month.split('-')[1]) + 1) + '-01';
@@ -2207,20 +2209,20 @@ exports.getItemCntbyRoute = (start, end, callback) => {
     });
 }
 
-exports.getOwnerCnt=(owner, start, end , callback)=>{
-    var query=`select date_format(SoldDate, '%m-%d') Date, ItemCnt from     
+exports.getOwnerCnt = (owner, start, end, callback) => {
+    var query = `select date_format(SoldDate, '%m-%d') Date, ItemCnt from     
     (select SoldDate, ListID from ItemList
     where OwnerID='${owner}' `;
-    if(start&&end) {
-        query+=` and SoldDate>='${start}' and SoldDate<='${end}' `;
+    if (start && end) {
+        query += ` and SoldDate>='${start}' and SoldDate<='${end}' `;
     }
-    query+=`) IL join
+    query += `) IL join
     (select ListID, count(ItemID) ItemCnt from Item
     group by ListID) IT
     on IL.ListID=IT.ListID order by Date`;
 
-    connection.query(query, (e0, rs)=>{
-        if(e0) {
+    connection.query(query, (e0, rs) => {
+        if (e0) {
             console.error(e0);
             callback(null);
         } else {
@@ -2229,13 +2231,13 @@ exports.getOwnerCnt=(owner, start, end , callback)=>{
     });
 }
 
-exports.getOwnerCntbyDate=(owner, date, callback)=>{
-    const query=`select I.* from ItemList L  left outer join
+exports.getOwnerCntbyDate = (owner, date, callback) => {
+    const query = `select I.* from ItemList L  left outer join
     (select ListID, count(ItemID) ItemCnt from Item
     group by ListID) I
     on L.ListID=I.ListID where L.OwnerID='${owner}' and L.SoldDate='${date}'`;
-    connection.query(query, (e0, rs)=>{
-        if(e0) {
+    connection.query(query, (e0, rs) => {
+        if (e0) {
             callback(null);
         } else {
             callback(rs);
@@ -2243,8 +2245,8 @@ exports.getOwnerCntbyDate=(owner, date, callback)=>{
     });
 }
 
-exports.getOnwerTimeline=(owner, today, startDay, endDay, callback)=>{
-    const timelineQuery=`select ROUTEE.*, BUSSSS.Num from 
+exports.getOnwerTimeline = (owner, today, startDay, endDay, callback) => {
+    const timelineQuery = `select ROUTEE.*, BUSSSS.Num from 
     (select ROUTE.*, CORPR.Name BusName from 
     (select ROUT.*, PTTM.Name PtName, PTTM.Phone PtPhone, PTTM.ProfilePath PtProfile from 
     (select ROT. *, DRV.Name DriverName, DRV.Phone DriverPhone, DRV.ProfilePath DriverProfile from 
@@ -2259,13 +2261,13 @@ exports.getOnwerTimeline=(owner, today, startDay, endDay, callback)=>{
     Members PTTM on  ROUT.PTID=PTTM.ID) ROUTE left outer join 
     Members CORPR on ROUTE.CorpID=CORPR.ID) ROUTEE left outer join
     Bus BUSSSS on ROUTEE.BusID=BUSSSS.ID`;
-    var results={
-        timeline:null,
-        item: null, 
+    var results = {
+        timeline: null,
+        item: null,
         loc: null
     };
 
-    const itemQuery=`select OWN.DefaultCnt, ITL.ItemCnt from 
+    const itemQuery = `select OWN.DefaultCnt, ITL.ItemCnt from 
     (select ID, DefaultCnt from Members 
     where ID='${owner}') OWN left outer join
     (select OwnerID, sum(ItemCnt) ItemCnt from 
@@ -2276,27 +2278,27 @@ exports.getOnwerTimeline=(owner, today, startDay, endDay, callback)=>{
     group by ListID) II on IL.ListID=II.ListID) IT group by OwnerID) ITL
     on OWN.ID=ITl.OwnerID`;
 
-    connection.query(timelineQuery, (e0, timeline)=>{
-        if(e0) {
+    connection.query(timelineQuery, (e0, timeline) => {
+        if (e0) {
             callback(results);
             console.error(e0);
         } else {
-            results.timeline=timeline[0];
-            connection.query(itemQuery, (e1, item)=>{
-                if(e1) {
+            results.timeline = timeline[0];
+            connection.query(itemQuery, (e1, item) => {
+                if (e1) {
                     console.error(e1);
                     callback(results);
                 } else {
-                    results.item=item[0];
-                    const locQuery=`select * from Location 
+                    results.item = item[0];
+                    const locQuery = `select * from Location 
                     where LocID in(${timeline[0].Locations}) 
                     order by RcTime asc`;
-                    connection.query(locQuery, (e2, loc)=>{
-                        if(e2) {
+                    connection.query(locQuery, (e2, loc) => {
+                        if (e2) {
                             console.error(e2);
                             callback(results);
                         } else {
-                            results.loc=loc;
+                            results.loc = loc;
                             callback(results);
                         }
                     });
@@ -2304,4 +2306,40 @@ exports.getOnwerTimeline=(owner, today, startDay, endDay, callback)=>{
             });
         }
     });
+}
+
+exports.getTakeItem = (date, logi, callback) => {
+    var query = `select Name, DriverName, Num, PTName, sum(ItemCnt) ItemCnt, group_concat(OwnerName) Owners from 
+    (select ROUTES.*, OWNERS.Name OwnerName from 
+    (select ROUTE.*, DRIVE.Name DriverName from 
+    (select ROUT.*, BUSS.Num from
+    (select ROT.*, PTT.Name PtName from 
+    (select RR.*, IL.ListID list,IL.ItemCnt from 
+    (select Name, ListID, Owners, DriverID, BusID,PTID from Route R
+    left outer join Timeline T
+    on R.RouteID=T.RouteID where 
+    T.RunDate='${date}' `;
+    if (logi) {
+        query += ` and R.Logi= '${logi}'`;
+    }
+    query += `) RR left outer join (select ListID, count(ItemID) ItemCnt from Item group by ListID) IL on 
+    RR.ListID regexp(IL.ListID)) ROT left outer join Members PTT
+    on ROT.PTID=PTT.ID) ROUT left outer join Bus BUSS
+    on ROUT.BusID=BUSS.ID) ROUTE left outer join Members DRIVE
+    on ROUTE.DriverID=DRIVE.ID) ROUTES left outer join Members OWNERS
+    on ROUTES.Owners like concat('%', OWNERS.ID, '%')) RESULTS group by Name, DriverName, Num, PtName`;
+
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            callback(null);
+            console.error(e0);
+        } else {
+            callback(rs);
+        }
+    })
+}
+
+exports.getNoticeList=(page, title, callback)=>{
+    const row=10;
+    
 }

@@ -19,20 +19,8 @@
 
 /* table */
 
-
-
-.tr {
-    font-size: 9pt;
-    text-align: center;
-    border-bottom: 1px solid black;
-}
-
 .filter {
     font-size: 14pt;
-}
-
-.location-name {
-    font-size: 13pt;
 }
 
 .action {

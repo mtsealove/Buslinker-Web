@@ -1,10 +1,11 @@
 $(function () {
   setMainHeight();
-  setBackgroundColor();
+  //setBackgroundColor();
   $(window).resize(setMainHeight);
+  /*
   if(isMobile()) {
     $('.nav-link').css('color', 'white');
-  }
+  }*/
 
   $('.main').scroll(function (data) {
     var current = $(this).scrollTop();
@@ -15,9 +16,13 @@ $(function () {
     const percent = (current / total) * 100;
     $("#indicator").css('width', percent + '%');
     console.log(percent);
-    setBackgroundColor();
+    //setBackgroundColor();
     
   })
+  
+  $('#nav-main').css('background-color', '#021B46');
+  $('.nav-link').css('color', 'white');
+  $('.logo-txt').css('color', 'white');
 });
 
 function setMainHeight() {

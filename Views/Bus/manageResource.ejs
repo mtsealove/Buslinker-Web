@@ -54,6 +54,7 @@
             });
 
             setLink();
+            setSearch();
         });
 
         function createBus() {
@@ -111,6 +112,27 @@
                 }
             });
         }
+
+        function setSearch() {
+            $('#search-driver').keyup(function() {
+                const name=$(this).val();
+                if(name.length>0) {
+                    $(`.driver-tr[data-name!=${name}]`).hide();
+                    $(`.driver-tr[data-name*=${name}]`).show();
+                } else {
+                    $(`.driver-tr`).show();
+                }
+            });
+            $('#search-bus').keyup(function() {
+                const num=$(this).val();
+                if(num.length>0) {
+                    $(`.bus-tr[data-num!=${num}]`).hide();
+                    $(`.bus-tr[data-num*=${num}]`).show();
+                } else {
+                    $(`.bus-tr`).show();
+                }
+            });
+        }
     </script>
 </head>
 
@@ -143,7 +165,7 @@
                             </div>
                         </div>
                         <div class="box0 horizontal" style="width: 250px;">
-                            <input style="width: 100%; border: none;" placeholder="차량 번호를 검색하세요">
+                            <input style="width: 100%;" class="transparent" placeholder="차량 번호를 검색하세요" id="search-bus">
                             <img src="/public/images/search.png" id="search-btn">
                         </div>
                     </div>
@@ -194,7 +216,7 @@
 
                             <!-- real data -->
                             <% for(var i=0; i<busList.length; i++) { %>
-                            <tr>
+                            <tr class="bus-tr" data-num="<%=busList[i].Num%>">
                                 <td style="width: 50px;"><img src="/public/images/remove.png"
                                         class="check_icon remove-btn" data-id="<%=busList[i].ID%>"></td>
                                 <td style="width: 200px;">
@@ -219,7 +241,7 @@
                             </div>
                         </div>
                         <div class="box0 horizontal" style="width: 250px;">
-                            <input style="width: 100%; border: none;" placeholder="기사 이름을 검색하세요" id="search_input">
+                            <input style="width: 100%" class="transparent" placeholder="기사 이름을 검색하세요" id="search-driver">
                             <img src="/public/images/search.png" id="search-btn">
                         </div>
                     </div>

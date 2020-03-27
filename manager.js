@@ -26,7 +26,6 @@ exports.startManager = (app) => {
             }
             var todayTime=new Date(start).getTime()+(60*60*24*1000);
             var tommorow=new Date(new Date().setTime(todayTime));
-            console.log(tommorow);
             end=tommorow.getFullYear()+'-';
             if(tommorow.getMonth()<9) {
                 end+='0';
@@ -353,11 +352,22 @@ exports.startManager = (app) => {
             }
             date+=d.getDate();
         }
-        console.log(date);
+        var cat=req.query.cat;
+        if(!cat) {
+            cat='delivery';
+        } 
         if (user.userID) {
-            sql.getRouteItem(date, null, (route) => {
-                res.render('./Manager/itemList', { user: user, route: route, current:date });
-            });
+            if(cat=='delivery') {
+                sql.getRouteItem(date, null, (route) => {
+                    console.log(route);
+                    res.render('./Manager/itemList', { user: user, route: route, current:date, cat:cat, take:[] });
+                });
+            } else {
+                sql.getTakeItem(date, null, (take)=>{
+                    res.render('./Manager/itemList', { user: user, route: [], current:date, cat:cat, take:take });
+                });
+            }
+            
         } else {
             res.redirect('/');
         }

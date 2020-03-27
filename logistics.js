@@ -12,18 +12,27 @@ exports.startLogistics = (app) => {
     app.get('/Logistics/ItemList', (req, res) => {
         const user = auth.getUser(req);
         var date = req.query.Date;
+        var cat=req.query.cat;
         if (!date) {
             date = getDate();
         }
+        if(!cat) {
+            cat='delivery';
+        }
 
         if (user.userID) {
-            sql.getRouteItem(date, user.userID, (route) => {
-                console.log(route);
-                sql.getLogiItemList(user.userID, date, (itemRs)=>{
-                    //console.log(itemRs);
-                    res.render('./Logi/itemList', { user: user, route: route, current: date, items: itemRs });
-                });
+            sql.getLogiItemList(user.userID, date, (itemRs)=>{
+                if(cat=='delivery') {
+                    sql.getRouteItem(date, user.userID, (route) => {       
+                        res.render('./Logi/itemList', { user: user, route: route, current: date, items: itemRs,cat:cat, take:[] }); 
+                    });
+                } else {
+                    sql.getTakeItem(date, user.userID, (take)=>{
+                        res.render('./Logi/itemList', { user: user, route: [], current: date, items: itemRs,cat:cat, take:take });
+                    })
+                }
             });
+            
         } else {
             res.redirect('/');
         }

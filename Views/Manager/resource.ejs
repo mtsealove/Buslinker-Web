@@ -11,7 +11,8 @@
             setLink();
             $('#close-btn').click(function() {
                 $('#modal').fadeOut(300);
-            })
+            });
+            setSearch();
         });
 
         function setExtend() {
@@ -48,6 +49,38 @@
                 }
             });
         }
+
+        function setSearch() {
+            $('#search-bus').keyup(function() {
+                const num=$(this).val();
+                if(num.length>0) {
+                    $(`.bus-tr[data-num!=${num}]`).hide();
+                    $(`.bus-tr[data-num*=${num}]`).show();
+                }  else {
+                    $('.bus-tr').show();
+                }
+                
+            });
+            $('#search-driver').keyup(function() {
+                const name=$(this).val();
+                if(name.length>0) {
+                    $(`.driver-tr[data-driver-name!=${name}]`).hide();
+                    $(`.driver-tr[data-driver-name*=${name}]`).show();
+                } else {
+                    $('.driver-tr').show();
+                }
+            });
+
+            $('#search-pt').keyup(function() {
+                const name=$(this).val();
+                if(name.length>1) {
+                    $(`.part-tr[data-pt-name!=${name}]`).hide();
+                    $(`.part-tr[data-pt-name*=${name}]`).show();
+                } else {
+                    $(`.part-tr`).show();
+                }
+            });
+        }
     </script>
 </head>
 
@@ -79,7 +112,7 @@
                             <h4 class="card-title"><b>총 <%=res.bus.length%>대</b></h4>
                         </div>
                         <div class="box-search horizontal between">
-                            <input placeholder="차량 번호를 검색하세요" class="transparent">
+                            <input placeholder="차량 번호를 검색하세요" class="transparent" id="search-bus">
                             <img src="/public/images/search.png" class="search">
                         </div>
                     </div>
@@ -101,7 +134,7 @@
                                 </td>
                             </tr>
                             <% } %>
-                            <tr class="common-tr" data-bus="<%=res.bus[i].Corp%>">
+                            <tr class="common-tr bus-tr" data-bus="<%=res.bus[i].Corp%>" data-num="<%=res.bus[i].Num%>">
                                 <td><%=res.bus[i].Num%></td>
                                 <td><span class="link" data-id="<%=res.bus[i].ID%>" data-cat="bus">일정 상세보기</span></td>
                             </tr>
@@ -120,7 +153,7 @@
                             <h4 class="card-title"><b>총 <%=res.driver.length%>명</b></h4>
                         </div>
                         <div class="box-search horizontal between">
-                            <input placeholder="기사 이름을 검색하세요" class="transparent">
+                            <input placeholder="기사 이름을 검색하세요" class="transparent" id="search-driver">
                             <img src="/public/images/search.png" class="search">
                         </div>
                     </div>
@@ -143,7 +176,7 @@
                                     </td>
                                 </tr>
                                 <% } %>
-                                <tr class="common-tr" data-driver="<%=res.driver[i].Corp%>">
+                                <tr class="common-tr driver-tr" data-driver="<%=res.driver[i].Corp%>" data-driver-name="<%=res.driver[i].Name%>">
                                     <td style="width: 45%;">
                                         <div class="horizontal" style="align-items: center;">
                                             <img src="/public/uploads/<%=res.driver[i].ProfilePath%>" class="table-img">
@@ -172,7 +205,7 @@
                             <h4 class="card-title"><b>총 <%=res.part.length%>명</b></h4>
                         </div>
                         <div class="box-search horizontal between">
-                            <input placeholder="물류관리 직원을 검색하세요" class="transparent">
+                            <input placeholder="물류관리 직원을 검색하세요" class="transparent" id="search-pt">
                             <img src="/public/images/search.png" class="search">
                         </div>
                     </div>
@@ -184,7 +217,7 @@
                         </thead>
                         <tbody>
                             <% for(var i=0; i<res.part.length; i++) { %>
-                                <tr class="common-tr part-tr">
+                                <tr class="common-tr part-tr" data-pt-name="<%=res.part[i].Name%>">
                                     <td style="width: 45%;">
                                         <div class="horizontal" style="align-items: center;">
                                             <img src="/public/uploads/<%=res.part[i].ProfilePath%>" class="table-img">

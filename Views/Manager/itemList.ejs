@@ -17,6 +17,7 @@
                 $('#popup-position').hide();
             });
             setLink();
+            setCat();
         });
 
         function setTotal() {
@@ -32,7 +33,8 @@
         function setDate() {
             $('#select-date').change(function () {
                 var date = $(this).val();
-                location.href = `?date=${date}`;
+                var cat = $('#select-cat').val();
+                location.href = `?date=${date}&cat=${cat}`;
             });
         }
         function showDate() {
@@ -51,6 +53,15 @@
                 $('#iframe').attr('src', url);
                 $('#popup-position').show();
                 $('#modal').fadeIn(300);
+            });
+        }
+
+        function setCat() {
+            $('#select-cat').val('<%=cat%>');
+            $('#select-cat').change(function () {
+                const cat = $(this).val();
+                const date = $('#select-date').val();
+                location.href = `?cat=${cat}&date=${date}`;
             });
         }
     </script>
@@ -102,13 +113,14 @@
                     </select>
                     <div style="width: 20px;"></div>
                     <!-- 배송 / 수거 선택 -->
-                    <select class="box0">
+                    <select class="box0" id="select-cat">
                         <option value="delivery">배송</option>
                         <option value="take">수거</option>
                     </select>
                 </div>
             </div>
 
+            <% if(cat=='delivery') { %>
             <table style="width: 100%; margin-top: 30px;">
                 <thead>
                     <th class="head">회사</th>
@@ -133,7 +145,7 @@
                                 <label></label>
                                 <img class="extend-table" src="/public/images/down.png" data-logi="<%=route[i].Logi%>">
                             </div>
-                            
+
                         </td>
                     </tr>
                     <% } %>
@@ -165,6 +177,30 @@
                     <% } %>
                 </tbody>
             </table>
+            <% } else { %>
+            <table style="width: 100%; margin-top: 30px;">
+                <thead>
+                    <th class="head">노선</th>
+                    <th class="head">기사</th>
+                    <th class="head">차량</th>
+                    <th class="head">상태</th>
+                    <th class="head">물량</th>
+                    <th class="head">화주</th>
+                </thead>
+                <tbody>
+                    <% for(var i=0; i<take.length; i++) { %>
+                    <tr>
+                        <td><%=take[i].Name%></td>
+                        <td><%=take[i].DriverName?take[i].DriverName:'기사 미배정'%></td>
+                        <td><%=take[i].Num?take[i].Num:'차량 미배정'%></td>
+                        <td><%=take[i].ItemCnt?'마감 완료':'미입력'%></td>
+                        <td><%=take[i].ItemCnt?take[i].ItemCnt.toLocaleString():0%></td>
+                        <td><%=take[i].Owners%></td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+            <% } %>
         </div>
 
     </section>

@@ -32,8 +32,8 @@
         }
 
         function searchDriver(key) {
-            $('.search-driver').keydown(function(key){
-                if($(this).val()!='') {
+            $('.search-driver').keydown(function (key) {
+                if ($(this).val() != '') {
                     $(this).parent().parent().children('.preview').show(200);
 
                 } else {
@@ -43,30 +43,30 @@
         }
 
         function getDriver(drvier, div) {
-              //login by ajax async
-                $.ajax({
+            //login by ajax async
+            $.ajax({
                 url: "/Bus/Get/Drivers",
                 type: "post",
                 data: {
-                  input: drvier
+                    input: drvier
                 },
                 dataType: "json",
-                success: function(data) {
+                success: function (data) {
                     //login success
-                    if(data.userName) {
+                    if (data.userName) {
                         div.remove('tr');
                     } else {
-                        
+
                     }
                 },
-                error: function(err) {
+                error: function (err) {
                 }
-            }); 
+            });
         }
 
         function unlock() {
-            $('.lock').click(function() {
-                const input=$(this).parent().children('.input-search');
+            $('.lock').click(function () {
+                const input = $(this).parent().children('.input-search');
                 input.removeAttr("readonly");
                 input.focus();
                 $(this).attr('src', '/public/images/search.png');
@@ -74,19 +74,19 @@
         }
 
         function editRoute() {
-            $('.link').click(function() {
-                const id=$(this).data('id');
-                const name=$(this).data('name');
-                const contract=$(this).data('contract');
-                
+            $('.link').click(function () {
+                const id = $(this).data('id');
+                const name = $(this).data('name');
+                const contract = $(this).data('contract');
+
                 $('#schedule-frame').attr('src', `/Bus/Manage/Route/Schedule?routeID=${id}`);
                 $('#route-name').text(name);
                 $('#contract').text(contract);
                 $('#modal').fadeIn(300);
             });
 
-            $('#close-btn').click(function(){
-                if(confirm('기사 및 차량 배치를 종료하시겠습니까?')) {
+            $('#close-btn').click(function () {
+                if (confirm('기사 및 차량 배치를 종료하시겠습니까?')) {
                     $('#modal').fadeOut(400);
                 }
             })
@@ -99,28 +99,29 @@
     <div id="modal">
         <div class="vertical" style="background-color: white;">
             <br>
-        <div class="horizontal between" style="width: 95%;">
-            <div>
-                <label id="route-name">마포-대한통운</label><br>
-                <label id="contract">2020-01-01 ~ 2020-06-01</label>
+            <div class="horizontal between" style="width: 95%;">
+                <div>
+                    <label id="route-name">마포-대한통운</label><br>
+                    <label id="contract">2020-01-01 ~ 2020-06-01</label>
+                </div>
+                <h3>원하는 날짜에 기사 및 차량을 드래그하세요.</h3>
+                <img src="/public/images/x_icon.png" id="close-btn">
             </div>
-            <h3>원하는 날짜에 기사 및 차량을 드래그하세요.</h3>
-            <img src="/public/images/x_icon.png" id="close-btn">
+            <br>
+            <iframe id="schedule-frame" style="width: 80vw; height: 85vh; border: none;"></iframe>
         </div>
-        <br>
-        <iframe id="schedule-frame"  style="width: 80vw; height: 85vh; border: none;"></iframe>
-    </div>
     </div>
     <div class="container-main">
-        <table id="manage-route">
-            <thead>
-                <tr>
-                    <th class="head">노선명</th>
-                    <th class="head">일정</th>
-                    <th class="head" colspan="11">경로</th>
-                </tr>
-            <tbody>
-                <% for(var i=0; i<routes.length; i++) {
+        <div class="normal">
+            <table id="manage-route">
+                <thead>
+                    <tr>
+                        <th class="head">노선명</th>
+                        <th class="head">일정</th>
+                        <th class="head" colspan="11">경로</th>
+                    </tr>
+                <tbody>
+                    <% for(var i=0; i<routes.length; i++) {
                     // formating dates
                     var startDate=new Date(routes[i].ContractStart);
                     var start=startDate.getFullYear()+'-'+startDate.getMonth()+1+'-'+startDate.getDate();
@@ -129,65 +130,73 @@
                     %>
                     <tr style="height: 20px;"></tr>
                     <tr class="route-tr">
-                    <td class="mid"><b><%=routes[i].Name%></b><br><%=routes[i].Bus%></td>
-                    <td class="mid2"><%=start+' ~ '+end%>
-                        <br>
-                            <span class="link" data-id="<%=routes[i].RouteID%>" data-name="<%=routes[i].Name%>" data-contract="<%=start+' ~ '+end%>"><b>일정 상세보기</b></span>
+                        <td class="mid"><b><%=routes[i].Name%></b><br><%=routes[i].Bus%></td>
+                        <td class="mid2"><%=start+' ~ '+end%>
+                            <br>
+                            <span class="link" data-id="<%=routes[i].RouteID%>" data-name="<%=routes[i].Name%>"
+                                data-contract="<%=start+' ~ '+end%>"><b>일정 상세보기</b></span>
                         </td>
-                    <td class="space"></td>
-                    <td colspan="10">
-                        <!-- station -->
-                        <div class="line line-station">
-                            <div class="vertical destination destination-left">
-                                <div class="destination-circle"></div>
-                                <label class="destination-txt" ><%=routes[i].Loc[0].LocName%><br><%=(routes[i].Loc[0].RcTime).substr(0, 5)%></label>
-                            </div>
-
-                            <!-- logistic center -->
-                            <div class="line line-logi" >
+                        <td class="space"></td>
+                        <td colspan="10">
+                            <!-- station -->
+                            <div class="line line-station">
                                 <div class="vertical destination destination-left">
                                     <div class="destination-circle"></div>
-                                    <label class="destination-txt" ><%=routes[i].Loc[1].LocName%><br><%=(routes[i].Loc[1].RcTime).substr(0, 5)%></label>
+                                    <label
+                                        class="destination-txt"><%=routes[i].Loc[0].LocName%><br><%=(routes[i].Loc[0].RcTime).substr(0, 5)%></label>
                                 </div>
-                                <!-- owners -->
-                                <div class="line line-owner">
-                                    <!-- 공터 -->
+
+                                <!-- logistic center -->
+                                <div class="line line-logi">
                                     <div class="vertical destination destination-left">
                                         <div class="destination-circle"></div>
-                                        <label class="destination-txt" ><%=routes[i].Loc[2].LocName%><br><%=(routes[i].Loc[2].RcTime).substr(0, 5)%></label>
+                                        <label
+                                            class="destination-txt"><%=routes[i].Loc[1].LocName%><br><%=(routes[i].Loc[1].RcTime).substr(0, 5)%></label>
                                     </div>
-                                    <!-- owners-->
-                                    <% for(var j=3; j<routes[i].Loc.length-2; j++) { 
+                                    <!-- owners -->
+                                    <div class="line line-owner">
+                                        <!-- 공터 -->
+                                        <div class="vertical destination destination-left">
+                                            <div class="destination-circle"></div>
+                                            <label
+                                                class="destination-txt"><%=routes[i].Loc[2].LocName%><br><%=(routes[i].Loc[2].RcTime).substr(0, 5)%></label>
+                                        </div>
+                                        <!-- owners-->
+                                        <% for(var j=3; j<routes[i].Loc.length-2; j++) { 
                                         var right='';
                                         if(routes[i].Loc.length-3==j) {
                                             right='destination-right';
                                         }
                                         %>
                                         <div class="vertical destination <%=right%>">
-                                        <div class="destination-circle"></div>
-                                        <label class="destination-txt" ><%=routes[i].Loc[j].LocName%><br><%=(routes[i].Loc[j].RcTime).substr(0, 5)%></label>
+                                            <div class="destination-circle"></div>
+                                            <label
+                                                class="destination-txt"><%=routes[i].Loc[j].LocName%><br><%=(routes[i].Loc[j].RcTime).substr(0, 5)%></label>
+                                        </div>
+                                        <% } %>
                                     </div>
-                                    <% } %>
+                                    <div class="vertical destination destination-right">
+                                        <div class="destination-circle"></div>
+                                        <label
+                                            class="destination-txt"><%=routes[i].Loc[routes[i].Loc.length-2].LocName%><br><%=(routes[i].Loc[routes[i].Loc.length-2].RcTime).substr(0, 5)%></label>
+                                    </div>
                                 </div>
+
                                 <div class="vertical destination destination-right">
                                     <div class="destination-circle"></div>
-                                    <label class="destination-txt" ><%=routes[i].Loc[routes[i].Loc.length-2].LocName%><br><%=(routes[i].Loc[routes[i].Loc.length-2].RcTime).substr(0, 5)%></label>
+                                    <label
+                                        class="destination-txt"><%=routes[i].Loc[routes[i].Loc.length-1].LocName%><br><%=(routes[i].Loc[routes[i].Loc.length-1].RcTime).substr(0, 5)%></label>
                                 </div>
                             </div>
-
-                            <div class="vertical destination destination-right">
-                                <div class="destination-circle"></div>
-                                <label class="destination-txt" ><%=routes[i].Loc[routes[i].Loc.length-1].LocName%><br><%=(routes[i].Loc[routes[i].Loc.length-1].RcTime).substr(0, 5)%></label>
-                            </div>
-                        </div>
                         </td>
                         <td style="width: 100px;">
-                    </td>
-                </tr>
-                <% } %>    
-            </tbody>
-            </thead>
-        </table>
+                        </td>
+                    </tr>
+                    <% } %>
+                </tbody>
+                </thead>
+            </table>
+        </div>
     </div>
 </body>
 

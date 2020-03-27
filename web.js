@@ -127,6 +127,10 @@ exports.startApp = (port) => {
         });
     });
 
+    app.get('/Notice', (req, res)=>{
+        res.render('notice', {user:auth.getUser(req)});
+    });
+
     // logout
     app.get('/Logout', (req, res) => {
         req.session.destroy();

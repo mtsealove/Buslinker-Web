@@ -172,6 +172,9 @@
 .work-txt {
     margin-left: 60px;
 }
+.active{
+    color: #ffcc00;
+}
 
 /* tab */
 
@@ -344,10 +347,10 @@
     color: gray;
 }
 .nav-item {
-    
+    color: white;    
 }
 .nav-link {
-    
+    color: white;
 }
 }
 
