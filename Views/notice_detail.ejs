@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <title>공지사항 <%=notice[0].Title%></title>
+    <script>
+        $(function() {
+            $('#attach').click(function() {
+                const name=$(this).data('name');
+                const path=$(this).data('path');
+                location.href=`/Download?OgName=${name}&Path=${path}`;
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <%- include('nav') %>
+    <div class="container-main">
+        <div class="normal" style="width: 80vw;">
+            <div class=" horizontal between">
+                <h3><%=notice[0].Title%></h3>
+                <% var date=new Date(notice[0].CDate);
+                var dateStr=date.getFullYear()+'년 ';
+                if(date.getMonth()<9) {
+                    dateStr+='0';
+                } 
+                dateStr+=date.getMonth()+'월 ';
+                if(date.getDate()<10) {
+                    dateStr+='0';
+                }
+                dateStr+=date.getDate()+'일 ';
+                if(date.getHours()<10) {
+                    dateStr+='0';
+                }
+                dateStr+=date.getHours()+'시 ';
+                if(date.getMinutes()<10) {
+                    dateStr+='0';
+                }
+                dateStr+=date.getMinutes()+'분';
+                 %>
+                <label><%=dateStr%></label>
+            </div>
+            <br>
+            <div class="card">
+                <div class="card-body">
+                    <pre class=" box0 size-12" style="width: 100%;"><%=notice[0].Contents%></pre>
+                    <% if(notice[0].FileName) { %>
+                        <label>첨부파일</label>
+                        <label class=" box0" style="width: 100%; cursor: pointer;" id="attach" data-name="<%=notice[0].FileName%>" data-path="<%=notice[0].FilePath%>"><%=notice[0].FileName%></label>
+                    <% } %>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

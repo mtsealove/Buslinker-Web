@@ -2329,8 +2329,8 @@ exports.getTakeItem = (date, logi, callback) => {
     on ROUTE.DriverID=DRIVE.ID) ROUTES left outer join Members OWNERS
     on ROUTES.Owners like concat('%', OWNERS.ID, '%')) RESULTS group by Name, DriverName, Num, PtName`;
 
-    connection.query(query, (e0, rs)=>{
-        if(e0) {
+    connection.query(query, (e0, rs) => {
+        if (e0) {
             callback(null);
             console.error(e0);
         } else {
@@ -2339,7 +2339,69 @@ exports.getTakeItem = (date, logi, callback) => {
     })
 }
 
-exports.getNoticeList=(page, title, callback)=>{
-    const row=10;
-    
+const row = 10;
+exports.getNoticeList = (page, title, callback) => {
+    const start = (page - 1) * row;
+    const end = page * row;
+    var query = `select ID, Title, date_format(CDate, '%Y-%m-%d %H:%i') Date, Click  
+    from Notice `;
+    if (title) {
+        query += ` where Title like '%${title}%'`;
+    }
+    query += ` order by ID desc limit ${start}, ${end}`;
+    connection.query(query, (e0, rs) => {
+        if (e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
+        }
+    });
+}
+
+exports.getNotciePage=(callback)=>{
+    const query=`select ceil(count(ID)/10) Cnt from Notice`;
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(0);
+        } else {
+            callback(rs[0].Cnt);
+        }
+    });
+}
+
+exports.createNotice = (title, contents, date, manager, fileName, filePath, callback) => {
+    var query = `insert into Notice set Title='${title}', Contents='${contents}', CDate='${date}', ManagerID='${manager}' `;
+    if (fileName) {
+        query += ` , FileName='${fileName}', FilePath='${filePath}'`;
+    }
+    connection.query(query, (e0) => {
+        if (e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    });
+}
+
+exports.getNotice=(ID, callback)=>{
+    const updateQuery=`update Notice set Click=Click+1 where ID=${ID}`;
+    connection.query(updateQuery, (e0)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            const getQuery=`select * from Notice where ID=${ID}`;
+            connection.query(getQuery, (e1, rs)=>{
+                if(e1) {
+                    console.error(e1);
+                    callback(null);
+                } else {
+                    callback(rs);
+                }
+            });
+        }
+    });
 }

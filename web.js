@@ -63,17 +63,36 @@ exports.startApp = (port) => {
 
     // create ask
     app.post('/Ask', (req, res) => {
+        const name=req.body['name'];
         const email = req.body['email'];
         const subject = req.body['subject'];
         const message = req.body['message'];
 
-        sql.createAsk(email, subject, message, (complete) => {
-            if (complete) {
-                res.send('<script>alert("문의사항이 전송되었습니다.");location.href="/Ask";</script>');
-            } else {
-                res.send('<script>alert("오류가 발생하였습니다"); history.go(-1)</script>');
+        const nodemailer = require('nodemailer');
+        let transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: 'buslinker1@gmail.com',  // gmail 계정 아이디를 입력
+              pass: 'fybacakztlgksplq'          // gmail 계정의 비밀번호를 입력
             }
-        });
+          });
+        
+          let mailOptions = {
+            from: 'buslinker1@gmail.com',    // 발송 메일 주소 (위에서 작성한 gmail 계정 아이디)
+            to: 'buslinker1@gmail.com',                     // 수신 메일 주소
+            subject: 'Buslinker 문의 - '+subject,   // 제목
+            text: '발신자: '+name+'\n'+'내용: '+message+'\n회신 메일: '+email // 내용
+          };
+        
+          transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+              console.log(error);
+              res.send('<script>alert("오류가 발생하였습니다"); history.go(-1)</script>');              
+            }
+            else {
+              res.send('<script>alert("문의사항이 전송되었습니다.");location.href="/Ask";</script>');
+            }
+          });
     })
 
     // login page
@@ -128,7 +147,65 @@ exports.startApp = (port) => {
     });
 
     app.get('/Notice', (req, res)=>{
-        res.render('notice', {user:auth.getUser(req)});
+        var page=req.query.page;
+        var title=req.query.query;
+        if(!page) {
+            page=1;
+        }
+        sql.getNoticeList(page, title, (notice)=>{
+            sql.getNotciePage((page)=>{
+                res.render('notice', {user:auth.getUser(req), notice:notice, pageList:page});
+            })
+        })
+        
+    });
+
+    app.get('/Notice/Create', (req, res)=>{
+        const user=auth.getUser(req);
+        if(user.userCat==1) {
+            res.render('create_notice', {user:user});
+        } else {
+            res.send(`<script>alert('권한이 없습니다.');location.href='/';</script>`);
+        }
+    });
+
+    app.get('/Notice/Detail',  (req, res)=>{
+        const ID=req.query.ID;
+        const user=auth.getUser(req);
+        sql.getNotice(ID, (notice)=>{
+            res.render('notice_detail', {user:user, notice: notice});
+        });
+    });
+
+    app.get('/Download', (req, res)=>{
+        const ogName=req.query.OgName;
+        const path='public/uploads/notice/'+req.query.Path;
+        res.download(path, ogName);
+    })
+
+    const multer = require('multer');
+    const upload = multer({ dest: 'public/uploads/notice' });
+    app.post('/Notice/Create', upload.single('attach'),(req, res)=>{
+        console.log(req.body);
+        console.log(req.file);
+        const user=auth.getUser(req);
+
+        const title=req.body['title'];
+        const contents=req.body['contents'];
+        var ogFileName=null;
+        var file=null;
+        if(req.file) {
+            ogFileName=req.file.originalname;
+            file=req.file.filename;
+        }
+        
+        sql.createNotice(title, contents, getDateTime(),user.userID, ogFileName, file, (rs)=>{
+            if(rs) {
+                res.send(`<script>alert('공지사항이 등록되었습니다.');location.href='/Notice';</script>`)
+            } else {
+                res.send(`<script>alert('오류가 발생하였습니다.');</script>`)
+            }
+        });
     });
 
     // logout
@@ -147,4 +224,30 @@ exports.startApp = (port) => {
     app.listen(port, () => {
         console.log('web server runings on: ' + port);
     });
+}
+
+function getDateTime() {
+    var date = new Date();
+    var str = date.getUTCFullYear() + '-';
+    if (date.getMonth() < 9) {
+        str += '0';
+    }
+    str += (date.getMonth() + 1) + '-';
+    if (date.getDate() < 10) {
+        str += '0';
+    }
+    str += date.getDate()+' ';
+    if(date.getHours()<10) {
+        str+='0'
+    }
+    str+=date.getHours()+':';
+    if(date.getMinutes()<10) {
+        str+='0';
+    }
+    str+=date.getMinutes()+':';
+    if(date.getSeconds()) {
+        str+='0';
+    }
+    str+=date.getSeconds();
+    return str;
 }

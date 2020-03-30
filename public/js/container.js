@@ -20,7 +20,7 @@ $(function () {
     
   })
   
-  $('#nav-main').css('background-color', '#021B46');
+  $('#nav-main').css('background-color', '#001F46');
   $('.nav-link').css('color', 'white');
   $('.logo-txt').css('color', 'white');
 });

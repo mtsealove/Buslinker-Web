@@ -6,11 +6,26 @@
     <%- include('config') %>
     <script src="/public/js/container.js"></script>
     <link href="/public/stylesheets/common.css" type="text/stylesheet">
+    <script>
+        $(function(){
+            $('#create-btn').click(function() {
+                location.href='/Notice/Create';
+            });
+            setTrLink();
+        });
+
+        function setTrLink() {
+            $('tr').click(function() {
+                const ID=$(this).data('id');
+                location.href=`/Notice/Detail?ID=${ID}`;
+            });
+        }
+    </script>
 </head>
 
 <body>
     <%- include('nav') %>
-    <div class="main">
+    <div class="container-main">
         <div class='normal'>
             <h3><b>공지사항</b></h3>
             <div class="horizontal between" >
@@ -21,7 +36,8 @@
                 </div>
             </div>
             <br>
-            <table>
+            <div style="height: 600px;">
+            <table class="table-hover">
                 <thead>
                     <th class="head">번호</th>
                     <th class="head">제목</th>
@@ -29,9 +45,33 @@
                     <th class="head">게시일</th>
                 </thead>
                 <tbody>
+                    <% for(var i=0; i<notice.length; i++) { %>
+                        <tr data-id="<%=notice[i].ID%>">
+                            <td><%=notice[i].ID%></td>
+                            <td style="width: 80%;"><%=notice[i].Title%></td>
+                            <td><%=notice[i].Click%></td>
+                            <td><%=notice[i].Date%></td>
+                        </tr>  
+                    <% } %>
                     
                 </tbody>
             </table>
+        </div>
+            
+            <div class="horizontal between">
+                <label></label>
+                <div class="horizontal">
+                    <% for(var i=0; i<pageList; i++) { %>
+                        <a href="?page=<%=i+1%>""><%=i+1%></a>
+                    <%  }%>
+                </div>
+                <% if(user.userCat==1) {%>    
+                <button class="btn-main" id="create-btn">공지사항 작성</button>
+                <% } else { %>
+                    <label></label>
+                <% } %>
+            </div>
+        
         </div>
         
     </div>

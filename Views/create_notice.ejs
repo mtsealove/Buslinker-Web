@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>공지사항 작성</title>
+        <%- include('config') %>
+        <script src="/public/js/container.js" ></script>
+        <link href="/public/stylesheets/common.css" type="text/stylesheet">
+        <script>
+            $(function() {
+                $('#confirm-btn').click(function(){
+                    checkInput();
+                });
+            });
+
+            function checkInput() {
+                var title=$('#input-title').val();
+                var contents=$('#input-contents').val();
+                if(title=='') {
+                    alert('제목을 입력하세요');
+                    return;
+                } else if(contents=='') {
+                    alert('내용을 입력하세요.');
+                    return; 
+                } else {
+                    if(confirm('공지사항을 등록하시겠습니까?')) {
+                        $('#notice-form').submit();
+                    }
+                }
+            }
+            
+        </script>
+    </head>
+    <body>
+        <%- include('nav') %>
+        <div class="container-main">
+            <div class="normal" style="width: 80vw;">
+                <h3>공지사항 작성</h3><br>
+                <div class="card">
+                    <div class="card-body">
+                        <form method="POST" action="/Notice/Create" id="notice-form" enctype="multipart/form-data">
+                            <label>제목</label>
+                            <input type="text" class=" box0" style="width: 100%;" placeholder="제목을 입력하세요." id="input-title" name="title"><br><br>
+                            <label>내용</label>
+                            <textarea class=" box0" rows="15" style="width: 100%;" placeholder="내용을 입력하세요." id="input-contents" name="contents"></textarea>
+                            <label>첨부파일</label>
+                            <input type="file" class=" box0" style="width: 100%;" id="input-file" name="attach"><br><br>
+                            <button type="button" class="btn-main" style="width: 100%;" id="confirm-btn">작성 완료</button>
+                        </form><br>
+                    </div>
+                </div>         
+            </div>
+        </div>
+    </body>
+</html>
