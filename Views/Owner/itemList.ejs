@@ -56,7 +56,6 @@
             var year = new Date().getFullYear();
             <%for (var i = 0; i < table.length; i++) { %>
                 addEvent(<%=table[i].ItemCnt %> , year + '-<%=table[i].Date%>');
-                console.log('<%=table[i].Date%>');
             <% } %>
         });
         document.addEventListener('DOMContentLoaded', function () {
@@ -210,7 +209,7 @@
     </div>
     <section class="container-main">
         <form id="item-form" hidden action="/Owner/Create/ItemList" method="POST"></form>
-        <div class="normal" style="padding-left: 100px; padding-right: 100px;padding-top: 50px;">
+        <div class="full-contents" >
             <h5>오늘의 물량 현황</h5>
             <div class="horizontal between">
                 <h3><b><%=ItemCnt!=0?ItemCnt.toLocaleString()+'개':'물량 등록 안됨'%></b></h3>

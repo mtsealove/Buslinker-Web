@@ -73,7 +73,7 @@
                         dataType: "json",
                         timeout: 1000000,
                         success: function (data) {
-                            console.log(data);
+                            //console.log(data);
                             if (data.Result) {
                                 $('#progress-dialog').fadeOut(200);
                                 $('#complete-dialog').fadeIn(200);
@@ -133,12 +133,12 @@
             var interval = setInterval(() => {
                 var current = (index / cnt) * 100;
                 bar1.set(current);
-                console.log(current);
+                //console.log(current);
                 index++;
                 if ((index / cnt) * 100 >= 99) {
                     clearInterval(interval);
                 }
-            }, 300);
+            }, 700);
         }
 
         function getExcel() {
@@ -276,7 +276,7 @@
     </div>
     <%- include('nav') %>
     <section class=" container-main">
-        <div class="normal">
+        <div class="full-contents">
             <div class="horizontal between">
                 <div>
                     <label>물량 현황</label>

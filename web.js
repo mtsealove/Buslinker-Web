@@ -28,11 +28,11 @@ exports.startApp = (port) => {
     app.use(cookie_parser());
 
     app.use((req, res, next)=>{
-        req.setTimeout(600000, ()=>{
+        req.setTimeout(1200000, ()=>{
             let err=new Error('Req Timeout');
             next(err);
         });
-        res.setTimeout(600000, ()=>{
+        res.setTimeout(1200000, ()=>{
             let err=new Error('Res Timeout');
             next(err);
         });
@@ -56,9 +56,34 @@ exports.startApp = (port) => {
 
     // ask page
     app.get('/Ask', (req, res) => {
+        const cat=req.query.cat;
+        var catKr='';
+        switch(cat) {
+            case 'convention':
+                catKr='제휴 문의';
+                break;
+        }
         sql.getSubjects((results) => {
-            res.render('ask', { user: auth.getUser(req), subjects: results });
+            res.render('ask', { user: auth.getUser(req), subjects: results, cat: catKr });
         })
+    });
+
+    app.get('/Faq',(req, res)=>{
+        sql.getFaq(1, (all)=>{
+            sql.getFaq(2, (logi)=>{
+                sql.getFaq(3, (bus)=>{
+                    sql.getFaq(4, (owner)=>{
+                        res.render('faq', {user:auth.getUser(req), all: all, logi:logi, bus:bus, owner:owner});
+                    });
+                });
+            });
+        });
+    });
+
+    app.get('/Rule/:rule', (req, res)=>{
+        const rule=req.params.rule;
+        const user=auth.getUser(req)
+        res.render('rules', {user:user, rule:rule});
     })
 
     // create ask

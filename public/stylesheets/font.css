@@ -47,6 +47,16 @@
     #brand-big {
         font-size: 55pt;
     }
+
+    .faq-big {
+        color: #001F46;
+        font-size: 40pt;
+    }
+
+    .faq-q-big {
+        margin-left: 30px;
+        font-size: 25pt;
+    }
 }
 @media( max-width: 767px) {
     #brand {
@@ -55,6 +65,16 @@
     
     #brand-big {
         font-size: 35pt;
+    }
+
+    .faq-big {
+        color: #001F46;
+        font-size: 30pt;
+    }
+
+    .faq-q-big {
+        margin-left: 20px;
+        font-size: 20pt;
     }
 }
 
@@ -75,4 +95,42 @@
 .link {
     color: #5885FF;
     cursor: pointer;
+}
+
+.rules {
+    color: #7C7C7C;
+    font-size: 14pt;
+    margin-left: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.rules.active {
+    color: black;
+}
+
+.faq-cat {
+    color: #001F46;
+    font-size: 14pt;
+}
+
+.faq-cnt {
+    color: #B2B2B2;
+    font-size: 12pt;
+}
+
+.faq-a {
+    cursor: pointer;
+}
+
+.faq-pre {
+    margin-left: 30px;
+    font-size: 14pt;
+    width: 80%;
+    white-space: pre-wrap;
+}
+
+.index {
+    cursor: pointer;
+    color: #5C6774;
 }

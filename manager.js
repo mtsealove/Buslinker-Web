@@ -118,8 +118,12 @@ exports.startManager = (app) => {
     // create Member
     const cpUpload = upload.fields([{ name: 'profile', maxCount: 1 }, { name: 'biz', maxCount: 1 }]);
     app.post('/Manager/SignUp', cpUpload, (req, res) => {
-        var filePath = __dirname + '/' + (req.files['biz'][0]).path;
-
+        var filePath = null;
+        console.log(req.body);
+        if(req.files['biz']) {
+            filePath = __dirname + '/' + (req.files['biz'][0]).path;
+        }
+        const ptName=req.body['name'];
         const email = req.body['email'];
         const password = req.body['password'];
         const phone = req.body['phone'];
@@ -134,33 +138,44 @@ exports.startManager = (app) => {
 
         var request = require('request');
         const fs = require('fs');
-        const options = {
-            url: 'https://ocr.api.friday24.com/business-license',
-            headers: {
-                'Authorization': 'Bearer kmRN36IXKLDiI6fy7BKz',
-                'Content-Type': 'multipart/form-data'
-            },
-            formData: {
-                'file': fs.createReadStream(filePath),
-            }
-        };
-
-        request.post(options, (error, response, body) => {
-            if (error) {
-                console.error(error);
-            } else {
-                const json = JSON.parse(body);
-                const name = json.license.corpName;
-                const bizNum = json.license.bizNum;
-                const bizAddr = json.license.addr;
-                const bizClass = json.license.bizClass;
-                sql.createMember(name, email, password, cat, phone, ProfilePath, bizNum, bizAddr, bizClass, center, garage, (result) => {
-                    if (result) {
-                        res.redirect('/Manager/SignUp/Complete');
-                    }
-                });
-            }
-        });
+        if(filePath) {
+            const options = {
+                url: 'https://ocr.api.friday24.com/business-license',
+                headers: {
+                    'Authorization': 'Bearer kmRN36IXKLDiI6fy7BKz',
+                    'Content-Type': 'multipart/form-data'
+                },
+                formData: {
+                    'file': fs.createReadStream(filePath),
+                }
+            };    
+            request.post(options, (error, response, body) => {
+                if (error) {
+                    console.error(error);
+                } else {
+                    const json = JSON.parse(body);
+                    const name = json.license.corpName;
+                    const bizNum = json.license.bizNum;
+                    const bizAddr = json.license.addr;
+                    const bizClass = json.license.bizClass;
+                    sql.createMember(name, email, password, cat, phone, ProfilePath, bizNum, bizAddr, bizClass, center, garage, (result) => {
+                        if (result) {
+                            res.redirect('/Manager/SignUp/Complete');
+                        } else {
+                            res.send(`<script>alert('오류가 발생하였습니다.');history.go(-1);</script>`);
+                        }
+                    });
+                }
+            });
+        } else {
+            sql.createPartTimeMenber(ptName, email, password, phone, center, ProfilePath, (rs)=>{
+                if(rs) {
+                    res.redirect('/Manager/SignUp/Complete');
+                } else {
+                    res.send(`<script>alert('오류가 발생하였습니다.');history.go(-1);</script>`);
+                }
+            });
+        }
     });
 
     app.get('/Manager/SignUp/Complete', (req, res) => {

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('config') %>
+    <script src="/public/js/container.js"></script>
+    <title>고객지원</title>
+    <script>
+        $(function () {
+            setHeight();
+            setSearch();
+            setLinks();
+            $('.close').click(function (){
+                $('#modal').fadeOut(300);
+            });
+        })
+        function setHeight() {
+            var viewHeight = $(window).height();
+            var navHeight = $('#nav-main').height();
+
+            var helf = viewHeight / 2 - navHeight;
+            $('#top-div').height(helf);
+
+        }
+
+        function setSearch() {
+            $('#search-input').keyup(function () {
+                const word = $(this).val();
+                $('.faq-a').hide();
+                $(`.faq-a:contains("${word}")`).show();
+            });
+        }
+
+        function setLinks() {
+            $('#modal').hide();
+            $('.faq-a').click(function() {
+                const q=$(this).text();
+                const a=$(this).data('a');
+                $('#faq-q').text(q);
+                $('#faq-a').text(a);
+                $('#modal').fadeIn(300);
+            })
+        }        
+    </script>
+</head>
+
+<body>
+    <div id="modal">
+        <div class=" modal-popup">
+                <div class=" horizontal between" style="background-color: #F5F5F5; padding: 20px;">
+                    <div class=" horizontal" >
+                        <h1 class=" faq-big">Q</h1>
+                        <h3 class="faq-q-big" id="faq-q">계약 참여</h3>
+                    </div>
+                    <img class="close" src="/public/images/x_icon.png">
+                </div>
+                <div class="horizontal" style="padding: 20px; align-items: baseline;">
+                    <h1 class=" faq-big">A</h1>
+                    <pre class=" faq-pre" id="faq-a">신규 계약과 기존 계약의 조정은 즉시 이루어지지 않습니다.
+버스링커는 통근과 물류 노선 계약이 함께 이루어지기 때문에 계약에 변동이 있을 경우
+노선과 관련된 상당한 조정기간이 필요합니다.
+                        
+자세한 내용은 문의하기를 통해 상담하세요.</pre>
+                </div>
+        </div>
+    </div>
+    <%- include('nav') %>
+    <div class="main">
+        <div id="contents">
+            <!-- search box -->
+            <div style="width: 100%;background-color: #001F46;" id="top-div">
+                <h3 class="font-white">무엇을 도와드릴까요?</h3>
+                <div class=" box-search horizontal" style="width: 400px;margin-top: 20px;">
+                    <input class=" transparent" placeholder="문의 키워드를 검색하세요." id="search-input">
+                    <img src="/public/images/search.png">
+                </div>
+            </div>
+            <!-- titles -->
+            <div id="faq-div">
+                <div>
+                    <p><b class="faq-cat">공통</b><span class="faq-cnt"> (<%=all.length%>)</span></p>
+                    <% for(var i=0; i<all.length; i++) { %>
+                    <label class="faq-a" data-a="<%=all[i].A%>"><%=all[i].Q%></label>
+                    <% } %>
+                </div>
+                <div>
+                    <p><b class="faq-cat">물류사</b><span class="faq-cnt"> (<%=logi.length%>)</span></p>
+                    <% for(var i=0; i<logi.length; i++) { %>
+                    <label class="faq-a" data-a="<%=logi[i].A%>"><%=logi[i].Q%></label>
+                    <% } %>
+                </div>
+                <div>
+                    <p><b class="faq-cat">버스사</b><span class="faq-cnt"> (<%=bus.length%>)</span></p>
+                    <% for(var i=0; i<bus.length; i++) { %>
+                    <label class="faq-a" data-a="<%=bus[i].A%>"><%=bus[i].Q%></label>
+                    <% } %>
+                </div>
+                <div>
+                    <p><b class="faq-cat">화주사</b><span class="faq-cnt"> (<%=owner.length%>)</span></p>
+                    <% for(var i=0; i<owner.length; i++) { %>
+                    <label class="faq-a" data-a="<%=owner[i].A%>"><%=owner[i].Q%></label>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,6 +1,6 @@
 const mysql = require('mysql');
 const connection = mysql.createConnection({
-    host: 'localhost',
+    host: 'buslinker2.cirok2goa354.us-east-2.rds.amazonaws.com',
     user: 'buslinker',
     password: 'Fucker0916!',
     database: 'Buslinker2',
@@ -124,12 +124,12 @@ exports.getDriverTimeline = (date, driverID, callback) => {
             if (route[0]) {
                 const locations = route[0].Locations;
                 const timeLineQuery = `select * from Location where LocID in(${locations}) order by RcTime asc`;
-                console.log(timeLineQuery);
+                // console.log(timeLineQuery);
                 connection.query(timeLineQuery, (e1, timeline) => {
                     if (e1) {
                         callback(null);
                     } else {
-                        console.log(timeline);
+                        // console.log(timeline);
                         callback({
                             route: route[0],
                             timeline: timeline
@@ -149,7 +149,7 @@ exports.getDriverTimeline = (date, driverID, callback) => {
 exports.getPtTimeline = (date, ptid, callback) => {
     const routeQuery = `select TTTTT.*, LLLLL.Name LogiName from 
     (select TTTT.*, PPPP.Name DriverName, PPPP.Phone DriverPhone from 
-    (select TTT.Num, TTT.Locations, TTT.Name, TTT.DriverID, TTT.Logi, CCC.Name Corp from 
+    (select TTT.RouteID, TTT.Num, TTT.Locations, TTT.Name, TTT.DriverID, TTT.Logi, CCC.Name Corp from 
     (select BB.Num, TT.* from 
     (select R.*, T.BusID, T.DriverID from Route R
     join Timeline T 
@@ -171,12 +171,12 @@ exports.getPtTimeline = (date, ptid, callback) => {
             if (route[0]) {
                 const locations = route[0].Locations;
                 const timeLineQuery = `select * from Location where LocID in(${locations}) order by RcTime asc`;
-                console.log(timeLineQuery);
+                
                 connection.query(timeLineQuery, (e1, timeline) => {
                     if (e1) {
                         callback(null);
                     } else {
-                        console.log(timeline);
+                        //console.log(timeline);
                         callback({
                             route: route[0],
                             timeline: timeline
@@ -220,7 +220,7 @@ exports.getDriverCalendar = (id, callback) => {
 }
 
 exports.getPtCalendar = (id, callback) => {
-    const query = `select RunDate from Timeline where PTID='${id}'`;
+    const query = `select date_format(RunDate, '%Y-%m-%d') RunDate from Timeline where PTID='${id}'`;
     connection.query(query, (e0, results) => {
         if (e0) {
             console.error(e0);
@@ -291,7 +291,7 @@ exports.checkQrCode = (id, date, qr, callback) => {
         select DriverID from Timeline where RunDate='${date}' and PTID='${id}')`;
 
     connection.query(query, (e0, qrRs) => {
-        console.log(qrRs);
+        // console.log(qrRs);
         if (e0) {
             console.error(e0);
             callback(false);
@@ -359,10 +359,11 @@ exports.getCommute = (id, callback) => {
 }
 
 exports.getPtMy = (id, date, callback) => {
-    const routeQuery = `select R.Name, T.ListID from Route R
+    const routeQuery = `select R.Name, T.ListID, T.LogiList from Route R
     join Timeline T 
     on R.RouteID=T.RouteID
     where T.RunDate='${date}' and T.PTID='${id}'`;
+    // console.log(routeQuery);
 
     connection.query(routeQuery, (e0, route) => {
         if (e0) {
@@ -378,7 +379,37 @@ exports.getPtMy = (id, date, callback) => {
                     console.error(e2);
                 } else {
                     if (route[0] != null && route[0].ListID) {
-                        const cntQuery = `select count(*) cnt from Item where ListID=${route[0].ListID}`;
+                        var ids=``;
+                        if(route[0].LogiList) {
+                            ids=`${route[0].LogiList}`;
+                        }
+                        const idSplit=route[0].ListID.split('|');
+                        // console.log(idSplit);
+                        var listIDs=[];
+                        for(var i=0; i<idSplit.length; i++) {
+                            try {
+                                var id=parseInt(idSplit[i]);
+                                if(!isNaN(id)) {
+                                    listIDs.push(id);    
+                                }
+                            } catch {
+                            }
+                        }
+                        if(ids=='') {
+                            for(var i=0; i<listIDs.length; i++) {
+                                ids+=listIDs[i];
+                                if(i!=listIDs.length-1) {
+                                    ids+=',';
+                                }
+                            }
+                        } else {
+                            for(var i=0; i<listIDs.length; i++) {
+                                ids+=','+listIDs[i];
+                            }
+                        }
+                        
+                        const cntQuery = `select count(*) cnt from Item where ListID in (${ids})`;
+                        // console.log(cntQuery);
                         connection.query(cntQuery, (e1, cntRs) => {
                             if (e1) {
                                 console.error(e1);
@@ -405,6 +436,82 @@ exports.getPtMy = (id, date, callback) => {
                     }
                 }
             });
+        }
+    });
+}
+
+exports.getPtCnt=(id, date, callback)=>{
+    var result={
+        Owner:0,
+        Logi:0
+    };
+    const logiQuery=`select IL.Cnt from 
+    (select LogiList from Timeline where PTID='${id}' and RunDate='${date}') T
+    join (select I.ListID, count(ItemID) Cnt from Item I join ItemList L on I.ListID=L.ListID group by I.ListID) IL
+    on T.LogiList=IL.ListID`;
+
+    const ownerQuery=`select ListID from Timeline where PTID='${id}' and RunDate='${date}'`;
+    connection.query(logiQuery, (e1, logiRs)=>{
+        if(e1) {
+            console.error(e1);
+            callback(result);
+        } else {
+            if(logiRs[0]&&logiRs[0].Cnt) {
+                result.Logi=logiRs[0].Cnt;
+            }
+            connection.query(ownerQuery, (e0, rs)=>{
+                if(e0) {
+                    callback(null);
+                    console.error(e0);
+                } else {
+                    if(rs[0]&&rs[0].ListID) {
+                        const split=rs[0].ListID.split('|');
+                        var ids=[];
+                        for(var i=0; i<split.length; i++) {
+                            var id=parseInt(split[i]);
+                            if(!isNaN(id)) {
+                                ids.push(id);
+                            }
+                        }
+                        var idStr='';
+                        for(var i=0; i<ids.length; i++) {
+                            idStr+=ids[i];
+                            if(i!=ids.length-1) {
+                                idStr+=',';
+                            }
+                        }
+                        const listQuery=`select sum(Cnt) Cnt from 
+                        (select I.ListID, count(ItemID) Cnt from Item I 
+                        join ItemList L on I.ListID=L.ListID group by I.ListID) IL where ListID in(${idStr})`;
+                        connection.query(listQuery, (e2, ownerRs)=>{
+                            if(e2) {
+                                console.error(e2);
+                                callback(result);
+                            } else {
+                                if(ownerRs[0].Cnt) {
+                                    result.Owner=ownerRs[0].Cnt;
+                                }
+                                callback(result);
+                            }
+                        });
+                    } else {
+                        callback(result);
+                    }
+                }
+            });
+        }
+    });
+}
+
+exports.getRouteCnt=(routeId, callback)=>{
+    const query=`select Gu, RouteID from Route where Gu=
+    (select Gu from Route where RouteID=${routeId})`;
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.error(e0);
+            callback(null);
+        } else {
+            callback(rs);
         }
     });
 }

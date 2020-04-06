@@ -47,12 +47,12 @@
             </ul>
             <div class="horizontal center">
                 <% var profile;
-                 if(user.profile) {
-                    profile='/public/images/uploads/'+user.profile;
-                } else {
-                    profile='/public/images/user.png';
-                } %>
-                <img src="<%=profile%>" id="user-profile">
+                if(user.profile) {
+                   profile='/public/uploads/'+user.profile;
+               } else {
+                   profile='/public/images/user.png';
+               } %>
+               <img src="<%=profile%>" id="user-profile">
                 <label class="font-white" id="user-name"><%=user.userName%></label>
             </div>
         </div>

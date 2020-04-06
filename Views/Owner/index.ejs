@@ -142,9 +142,7 @@
 
         function setDoughnutHeight() {
             const height=$('#receipt-div').outerHeight();
-            console.log(height);
             $('#doughnut-div').height(height);
-            console.log($('#doughnut-div'));
         }
     </script>
 </head>
@@ -152,7 +150,7 @@
 <body>
     <%-include('nav') %>
     <section class="container-main">
-        <div class="normal">
+        <div class="full-contents">
             <div class=" horizontal between">
                 <h3><b>종합</b></h3>
                 <select class="box0" id="select-month">

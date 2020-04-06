@@ -1,6 +1,6 @@
 const mysql = require('mysql');
 const connection = mysql.createConnection({
-    host: 'localhost',
+    host: 'buslinker2.cirok2goa354.us-east-2.rds.amazonaws.com',
     user: 'buslinker',
     password: 'Fucker0916!',
     database: 'Buslinker2',
@@ -717,7 +717,7 @@ exports.createItemList = (userID, ids, item_names, names, phones, addrs, callbac
                             callback(false);
                         } else {
                             // get route id for update
-                            const getRoute = `select RouteID from route where Owners like '%${userID}%'`;
+                            const getRoute = `select RouteID from Route where Owners like '%${userID}%'`;
                             connection.query(getRoute, (e3, route) => {
                                 if (e3) {
                                     console.error('e3');
@@ -1074,7 +1074,6 @@ exports.getOwnerFee = (start, end, corp, owner, callback) => {
     if (owner) {
         query += ` where ID='${owner}'`;
     }
-    console.log(query);
 
     connection.query(query, (err, result) => {
         if (err) {
@@ -1424,29 +1423,14 @@ exports.updateTimeLinePt = (routeID, remove, part, callback) => {
             console.error(e0);
             callback(false);
         } else {
-            // delete all empty data;
-            var clearQuery = `delete from Timeline where BusID is null and DriverID is null and PTID is null`;
-            connection.query(clearQuery, (e1) => {
-                if (e1) {
-                    console.error(e1);
-                    callback(false);
-                } else {
-                    updatePartTime(routeID, part, callback);
-                }
-            });
+            updatePartTime(routeID, part, callback);
         }
     });
 }
 async function updatePartTime(routeID, part, callback) {
-    var insertList = [];
-    var index = 0;
     for (var i = 0; i < part.length; i++) {
         var id = ((String)(part[i])).split(':')[0];
         var date = ((String)(part[i])).split(':')[1];
-        //      console.log(id);
-        // console.log(date);
-        var insertQuery = `insert into TimeLine set RouteID=${routeID}, RunDate='${date}', PTID='${id}'`;
-        insertList.push(insertQuery);
         var updateQuery = `update Timeline set PTID='${id}' where RouteID=${routeID} and RunDate='${date}'`;
         console.log(updateQuery);
         connection.query(updateQuery, (e0, result) => {
@@ -1454,14 +1438,7 @@ async function updatePartTime(routeID, part, callback) {
                 console.error(e0);
                 callback(false);
             } else {
-                console.log(insertList[index++]);
-                if (result.affectedRows == 0) {
-                    connection.query(insertList[index - 1], (e1) => {
-                        if (e1) {
-                            console.error(e1);
-                        }
-                    });
-                }
+                
             }
         });
     }
@@ -2276,7 +2253,9 @@ exports.getOnwerTimeline = (owner, today, startDay, endDay, callback) => {
     where SoldDate>='${startDay}' and Solddate<'${endDay}') IL left outer join
     (select ListID, count(ItemID) ItemCnt from Item
     group by ListID) II on IL.ListID=II.ListID) IT group by OwnerID) ITL
-    on OWN.ID=ITl.OwnerID`;
+    on OWN.ID=ITL.OwnerID`;
+
+    console.log(itemQuery);
 
     connection.query(timelineQuery, (e0, timeline) => {
         if (e0) {
@@ -2404,4 +2383,33 @@ exports.getNotice=(ID, callback)=>{
             });
         }
     });
+}
+
+exports.getFaq=(Cat, callback)=>{
+    const query=`select * from Faq where Cat=${Cat}`;
+    connection.query(query, (e0, rs)=>{
+        if(e0) {
+            console.log(e0);
+            callback(null);
+        } else {
+            callback(rs);
+        }
+    });
+}
+/*   name: '테스트',
+  email: 'shyi96@naver.com',
+  password: 'Fucker0916*',
+  phone: '010-1111-2222',
+  center: '서울 광진구 광나루로20길 17*/
+exports.createPartTimeMenber=(name, email, password, phone, addr, profilePath, callback)=>{
+    const query=`insert into Members set Name='${name}', ID='${email}', Password='${crypto.Chipe(password)}',
+     Phone='${phone}', CenterAddr='${addr}', ProfilePath='${profilePath}', MemberCat=5`;
+     connection.query(query, (e0)=>{
+        if(e0) {
+            console.error(e0);
+            callback(false);
+        } else {
+            callback(true);
+        }
+     });
 }

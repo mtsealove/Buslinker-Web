@@ -4,6 +4,7 @@ exports.startApp = (port) => {
     const session = require('express-session');
     const app = express();
     const sql = require('./sqlMobile');
+    const socketio = require('socket.io');
 
     const Ok = {
         Result: true
@@ -30,7 +31,6 @@ exports.startApp = (port) => {
         const pw = req.body['Password'];
         const cat = req.body['Cat'];
         const token = req.body['Token'];
-        console.log('login tried');
 
         sql.Login(id, pw, cat, token, (result) => {
             if (result) {
@@ -39,7 +39,6 @@ exports.startApp = (port) => {
                     ID: result.ID,
                     ProfilePath: result.ProfilePath
                 };
-                console.log(userInfo);
                 res.json(userInfo);
             } else {
                 const fail = {
@@ -47,7 +46,6 @@ exports.startApp = (port) => {
                     ID: null,
                     ProfilePath: null
                 }
-                console.log(fail);
                 res.json(fail);
             }
         })
@@ -92,10 +90,10 @@ exports.startApp = (port) => {
 
     app.get('/Driver/My', (req, res) => {
         const id = req.query.ID;
-        console.log(id);
+        
         const date = getDate();
         sql.getDriverMy(id, date, (my) => {
-            console.log(my);
+            // console.log(my);
             if (my) {
                 res.json(my);
             } else {
@@ -113,6 +111,14 @@ exports.startApp = (port) => {
     app.get('/Pt/My', (req, res)=>{
         const id=req.query.ID;
         sql.getPtMy(id, getDate(), (rs)=>{
+            // console.log(rs);
+            res.json(rs);
+        });
+    });
+
+    app.get('/Pt/Cnt', (req, res)=>{
+        const id=req.query.ID;
+        sql.getPtCnt(id, getDate(), (rs)=>{
             res.json(rs);
         });
     });
@@ -153,9 +159,9 @@ exports.startApp = (port) => {
         const latitude = req.body['Latitude'];
         const longitude = req.body['Longitude'];
         const date = getDate();
-        console.log(id);
-        console.log(latitude);
-        console.log(longitude);
+        // console.log(id);
+        // console.log(latitude);
+        // console.log(longitude);
 
         sql.UpdateLocation(id, date, latitude, longitude, (result) => {
             if (result) {
@@ -176,7 +182,7 @@ exports.startApp = (port) => {
     app.get('/Pt/Calendar', (req, res)=>{
         const id=req.query.ID;
         sql.getPtCalendar(id, (calendar)=>{
-            console.log(calendar)
+            // console.log(calendar)
             res.json(calendar);
         });
     });
@@ -203,8 +209,8 @@ exports.startApp = (port) => {
         const id=req.body['ID'];
         const qr=req.body['Code'];
         console.log('commute');
-        console.log(id);
-        console.log(qr);        
+        // console.log(id);
+        // console.log(qr);        
         sql.checkQrCode(id, getDate(), qr, (result)=>{
             if(result) {
                 res.json(Ok);
@@ -218,7 +224,6 @@ exports.startApp = (port) => {
     app.get('/Commute', (req, res)=> {
         const id=req.query.ID;
         sql.getCommute(id, (commute)=>{
-            console.log("commute: "+commute);
             if(commute){
                 res.json(Ok);
             } else {
@@ -227,9 +232,91 @@ exports.startApp = (port) => {
         });
     });
 
-    app.listen(port, () => {
+    var server=app.listen(port, () => {
         console.log('mobile server runnings on: ' + port);
-    })
+    });
+
+    var io=socketio.listen(server);
+    var hash=[];
+    var match=[];
+    io.on('connect', socket=>{
+        console.log('connteced');
+        socket.to(socket.id).emit("socket_id", socket.id);
+        console.log(socket.id);
+
+        socket.on('create', (data)=>{ 
+            console.log(data.RouteID);
+            hash[socket.id]=data.RouteID;
+            console.log(hash[socket.id]);
+            const max=data.Max;
+            sql.getRouteCnt(data.RouteID, (rs)=>{
+                if(rs) {
+                    console.log(rs);
+                    const gu=rs[0].Gu
+                    // if not create
+                    if(match[gu]) {
+                        
+                    } else {
+                        match[gu]=[];
+                        for(var i=0; i<rs.length; i++) {
+                            match[gu].push({
+                                RouteID: rs[i].RouteID,
+                                PTID:null,
+                                Level:0,
+                                Max:max,
+                                SocketID:null,
+                                Ready:false,
+                                Name:'미입장',
+                                Profile:null
+                            });
+                        }
+                    }
+                    // update
+                    for(var i=0; i<match[gu].length; i++) {
+                        if(data.RouteID==match[gu][i].RouteID) {
+                            match[gu][i].PTID=data.PTID;
+                            match[gu][i].SocketID=socket.id;
+                            match[gu][i].Level++;
+                            match[gu][i].Ready=true;
+                            match[gu][i].Name=data.Name;
+                            match[gu][i].Profile=data.Profile;
+                        }
+                    }
+                    // check all ready 
+                    var ready=true;
+                    for(var i=0; i<match[gu].length; i++) {
+                        for(var j=0; j<i; j++) {
+                            if(match[gu][i].Level!=match[gu][j].Level) {
+                                ready=false;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    console.log(match);
+                    for(var i=0; i<match[gu].length; i++) {
+                        io.to(match[gu][i].SocketID).emit('ready', match[gu]);
+                    }
+                    if(ready) {
+                        for(var i=0; i<match[gu].length; i++) {
+                            match[gu][i].Ready=false;
+                        }
+                    }
+                    var allDone=true;
+                    for(var i=0; i<match[gu].length; i++) {
+                        if(match[gu][i].Max!=match[gu][i].Level) {
+                            allDone=false;
+                        }
+                    }
+                    if(allDone) {
+                        match[gu]=null;
+                    }
+                }
+            });
+        });
+    });
+
+    
 }
 
 function getDate() {

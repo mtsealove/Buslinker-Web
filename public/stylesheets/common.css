@@ -331,7 +331,7 @@ img.extend-table {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 2;
+    z-index: 3;
 }
 
 #map {
@@ -458,13 +458,6 @@ iframe {
 
 /* 일요일 */
 
-div.normal {
-    width: 100%;
-    padding-left: 30px;
-    padding-right: 30px;
-    padding-top: 30px;
-}
-
 .single-tab {
     background-color: white;
     padding: 20px 20px 0px 20px;
@@ -506,4 +499,68 @@ div.normal {
 
 .location-name {
     font-size: 13pt;
+}
+
+thead.blue {
+    background-color: #436CF4;
+    color: white;
+}
+
+th.blue {
+    text-align: left;
+    padding: 10px;
+}
+
+td.blue {
+    padding: 10px;
+}
+th.middle {
+    text-align: center;
+}
+td.middle {
+    text-align: center;
+}
+
+tr.stp:nth-child(odd)  {
+    background-color: #F8F8F8;
+}
+
+.full-contents {
+    width: 100vw;
+    padding: 30px 50px 0px 50px;
+    overflow-y: auto;
+}
+
+@media( min-width: 768px)  {
+    .modal-popup {
+        width: 800px;
+        background-color: white;
+        border-radius: 5px;
+    }
+
+    .notice-title {
+        width: 70%;
+    } 
+
+    div.normal {
+        width: 100%;
+        padding-left: 150px;
+        padding-right: 150px;
+        padding-top: 50px;
+    }
+}
+
+@media(max-width: 767px) {
+    .modal-popup {
+        width: 90vw;
+        background-color: white;
+        border-radius: 5px;
+    }
+
+    div.normal {
+        width: 100%;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-top: 30px;
+    }
 }

@@ -11,26 +11,30 @@
         <div class="footer-container">
             <label class="font-white size-12"><b>문의하기</b></label>
             <div class="footer-body">
-                <label class="font-white size-10 footer-label">010-4723-8131</label>
-                <label class="font-white size-10 footer-label"><a href="mailto:buslinker@gmail.com">buslinker@gmail.com</a></label>
+                <label ><a class="font-white size-10 footer-label" href="tel:0104713-8131">010-4713-8131</a></label>
+                <label ><a class="font-white size-10 footer-label" href="mailto:buslinker1@gmail.com">buslinker1@gmail.com</a></label>
             </div>
         </div>
         <div class="footer-container footer-no">
             <label class="font-white size-12"><b>사이트맵</b></label>
             <div class="footer-body">
-                <label class="font-white size-10">회사 소개</label>
-                <label class="font-white size-10">문의하기</label>
-                <label class="font-white size-10">공지사항</label>
-                <label class="font-white size-10">고객지원</label>
-                <label class="font-white size-10">로그인</label>
+                <label ><a class="font-white size-10 footer-label" href="/Introduction">회사 소개</a></label>
+                <label ><a class="font-white size-10 footer-label" href="/Ask">문의하기</a></label>
+                <label ><a class="font-white size-10 footer-label" href="/Notice">공지사항</a></label>
+                <label ><a class="font-white size-10 footer-label" href="/Faq
+                    ">고객지원</a></label>
+                <% if(!user.userID) { %>
+                <label ><a class="font-white size-10 footer-label" href="/Login">로그인</a></label>
+                <% } %>
+                
             </div>
         </div>
         <div class="footer-container">
             <label class="font-white size-12"><b>정보</b></label>
             <div class="footer-body">
-                <label class="font-white size-10 footer-label">이용 약관</label>
-                <label class="font-white size-10 footer-label">운송 약관</label>
-                <label class="font-white size-10 footer-label">개인정보 처리 방침</label>
+                <label ><a class="font-white size-10 footer-label" href="/Rule/use">이용약관</a></label>
+                <label ><a class="font-white size-10 footer-label" href="/Rule/delivery">운송약관</a></label>
+                <label ><a class="font-white size-10 footer-label" href="/Rule/privacy">개인정보 처리 방침</a></label>
             </div>
         </div>
     </div>

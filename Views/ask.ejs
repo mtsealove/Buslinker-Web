@@ -18,6 +18,7 @@
                 }
             })
             setHeight();
+            setCat();
         })
 
         function checkInput() {
@@ -56,28 +57,32 @@
             var viewHeight = $(window).height();
             var navHeight = $('#nav-main').height();
             var helf = viewHeight / 2 - navHeight;
-            $('#top-div').height(helf);
+            $('#top-div').height(helf);        
+            var contentsHeight = $('#ask-contents-div').height();
 
-            var contentsHeight = $('#contents-div').height();
+            $('#ask-contents-div').offset({ top: (viewHeight - contentsHeight) / 2 });
+        }
 
-            $('#contents-div').offset({ top: (viewHeight - contentsHeight) / 2 });
+        function setCat() {
+            const cat='<%=cat%>';
+            if(cat) {
+                $('#subject').val(cat);
+            }
         }
     </script>
 </head>
 
 <body>
     <%- include('nav') %>
-    <div class="main">
-        <div id="contents">
+    <div class="main" >
+        <div id="contents" >
             <div style="width: 100%;background-color: #001F46;" id="top-div">
             </div>
-            <section style="padding: 0px 20vw 0px 20vw; position: fixed; width: 100%;" id="contents-div">
-                
+            <section id="ask-contents-div" style="overflow-y: auto;">
                 <h1 class="font-white">문의가 필요하신가요?</h1>
                 <p class=" font-white size-14">문의사항에 대해 신속하고 정확히 답변해드리겠습니다.</p>
-                <div class="card" style="width: 100%; height: 620px;">
-                    <div class="horizontal between" style="width: 100%;">
-                    <div class="normal" style="width: 65%;">
+                <div class="card ask-div" style="height: 620px;">
+                    <div id="ask-left">
                         <h4>문의하기</h4>
                         <form id="touch-form" method="POST" action="/Ask">
                             <div class="horizontal between" >
@@ -91,7 +96,7 @@
                                 </div>    
                             </div><br>
                             <label>주제</label><br>
-                            <select name="subject" class=" ask-input">
+                            <select name="subject" class=" ask-input" id="subject">
                                 <% for(var i=0; i<subjects.length; i++) { %>
                                 <option value="<%=subjects[i].SubjectName%>"><%=subjects[i].SubjectName%></option>
                                 <% } %>
@@ -119,7 +124,6 @@
                         <br>
                         <img>
                         <label><a style="color: white;" href="mailto:buslinker1@gmail.com">buslinker1@gmail.com</a></label>
-                    </div>
                     </div>
                 </div>
 

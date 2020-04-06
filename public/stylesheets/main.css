@@ -207,15 +207,19 @@
     color: #001F46;
 }
 
-#ask-right {
-    width: 35%;
-    background-color: #58ADE7;
-    height: 620px;
-    padding: 40px;
-    color: white;
+#top-div {
+    display: flex;
+    flex-direction: column;
+    justify-content:  center;
+    align-items: center;
 }
 
 @media( min-width: 768px) {
+    #ask-contents-div {
+        padding: 0px 20vw 0px 20vw; 
+        position: fixed;
+         width: 100%;
+    }
     #main-back {
         width: 800px;
         height: 402px;
@@ -365,9 +369,51 @@
     .nav-link {
         color: white;
     }
+
+    #faq-div {
+        padding: 50px 150px 50px 150px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+
+    .ask-div {
+        width: 1000px;
+        height: 620px;
+        display: flex;
+        flex-direction: row;
+    }
+    #ask-left {
+        width: 65%;
+        padding: 20px;
+    }
+    #ask-right {
+        width: 35%;
+        background-color: #58ADE7;
+        height: 620px;
+        padding: 40px;
+        color: white;
+    }
 }
 
 @media( max-width: 767px) {
+    #ask-left {
+        padding: 20px;
+    }
+    #ask-right {
+        width: 100%;
+        background-color: #58ADE7;
+        padding: 40px;
+        color: white;
+    }
+    #ask-contents-div {
+        padding: 0px 20px 0px 20px; 
+        position: fixed;
+        width: 100%;
+    }
+    .ask-div {
+        width: 100%;
+        
+    }
     #main-back {
         width: 350px;
         height: 180px;
@@ -543,5 +589,12 @@
     }
     .nav-link {
         color: white;
+    }
+
+    #faq-div {
+        padding: 15px;
+        display: grid;
+        grid-gap: 10px;
+        grid-template-columns: 1fr 1fr;
     }
 }
