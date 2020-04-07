@@ -123,6 +123,18 @@ exports.startApp = (port) => {
         });
     });
 
+    app.post('/Pt/Action', (req, res)=>{
+        const id=req.body['ID'];
+        const action=req.body['Action'];
+        sql.updateAction(id, action, getDate(), (rs)=>{
+            if(rs) {
+                res.json(Ok);
+            } else {
+                res.json(Err);
+            }
+        });
+    });
+
     app.get('/Driver/Timeline', (req, res) => {
         const id = req.query.ID;
         var date = req.query.Date;
@@ -218,7 +230,7 @@ exports.startApp = (port) => {
                 res.json(Err);
             }
         });
-    })
+    });
 
     // 출퇴근 여부 반환
     app.get('/Commute', (req, res)=> {
@@ -263,7 +275,7 @@ exports.startApp = (port) => {
                                 RouteID: rs[i].RouteID,
                                 PTID:null,
                                 Level:0,
-                                Max:max,
+                                Max:4,
                                 SocketID:null,
                                 Ready:false,
                                 Name:'미입장',

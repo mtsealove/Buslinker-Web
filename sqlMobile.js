@@ -325,7 +325,17 @@ exports.checkQrCode = (id, date, qr, callback) => {
                                         } else {
                                             const token = tokenRs[0].Token;
                                             fcm.sendDriverCommute(token, commute);
-                                            callback(true);
+                                            var action='운행 종료';
+                                            if(commute) {
+                                                action='출근 운행중';
+                                            } 
+                                            updateAction(id, action, getDate(), (updateRs)=>{
+                                                if(updateRs) {
+                                                    callback(true);
+                                                } else {
+                                                    callback(false);
+                                                }
+                                            });
                                         }
                                     });
                                 }
@@ -514,4 +524,45 @@ exports.getRouteCnt=(routeId, callback)=>{
             callback(rs);
         }
     });
+}
+
+exports.updateAction=(ptId, action, date, callback)=>{
+    const query=`update Timeline set Action='${action}'
+    where RunDate='${date}' and PTID='${ptId}'`;
+    connection.query(query, (e0)=>{
+        if(e0){
+            console.error(e0);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    });
+}
+
+function updateAction(ptId, action, date, callback){
+    const query=`update Timeline set Action='${action}'
+    where RunDate='${date}' and PTID='${ptId}'`;
+    connection.query(query, (e0)=>{
+        if(e0){
+            console.error(e0);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    });
+}
+
+
+function getDate() {
+    const d = new Date();
+    var dateStr = d.getFullYear() + '-';
+    if (d.getMonth() < 9) {
+        dateStr += '0';
+    }
+    dateStr += (d.getMonth() + 1) + '-';
+    if (d.getDate() < 10) {
+        dateStr += '0';
+    }
+    dateStr += d.getDate();
+    return dateStr;
 }

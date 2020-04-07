@@ -1431,14 +1431,24 @@ async function updatePartTime(routeID, part, callback) {
     for (var i = 0; i < part.length; i++) {
         var id = ((String)(part[i])).split(':')[0];
         var date = ((String)(part[i])).split(':')[1];
-        var updateQuery = `update Timeline set PTID='${id}' where RouteID=${routeID} and RunDate='${date}'`;
-        console.log(updateQuery);
+        const updateQuery = `update Timeline set PTID='${id}' where RouteID=${routeID} and RunDate='${date}'`;
+        const tokenQuery=`select M.Token, '${date}' Date from Members M where M.ID='${id}'`;
+        // console.log(updateQuery);
         connection.query(updateQuery, (e0, result) => {
             if (e0) {
                 console.error(e0);
                 callback(false);
             } else {
-                
+                connection.query(tokenQuery, (e1, tokenRs)=>{
+                    if(e1) {
+                        console.error(e1);
+                        callback(false);
+                    } else if(tokenRs[0]) {
+                        const token=tokenRs[0].Token;
+                        const dates=tokenRs[0].Date;
+                        fcm.sendPtSchedule(token, dates);
+                    }
+                });
             }
         });
     }
@@ -1876,21 +1886,24 @@ exports.getGuCnt = (gu, callback) => {
 
 // manager, bus, logi all accept
 exports.getStatus = (date, bus, logi, callback) => {
-    var timelineQuery = `select TTTT.*, Buss.Num from 
-    (select TTT.*, DRV.Name DriverName from 
-   (select TT.*, PT.Name PtName, PT.Phone PtPhone from
-   (select R.*,T.BusID, T.DriverID, T.PTID, T.ActionID, T.Lat, T.Lng from Timeline T 
-   left outer join Route R on T.RouteID=R.RouteID
-    where T.RunDate='${date}') TT left outer join Members PT
-    on TT.PTID=PT.ID) TTT left outer join Members DRV
-    on TTT.DriverID=DRV.ID) TTTT left outer join Bus Buss
-    on TTTT.BusID=Buss.ID`;
+    var timelineQuery = `select TTTTT.*, CORPR.Name CorpName from 
+    (select TTTT.*, Buss.Num from 
+        (select TTT.*, DRV.Name DriverName from 
+       (select TT.*, PT.Name PtName, PT.Phone PtPhone from
+       (select R.*,T.BusID, T.DriverID, T.PTID, T.Action, T.Lat, T.Lng from Timeline T 
+       left outer join Route R on T.RouteID=R.RouteID
+        where T.RunDate='${date}') TT left outer join Members PT
+        on TT.PTID=PT.ID) TTT left outer join Members DRV
+        on TTT.DriverID=DRV.ID) TTTT left outer join Bus Buss
+        on TTTT.BusID=Buss.ID) TTTTT join Members CORPR
+        on TTTTT.CorpID=CORPR.ID`;
 
     if (bus) {
         timelineQuery += ` where CorpID='${bus}'`;
     } else if (logi) {
         timelineQuery += ` where Logi='${logi}'`;
     }
+    timelineQuery+=` order by CorpName asc`;
 
     console.log(timelineQuery);
 
