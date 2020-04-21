@@ -2055,7 +2055,7 @@ exports.getLogiGraph = (logi, owner, bus, callback) => {
     (select distinct Ym, (Tmp*Commission)/100 TmpFee, (DefaultFee*Commission)/100 DefaultFee from
     (select TOTAL.Ym, TOTAL.DefaultFee, TOTAL.Tmp, MEMBS.Commission from 
     (select FEEE.*, ROUT.Logi from 
-    (select MEM.ID, ITL.Ym,(ITL.Cnt-MEM.DefaultCnt)*Mem.AdFee Tmp, DefaultFee from
+    (select MEM.ID, ITL.Ym,(ITL.Cnt-MEM.DefaultCnt)*MEM.AdFee Tmp, DefaultFee from
     (select ID, AdFee, DefaultFee ,DefaultCnt from Members ) MEM join
     (select IL.OwnerID, date_format(SoldDate, '%Y-%m-01') Ym, sum(II.Cnt) Cnt from
     (select * from ItemList where OwnerID in
