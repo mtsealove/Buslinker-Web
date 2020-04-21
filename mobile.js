@@ -67,7 +67,7 @@ exports.startApp = (port) => {
                 });
             } else {
                 res.json({
-                    CodeQR: '0'
+                    Code: '0'
                 });
             }
         });

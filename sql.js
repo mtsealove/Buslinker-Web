@@ -2055,7 +2055,7 @@ exports.getLogiGraph = (logi, owner, bus, callback) => {
     (select distinct Ym, (Tmp*Commission)/100 TmpFee, (DefaultFee*Commission)/100 DefaultFee from
     (select TOTAL.Ym, TOTAL.DefaultFee, TOTAL.Tmp, MEMBS.Commission from 
     (select FEEE.*, ROUT.Logi from 
-    (select MEM.ID, ITL.Ym,(ITL.Cnt-MEM.DefaultCnt)*Mem.AdFee Tmp, DefaultFee from
+    (select MEM.ID, ITL.Ym,(ITL.Cnt-MEM.DefaultCnt)*MEM.AdFee Tmp, DefaultFee from
     (select ID, AdFee, DefaultFee ,DefaultCnt from Members ) MEM join
     (select IL.OwnerID, date_format(SoldDate, '%Y-%m-01') Ym, sum(II.Cnt) Cnt from
     (select * from ItemList where OwnerID in
@@ -2069,6 +2069,8 @@ exports.getLogiGraph = (logi, owner, bus, callback) => {
     on MEM.ID=ITL.OwnerID) FEEE left outer join
     Route ROUT on ROUT.Owners regexp FEEE.ID) TOTAL left outer join
     Members MEMBS on TOTAL.Logi=MEMBS.ID) Result) R group by Ym`;
+
+    console.log(takeQuery);
 
     var runQuery = `select date_format(R.Month, '%Y-%m-01') Ym, count(R.RouteID)*M.RunFee*0.1 RunFee from Members M join
     (select distinct C.Month, R.RouteID, R.Logi from Calendar C, Route R
