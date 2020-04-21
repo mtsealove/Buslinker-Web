@@ -25,6 +25,11 @@ exports.startApp = (port) => {
         }
     }));
 
+	app.all('/*', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+});
     // login
     app.post('/Login', (req, res) => {
         const id = req.body['ID'];
