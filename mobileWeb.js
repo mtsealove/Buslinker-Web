@@ -234,6 +234,7 @@ exports.startApp = (app) => {
     });
 
 
+    /*
     var io = socketio.listen(server);
     var hash = [];
     var match = [];
@@ -313,7 +314,7 @@ exports.startApp = (app) => {
             });
         });
     });
-
+*/
 
 }
 
