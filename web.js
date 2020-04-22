@@ -268,12 +268,13 @@ exports.startApp = (port) => {
         };
         
     http.createServer(app).listen(80);
-    //https.createServer(options, app).listen(443);
+    https.createServer(options, app).listen(443);
     
-    
+    /*
     app.listen(port, () => {
         console.log('web server runings on: ' + port);
     });
+    */
     
 }
 
