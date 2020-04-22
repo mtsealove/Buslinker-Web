@@ -41,7 +41,7 @@
             const id=$.cookie('id');
             
             $.ajax({
-                url:`http://3.17.182.55:3300/Driver/Calendar?ID=${id}`,
+                url:`/mobile/Driver/Calendar?ID=${id}`,
                 method:'get',
                 success: function(data){
                     //console.log(data);
@@ -97,7 +97,7 @@
         function getTimeline(date) {
             const id=$.cookie('id');
             $.ajax({
-                url:`http://3.17.182.55:3300/Driver/Timeline?ID=${id}&Date=${date}`,
+                url:`/mobile/Driver/Timeline?ID=${id}&Date=${date}`,
                 method:'get',
                 success:function(data) {
                     console.log(data);

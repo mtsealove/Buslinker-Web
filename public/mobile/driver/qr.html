@@ -41,7 +41,7 @@
       const id = $.cookie('id');
 
       $.ajax({
-        url: `http://3.17.182.55:3300/Driver/QR?ID=${id}`,
+        url: `/mobile/Driver/QR?ID=${id}`,
         timeout: 600000,
         success: function (data) {
           // new QRCode(document.getElementById('qr'), data.Code);
