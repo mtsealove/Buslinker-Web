@@ -5,19 +5,14 @@
 const _version = 'v8';
 const cacheName = 'v5';
 const cacheList = [
-  '/',
-  '/main.html',
-  '/manifest.json',
-  '/scripts/app.js',
-  '/styles/index.css',
-  '/images/1.jpg',
-  '/images/2.jpg',
-  '/images/3.jpg',
-  '/images/4.jpg',
-  '/images/5.jpg',
-  '/images/icons/icon-128x128.png',
-  '/images/tab_commute.png',
-  '/images/tab_item.png'
+  '/public/mobile/driver/',
+  '/public/mobile/driver/main.html',
+  '/public/mobile/driver/manifest.json',
+  '/public/mobile/driver/scripts/app.js',
+  '/public/mobile/driver/styles/index.css',
+  '/public/mobile/driver/images/icons/icon-128x128.png',
+  '/public/mobile/driver/images/tab_commute.png',
+  '/public/mobile/driver/images/tab_item.png'
 ];
 
 const log = msg => {
