@@ -8,6 +8,7 @@ exports.startApp = (port) => {
     const manager = require('./manager');
     const bus = require('./bus');
     const owenr = require('./owner');
+    const mobileWeb=require('./mobileWeb');
     const auth = require('./auth');
     const logistics = require('./logistics');
     const https=require('https');
@@ -57,6 +58,7 @@ exports.startApp = (port) => {
     bus.startBus(app);
     owenr.startOwner(app);
     logistics.startLogistics(app);
+    mobileWeb.startApp(app);
 
     // index page
     app.get('/', (req, res) => {
