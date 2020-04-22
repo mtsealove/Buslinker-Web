@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>BusLinker</title>
+    <link rel="stylesheet" type="text/css" href="styles/index.css">
+    <link rel="stylesheet" type="text/css" href="styles/font.css">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="My PWA">
+    <meta name="apple-mobile-web-app-title" content="My PWA">
+    <meta name="msapplication-starturl" content="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="images/icons/icon-152x152.png">
+    <meta name="msapplication-TileImage" content="images/icons/icon-144x144.png">
+    <meta name="msapplication-TileColor" content="#2196f3">
+    <meta name="theme-color" content="#2196f3">
+    <script src="https://code.jquery.com/jquery-3.5.0.min.js"
+        integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script src="scripts/jquery.simple-calendar.js"></script>
+    <link rel="stylesheet" href="styles/simple-calendar.css">
+
+    <script src="/public/js/fullcalendar/core.js"></script>
+    <script src="/public/js/fullcalendar/timegrid.js"></script>
+    <script src="/public/js/fullcalendar/daygrid.js"></script>
+    <script src="/public/js/fullcalendar/interaction.js"></script>
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/core.css" />
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/timegrid.css" />
+    <link rel="stylesheet" href="/public/stylesheets/fullcalendar/daygrid.css" />
+    <script>
+        $(function () {
+            setCalendar();
+        });
+        function setCalendar() {
+            const id=$.cookie('id');
+            
+            $.ajax({
+                url:`http://3.17.182.55:3300/Driver/Calendar?ID=${id}`,
+                method:'get',
+                success: function(data){
+                    //console.log(data);
+                    for(item of data) {
+                      addEvent(item.RunDate);
+                    }
+                },
+                error: function(){
+                    setCalendar();
+                }
+            })
+        }
+
+        function addEvent(date) {
+            calendar.addEvent({
+                title: '',
+                start: date,
+                allDay: true,
+                color: '#001f46',
+                textColor: '#ffffff',
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+        var Calendar = FullCalendar.Calendar;
+        var calendarEl = document.getElementById('calendar');
+
+        calendar = new Calendar(calendarEl, {
+            plugins: ['interaction', 'dayGrid', 'timeGrid'],
+            header: {
+                left: 'prev',
+                center: 'title',
+                right: 'next'
+            },
+            editable: false,
+            droppable: false, // this allows things to be dropped onto the calendar
+            locale: 'ko',
+            eventLimit: true, // for all non-TimeGrid views
+            views: {
+                month: {
+                    eventLimit: 2 // adjust to 6 only for timeGridWeek/timeGridDay
+                }
+            },
+            dateClick: function(info){
+                const date=info.dateStr;
+                getTimeline(date);
+                const dateStr=date.split('-')[0]+'년 '+date.split('-')[1]+'월 '+date.split('-')[2]+'일';
+                $('#date').text(dateStr);
+            }
+        });
+
+        calendar.render();
+        });
+        function getTimeline(date) {
+            const id=$.cookie('id');
+            $.ajax({
+                url:`http://3.17.182.55:3300/Driver/Timeline?ID=${id}&Date=${date}`,
+                method:'get',
+                success:function(data) {
+                    console.log(data);
+                    // console.log(data.route.Name);
+                    var routeName='';
+                    if(data.route.Name!=null) {
+                        routeName=data.route.Name;
+                    } else {
+
+                    }
+                     $('#route-name').text(routeName);
+                },
+                error:function() {
+                    getTimeline(date);
+                }
+            })
+        }
+
+    </script>
+</head>
+
+<body>
+    <div class="header">
+        <img src="images/back_navy.png" class="btn-back">
+        <p class=" size-14 navy" style="text-align: center;"><b id="title">스케줄 확인</b></p>
+    </div>
+    <br>
+    <div id="calendar">
+
+    </div>
+    <div>
+        <p class=" size-12 navy" ><b id="date"></b></p>
+        <div class=" horizontal between">
+            <label class="size-10 navy" id="route-name"></label>
+            <label class="size-10 navy" id="num"></label>
+        </div>
+    </div>
+</body>
+
+</html>

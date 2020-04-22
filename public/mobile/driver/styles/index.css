@@ -1,0 +1,164 @@
+* {
+  box-sizing: border-box; 
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #F5F5F5;
+}
+
+#logo {
+  display: flex;
+  flex-direction: column;
+  justify-content:  center;
+  align-items: center;
+}
+.input {
+  background-color: white;
+  width: 100%;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 12pt;
+  margin-bottom: 10px;
+}
+
+.btn-main {
+  border: none;
+  background-color: #001F46;
+  padding: 10px;
+  color: white;
+  font-size: 12pt;
+  border-radius: 10px;
+}
+.btn-disabled {
+  pointer-events: none;
+  background-color: #C4C4C4;
+}
+.btn-back {
+  width: 15px;
+  height: 25px;
+}
+.block {
+  width: 100%;
+}
+.horizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  width: 90%;
+  align-items: center;
+}
+
+.between {
+  justify-content: space-between;
+}
+
+#login-div {
+  width: 80vw;
+  position: absolute;
+  top: 100px;
+}
+
+#tab-container {
+  position: absolute;
+  bottom: 40px;
+  height: 40px;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  /* align-items: center; */
+  align-items: flex-end;
+  width: 100%;
+  padding: 0px 40px 0px 40px; 
+}
+
+#tab-bottom {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: white;
+  height: 40px;
+}
+
+.title {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px;
+  align-items: center;
+}
+
+.contents {
+  width: 90%;
+}
+
+#profile {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  border: none;
+}
+#main-box-container {
+  position: absolute;
+  bottom: 120px;
+}
+.main-box {
+  width: 49%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+  align-items: center;
+}
+
+.main-box.top-left {
+  border-top-left-radius: 20px;
+}
+
+.main-box.top-right {
+  border-top-right-radius: 20px;
+}
+
+.main-box.bottom-left {
+  border-bottom-left-radius: 20px;
+}
+
+.main-box.bottom-right {
+  border-bottom-right-radius: 20px;
+}
+
+.main-icon {
+  height: 35px;
+  width: 35px;
+}
+
+#qr {
+  width: 280px;
+  height: 280px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #001F46;
+  background-color: white;
+  
+  border-radius: 10px;
+}
+
+#calendar {
+  /* width: 90vw; */
+}

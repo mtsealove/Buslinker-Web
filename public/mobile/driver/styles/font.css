@@ -1,0 +1,63 @@
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+body {
+    font-family: 'Nanum Gothic';
+}
+.size-10 {
+    font-size: 10pt;
+}
+.size-11 {
+    font-size: 11pt;
+}
+
+.size-12 {
+    font-size: 12pt;
+}
+
+.size-13 {
+    font-size: 13pt;
+}
+.size-14 {
+    font-size: 14pt;
+}
+.size-15 {
+    font-size: 15pt;
+}
+.size-16 {
+    font-size: 16pt;
+}
+.size-17 {
+    font-size: 17pt;
+}
+.size-18 {
+    font-size: 18pt;
+}
+.size-19 {
+    font-size: 19pt;
+}
+.size-20 {
+    font-size: 20pt;
+}
+.eurostile {
+    font-family: 'eurostile';
+}
+
+.navy{
+    color: #001f46;
+}
+.logo {
+    font-size: 30pt;
+    margin-top: 10px;
+    font-family: 'eurostile';
+    color: #001f46;
+}
+label {
+    line-height: 140%;
+}
+.des {
+    margin-top: 5px;
+}
+
+@font-face {
+    font-family: 'eurostile';
+    src: url('/public/fonts/EuroStyle\ Normal.ttf');
+}

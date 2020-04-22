@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>BusLinker</title>
+  <link rel="stylesheet" type="text/css" href="styles/index.css">
+  <link rel="stylesheet" type="text/css" href="styles/font.css">
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="My PWA">
+  <meta name="apple-mobile-web-app-title" content="My PWA">
+  <meta name="msapplication-starturl" content="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon" href="images/icons/icon-152x152.png">
+  <meta name="msapplication-TileImage" content="images/icons/icon-144x144.png">
+  <meta name="msapplication-TileColor" content="#2196f3">
+  <meta name="theme-color" content="#2196f3">
+  <script src="https://code.jquery.com/jquery-3.5.0.min.js"
+    integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script> 
+  <script>
+      $(function() {
+        setCenter();
+        setBtns();
+      });
+      function setCenter() {
+          const height=$(window).height();
+          const center=$('#center');
+          const centerHeight=center.height();
+          center.offset({top:(height-centerHeight)/2});
+      }
+
+      function setBtns() {
+          $('#start').click(function() {
+            $.cookie('commute', true) ;
+            location.href='qr.html';
+          });
+          $('#end').click(function(){
+              $.cookie('commute', false);
+              location.href='qr.html';
+          });
+      }
+  </script>
+  <script src="scripts/agent.js"></script>
+  </head>
+  <body>
+    <div class="title">
+        <p class="size-20 eurostile navy">Bus<b>Linker</b></p>
+    </div>
+    <div class="contents" id="center">
+        <button type="button" class=" btn-main block" id="start">
+            <b>출근하시겠어요?</b><br>
+        출근 QR코드를 생성합니다.
+        </button>
+        <br><br>
+        <button type="button" class=" btn-main btn-disabled block" id="end">
+            <b>퇴근하시겠어요?</b><br>
+        퇴근 QR코드를 생성합니다.
+        </button>
+    </div>
+    <div id="tab-container">
+      <img src="/public/mobile/driver/images/tab_commute.png" width="30" height="30" onclick="location.href='commute.html'">
+        <img src="/public/mobile/driver/images/tab_logo.png" width="60" height="60" onclick="location.href='main.html'">
+        <img src="/public/mobile/driver/images/tab_item.png" height="30" width="30">
+    </div>
+    <div id="tab-bottom"></div>
+  </body>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>BusLinker</title>
+  <link rel="stylesheet" type="text/css" href="styles/index.css">
+  <link rel="stylesheet" type="text/css" href="styles/font.css">
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="My PWA">
+  <meta name="apple-mobile-web-app-title" content="My PWA">
+  <meta name="msapplication-starturl" content="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon" href="images/icons/icon-152x152.png">
+  <meta name="msapplication-TileImage" content="images/icons/icon-144x144.png">
+  <meta name="msapplication-TileColor" content="#2196f3">
+  <meta name="theme-color" content="#2196f3">
+  <script src="https://code.jquery.com/jquery-3.5.0.min.js"
+    integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <script src="scripts/qrcode.min.js"></script>
+  <script>
+    $(function () {
+      const commute = $.cookie('commute');
+      const title = $('#title');
+      if (commute) {
+        title.text('출근');
+      } else {
+        title.text('퇴근');
+      }
+
+      getQr();
+      setQrCenter();
+    });
+    function getQr() {
+      const id = $.cookie('id');
+
+      $.ajax({
+        url: `http://3.17.182.55:3300/Driver/QR?ID=${id}`,
+        timeout: 600000,
+        success: function (data) {
+          // new QRCode(document.getElementById('qr'), data.Code);
+          var qrcode = new QRCode("qr", {
+            text: data.Code,
+            width: 200,
+            height: 200,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+          });
+          setCount();
+        },
+        error: function () {
+          getQr();
+        }
+      })
+    }
+
+    function setQrCenter() {
+      const height = $(window).height();
+      const width = $(window).width();
+      const qr = $('#qr');
+      const qrHeight = qr.height();
+      const qrWidth = qr.width();
+      qr.offset({ top: (height - qrHeight) / 2, left: (width - qrWidth) / 2 });
+    }
+    
+    function setCount() {
+      var time=60;
+      const label=$('#time');
+      var interval=setInterval(()=>{
+        time--;
+        if(time==0) {
+          clearInterval(interval);
+          history.go(-1);
+        }
+        label.text('남은 인증시간: 00:'+time);
+      }, 1000);
+    }
+  </script>
+</head>
+
+<body>
+  <div class="header">
+    <img src="images/back_navy.png" class="btn-back">
+    <p class=" size-14 navy" style="text-align: center;"><b id="title">출근</b></p>
+  </div>
+  <br>
+  <label class=" size-12 navy"><b>생성된 QR코드를</b></label>
+  <label class=" size-12 navy"><b>물류관리 직원에게 보여주세요.</b></label>
+  <br>
+  <label class=" size-12 navy" id="time">남은 인증시간: </label>
+  <div id="qr" ></div>
+
+</body>

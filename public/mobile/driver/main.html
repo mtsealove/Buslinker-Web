@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>BusLinker</title>
+  <link rel="stylesheet" type="text/css" href="styles/index.css">
+  <link rel="stylesheet" type="text/css" href="styles/font.css">
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="My PWA">
+  <meta name="apple-mobile-web-app-title" content="My PWA">
+  <meta name="msapplication-starturl" content="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon" href="images/icons/icon-152x152.png">
+  <meta name="msapplication-TileImage" content="images/icons/icon-144x144.png">
+  <meta name="msapplication-TileColor" content="#2196f3">
+  <meta name="theme-color" content="#2196f3">
+  
+  <script src="https://code.jquery.com/jquery-3.5.0.min.js"
+    integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+    <script src="/public/mobile/driver/scripts/agent.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script> 
+    <script>
+        $(function() {
+            setUser();
+            setMainBtns();
+        });
+        function setUser() {
+            const name=$.cookie('name');
+            $('#name').text(name+'님');
+            const path=$.cookie('path');
+            $('#profile').attr('src', `https://3.17.182.55/public/uploads/${path}`);
+        }
+
+        function setMainBtns() {
+            $('#main-logout').click(function() {
+                if(confirm('로그아웃 하시겠습니까?')) {
+                    $.cookie('id', '');
+                    $.cookie('ids', '');
+                    $.cookie('name', '');
+                    $.cookie('path', '');
+                    $.cookie('pw', '');
+                    location.href='/public/mobile/driver';
+                }
+            });
+            $('#main-schedule').click(function() {
+                location.href='schedule.html';
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="title">
+        <p class="size-20 eurostile navy">Bus<b>Linker</b></p>
+    </div>
+    <div class=" contents">
+        <div class=" horizontal between">
+            <label class="size-18 navy"><b id="name">님</b><br>안녕하세요.</label>
+            <img id="profile">
+        </div>
+    </div>
+    <br>
+    <div class=" contents">
+        <label class="size-18 navy">오늘의 노선은<br>
+            <b id="route-name">마포-CJ대한통운</b>이며,<br>
+            <b id="way-point">n개의 경유지가 있습니다.</b></label>
+    </div>
+    
+    <div class="contents" id="main-box-container">
+        <div class="horizontal between">
+            <div class="main-box top-left" id="main-schedule">
+                <img class="main-icon" src="/public/mobile/driver/images/main_schedule.png" >
+                <label class="size-11 navy des"><b>스케줄 보기</b></label>
+            </div>
+            <div class="main-box top-right">
+                <img class="main-icon" src="/public/mobile/driver/images/main_tutorials.png" >
+                <label class="size-11 navy des"><b>튜토리얼</b></label>
+            </div>
+        </div>
+        <div style="height: 7px;"></div>
+        <div class="horizontal between">
+            <div class="main-box bottom-left">
+                <img class="main-icon" src="/public/mobile/driver/images/main_ask.png" >
+                <label class="size-11 navy des"><b>문의하기</b></label>
+            </div>
+            <div class="main-box bottom-right" id="main-logout">
+                <img class="main-icon" src="/public/mobile/driver/images/main_logout.png" >
+                <label class="size-11 navy des"><b>로그아웃</b></label>
+            </div>
+        </div>
+        
+    </div>
+    <div id="tab-container">
+        <img src="/public/mobile/driver/images/tab_commute.png" width="30" height="30" onclick="location.href='commute.html'"> 
+        <img src="/public/mobile/driver/images/tab_logo.png" width="60" height="60" onclick="location.href='main.html'">
+        <img src="/public/mobile/driver/images/tab_item.png" height="30" width="30">
+    </div>
+    <div id="tab-bottom"></div>
+    <script src="scripts/app.js" async></script>
+</body>
