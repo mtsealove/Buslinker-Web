@@ -6,7 +6,7 @@
   <link rel="stylesheet" type="text/css" href="styles/index.css">
   <link rel="stylesheet" type="text/css" href="styles/font.css">
   <!-- PWA Manifest -->
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="/public/mobile/driver/manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="application-name" content="My PWA">
@@ -14,8 +14,8 @@
   <meta name="msapplication-starturl" content="/">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <link rel="apple-touch-icon" href="images/icons/icon-152x152.png">
-  <meta name="msapplication-TileImage" content="images/icons/icon-144x144.png">
+  <link rel="apple-touch-icon" href="/public/mobile/driver/images/icons/icon-152x152.png">
+  <meta name="msapplication-TileImage" content="/public/mobile/driver/images/icons/icon-144x144.png">
   <meta name="msapplication-TileColor" content="#2196f3">
   <meta name="theme-color" content="#2196f3">
   
@@ -32,7 +32,7 @@
             const name=$.cookie('name');
             $('#name').text(name+'님');
             const path=$.cookie('path');
-            $('#profile').attr('src', `https://3.17.182.55/public/uploads/${path}`);
+            // $('#profile').attr('src', `https://3.17.182.55/public/uploads/${path}`);
         }
 
         function setMainBtns() {
