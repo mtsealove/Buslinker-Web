@@ -64,13 +64,13 @@
     align-items: center;
     display: flex;
     flex-direction: column;
-    padding-top: 100px;
-    padding-bottom: 100px;
+    padding-top: 50px;
+    padding-bottom: 50px;
 }
 
 .main {
-    position: fixed;
-    top: 62px;
+    /* position: fixed; */
+    /* top: 62px; */
     width: 100vw;
     height: 200px;
     overflow-x: hidden;
@@ -83,6 +83,9 @@
 
 .main::-webkit-scrollbar {
     display: none;
+}
+.navbar-nav {
+    align-items: center;
 }
 
 /* 정중앙 */
@@ -212,32 +215,56 @@
     flex-direction: column;
     justify-content:  center;
     align-items: center;
+    background: url('/public/images/etc_back.png');
+    width: 100%;
+    background-size: 100%;
 }
 
+.input-shadow {
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 20px;
+    background-color: #F5F5F5;
+}
+.input-shadow::placeholder {
+    color: #73A1C2;
+}
 @media( min-width: 768px) {
+    #ask-txt {
+        align-items: flex-end;  
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
     #ask-contents-div {
         padding: 0px 20vw 0px 20vw; 
         position: fixed;
          width: 100%;
     }
     #main-back {
-        width: 800px;
-        height: 402px;
+        width: 1000px;
+        height: 700px;
     }
     .intro {
         display: flex;
-        width: 80%;
+        margin-left: 5%;
+        width: 90%;
         flex-direction: row;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start;
     }
     .intro-container {
-        background-color: #001F46;
-        height: 100vh;
+        /* background-color: #001F46; */
+        background: url('/public/images/main_background.png');
+        /* height: 100vh; */
+        height: 1540px;
+        width: 100vw;
         display: flex;
         flex-direction: row;
         justify-content: center;
-        align-items: center;
+        padding-top: 200px;
+        /* align-items: center; */
     }
     #what-we-do-container {
         margin-top: 50px;
@@ -251,11 +278,12 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center;
-        margin-left: 50px;
-        margin-right: 50px;
+        padding: 30px 20px 0px 20px;
     }
-    label.what-we-do-txt {}
+    label.what-we-do-txt {
+        width: 300px;
+        font-size: 12pt;
+    }
     .space10 {
         display: none;
     }
@@ -292,25 +320,26 @@
         flex-direction: column;
     }
     .des-web-container {
-        width: 90vw;
+        margin-top: 180px;
+        width: 80vw;
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
     }
     #labtop {
-        margin-right: -200px;
-        height: 600px;
+        height: 450px;
     }
     .des-app-container {
-        width: 40vw;
+        margin-top: 300px;
+        width: 80vw;
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
     }
     #phones {
-        width: 300px;
+        width: 500px;
     }
     .logo-big {
         width: 60px;
@@ -364,10 +393,10 @@
         color: gray;
     }
     .nav-item {
-        color: white;
+        color: black;
     }
     .nav-link {
-        color: white;
+        color: black;
     }
 
     #faq-div {
@@ -378,7 +407,7 @@
 
     .ask-div {
         width: 1000px;
-        height: 620px;
+        height: 640px;
         display: flex;
         flex-direction: row;
     }
@@ -393,11 +422,45 @@
         padding: 40px;
         color: white;
     }
+
+    #what-we-do-section {
+        margin-top: -400px;
+    }
+
+    #des {
+        background: url('/public/images/des_background.png');
+        background-size: 100vw;
+        height: 1600px;
+    }
+
+    #login-div {
+        width: 500px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color:#F5F5F5;
+        padding: 50px 0px 50px 0px;
+    }
 }
 
 @media( max-width: 767px) {
+
+    #ask-txt {
+        align-items: flex-end;  
+        display: flex;
+        flex-direction: column;
+    }
+    #des {
+        background: url('/public/images/des_background.png');
+        background-size: 200vw;
+        background-position-x: center;
+    }
+    #what-we-do-section {
+        /* margin-top: -80px; */
+    }
     #ask-left {
         padding: 20px;
+        height: 1000px;
     }
     #ask-right {
         width: 100%;
@@ -412,11 +475,10 @@
     }
     .ask-div {
         width: 100%;
-        
     }
     #main-back {
         width: 350px;
-        height: 180px;
+        height: 240px;
         margin-bottom: 20px;
     }
     .intro {
@@ -427,8 +489,10 @@
         align-items: center;
     }
     .intro-container {
-        background-color: #001F46;
-        height: 80vh;
+        background: url('/public/images/main_background.png');
+        background-size: 200vw;
+        height: 600px;
+        /* padding-top: 60px; */
         display: flex;
         flex-direction: row;
         justify-content: center;
@@ -436,7 +500,8 @@
     }
     #what-we-do-container {
         margin-top: 20px;
-        width: 100vw;
+        width: 84%;
+        margin-left: 8%;
         display: flex;
         flex-direction: row;
         overflow: auto;
@@ -446,15 +511,13 @@
         display: none;
     }
     .what-we-do {
-        width: 100vw;
+        width: 100%;
         display: flex;
         flex-direction: column;
-        align-items: center;
         border-radius: 5px;
         padding-left: 10px;
         padding-right: 10px;
         padding-top: 20px;
-        margin-right: 10%;
         box-shadow: 3px 2px 5px rgba(0, 0, 0, 0.3);
     }
     label.what-we-do-txt {
@@ -517,9 +580,8 @@
         flex-direction: column;
     }
     #phones {
-        width: 50%;
-        margin-left: 25%;
-        margin-right: 25%;
+        width: 100%;
+        
         margin-bottom: 20px;
     }
     .logo-big {

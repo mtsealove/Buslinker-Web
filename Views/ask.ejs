@@ -19,6 +19,8 @@
             })
             setHeight();
             setCat();
+
+            $('.nav-link').css('color', 'white');
         })
 
         function checkInput() {
@@ -72,14 +74,14 @@
     </script>
 </head>
 
-<body>
+<body style="background-color: #F5F5F5;">
     <%- include('nav') %>
     <div class="main" >
         <div id="contents" >
-            <div style="width: 100%;background-color: #001F46;" id="top-div">
+            <div id="top-div">
             </div>
             <section id="ask-contents-div" style="overflow-y: auto;">
-                <h1 class="font-white">문의가 필요하신가요?</h1>
+                <h2 class="font-white">문의가 필요하신가요?</h2>
                 <p class=" font-white size-14">문의사항에 대해 신속하고 정확히 답변해드리겠습니다.</p>
                 <div class="card ask-div" style="height: 620px;">
                     <div id="ask-left">
@@ -103,7 +105,7 @@
                             </select>
 
                             <br><br>
-                            <div class="horizontal between" style="align-items: flex-end;">
+                            <div id="ask-txt">
                                 <textarea rows="15" placeholder="문의 내용을 입력하세요." name="message" class=" ask-input"
                                 id="input_message"></textarea>
                                 <img src="/public/images/send_ask.png" style="margin: 20px;" id="submit_btn">

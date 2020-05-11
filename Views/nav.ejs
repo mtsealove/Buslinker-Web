@@ -31,6 +31,7 @@
         });
     })
 </script>
+<!-- <div id="indicator" style="background-color: #ffcc00; height: 3px; width: 0px;"></div> -->
 <div id="nav-main">
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="logo-container">
@@ -64,15 +65,15 @@
                     <!-- not logined -->
                     <% if(!user.userID) { %>
                     <li class="nav-item">
-                        <button type="button" class="btn-blue" id="start-btn">시작하기</button>
+                        <button type="button" class="btn-blue btn-slim" id="start-btn">시작하기</button>
                     </li>
                     <% } else { %>
                     <!-- if logined -->
-                    <button type="button" class="btn-blue" id="work-btn" data-cat="<%=user.userCat%>">시작하기</button>
+                    <button type="button" class="btn-blue btn-slim" id="work-btn" data-cat="<%=user.userCat%>">시작하기</button>
                     <% } %>
                 </ul>
             </div>
         </div>
     </nav>
-    <div id="indicator" style="background-color: #ffcc00; height: 1.5px; width: 0px;"></div>
+    
 </div>

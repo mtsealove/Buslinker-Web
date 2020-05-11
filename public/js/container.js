@@ -20,35 +20,16 @@ $(function () {
     
   })
   
-  $('#nav-main').css('background-color', '#001F46');
-  $('.nav-link').css('color', 'white');
+  $('#nav-main').css('background-color', 'transparent');
+  $('.nav-link').css('color', '#001f46');
   $('.logo-txt').css('color', 'white');
+  // /setBackgroundColor();
 });
 
 function setMainHeight() {
   var height = $(window).height();
-  height -= 62;
+  // height -= 62;
   $('.main').css('height', height);
-}
-
-function setBackgroundColor() {
-  var color = $(document.elementFromPoint(0, 65)).css('background-color');
-
-  $('#nav-main').css('background-color', color);
-
-  if (rgba2hex(color) == '00000000') {
-    if(!isMobile()) {
-      $('.nav-link').css('color', 'black');
-    }
-    $('.logo-txt').css('color', 'black');
-    $('#indicator').css('background-color', '#001F46');
-  } else {
-    if(!isMobile()) {
-      $('.nav-link').css('color', 'white');
-    }
-    $('.logo-txt').css('color', 'white');
-    $('#indicator').css('background-color', '#FFCC00');
-  }
 }
 
 function isMobile() {

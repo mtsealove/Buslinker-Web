@@ -7,13 +7,13 @@
     <script src="/public/js/container.js"></script>
 </head>
 
-<body>
+<body style="background-color: #F5F5F5;">
     <!-- nav bar -->
     <%- include('nav') %>
     <div class="main">
         <div id="contents">
             <!-- 브랜드 네임과 소개 -->
-            <section class="centered intro-container">
+            <section class="intro-container">
                 <div class="intro">
                     <div>
                         <div class="vertical">
@@ -22,87 +22,92 @@
                             </h2>
                         </div>
                         <br>
-                        <p class="font-white">버스링커는 누구에게 A 서비스를 제공함과 동시에 </p>
-                        <p class="font-white">누구에게 B와 C서비스를 제공하는 버스 중개 플랫폼입니다.</p><br>
+                        <p class="font-white-reverse">버스링커는 누구에게 A 서비스를 제공함과 동시에 </p>
+                        <p class="font-white-reverse">누구에게 B와 C서비스를 제공하는 버스 중개 플랫폼입니다.</p><br>
                         <div class="horizontal">
                             <button class="btn-blue" onclick="location.href='/Introduction'">더 알아보기</button>
                             <div style="width: 15px;"></div>
-                            <button class="btn-line-white" onclick="location.href='/Ask?cat=convention'">제휴 문의하기</button>
+                            <button class="btn-line-white-reverse" onclick="location.href='/Ask?cat=convention'">제휴
+                                문의하기</button>
                         </div>
                     </div>
-                    <img src="/public/images/main_back.png" id="main-back">
+                    <img src="/public/images/main_bus.png" id="main-back">
                 </div>
 
             </section>
             <!-- What we do? -->
-            <section class="centered">
-                <h1>버스링커는?</h1>
+            <section class="centered" id="what-we-do-section">
+                <h3>버스링커는?</h3>
+                <div style="width: 80px; height: 4px; background-color: #00C4C6;"></div>
                 <div id="what-we-do-container">
-                    <div class="what-we-do" style="margin-left: 10%;">
-                        <img src="/public/images/circle_img.png" class="what-we-do-img" />
+                    <div class="what-we-do font-white" style=" background-color: #001F46;">
+                        <!-- <img src="/public/images/circle_img.png" class="what-we-do-img" /> -->
                         <h3>통근버스 운영</h3>
-                        <label class="what-we-do-txt">Lorem ipsum dolor sit amet, 
-consetetur sadipscing elitr, 
-sed diam nonumy eirmod tempor invidunt ut 
-labore et dolore magna aliquyam erat,
-sed diam voluptua. At vero eos</label>
+                        <br>
+                        <label class="what-we-do-txt">Lorem ipsum dolor sit amet,
+                            consetetur sadipscing elitr,
+                            sed diam nonumy eirmod tempor invidunt ut
+                            labore et dolore magna aliquyam erat,
+                            sed diam voluptua. At vero eos</label>
                     </div>
 
-                    <div class="what-we-do">
-                        <img src="/public/images/circle_img.png" class="what-we-do-img" />
-                        <h3>화물 입고</h3>
-                        <label class="what-we-do-txt">Lorem ipsum dolor sit amet, 
-consetetur sadipscing elitr, 
-sed diam nonumy eirmod tempor invidunt ut 
-labore et dolore magna aliquyam erat,
-sed diam voluptua. At vero eos</label>
+                    <div class="what-we-do" style="background-color: white;">
+                        <!-- <img src="/public/images/circle_img.png" class="what-we-do-img" /> -->
+                        <h3>화물 배송</h3>
+                        <br>
+                        <label class="what-we-do-txt">Lorem ipsum dolor sit amet,
+                            consetetur sadipscing elitr,
+                            sed diam nonumy eirmod tempor invidunt ut
+                            labore et dolore magna aliquyam erat,
+                            sed diam voluptua. At vero eos</label>
                     </div>
 
-                    <div class="what-we-do">
-                        <img src="/public/images/circle_img.png" class="what-we-do-img" />
-                        <h3>화물 출고</h3>
-                        <label class="what-we-do-txt">Lorem ipsum dolor sit amet, 
-consetetur sadipscing elitr, 
-sed diam nonumy eirmod tempor invidunt ut 
-labore et dolore magna aliquyam erat,
-sed diam voluptua. At vero eos</label>
+                    <div class="what-we-do font-white" style="background-color: #84B8DF;">
+                        <!-- <img src="/public/images/circle_img.png" class="what-we-do-img" /> -->
+                        <h3>화물 수거</h3>
+                        <br>
+                        <label class="what-we-do-txt">Lorem ipsum dolor sit amet,
+                            consetetur sadipscing elitr,
+                            sed diam nonumy eirmod tempor invidunt ut
+                            labore et dolore magna aliquyam erat,
+                            sed diam voluptua. At vero eos</label>
                     </div>
                     <div class="space10"></div>
                 </div>
-                
+
             </section>
             <!-- 목표 -->
             <section class="centered" style="background-color: #001F46;">
                 <div class="goal">
-                <label class="font-white size-16"><b>버스링커는 여객과 물류 운송을 통합하여</b></label>
-                <label class="font-white size-16"><b>더 효율적인 자산 활용과</b></label>
-                <label class="font-white size-16"><b>버스사와 물류사의 동반성장을 목표로 하고 있습니다.</b></label><br>
-                <label class="font-white size-11">더 알아보기</label>
-            </div>
+                    <label class="font-white size-17">버스링커는 여객과 물류 운송을 통합하여</label>
+                    <label class="font-white size-17"><b>더 효율적인 자산 활용</b>과</label>
+                    <label class="font-white size-17"><b>버스사와 물류사의 동반성장</b>을 목표로 하고 있습니다.</label><br>
+                    <a class="font-white size-11" href="/Introduction">더 알아보기</a>
+                </div>
             </section>
             <!-- 웹 관리기능 간단 소개 -->
-            <section class="centered">
+            <section class="centered" id="des">
                 <div class="des-web-container">
                     <div id="web-des">
                         <h2>A nice section heading</h2>
-                        <h1><b>goes here</b></h1>
+                        <h1><b class="size-50">goes here</b></h1>
                         <br><br>
                         <pre>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
 diam nonumy eirmod tempor invidunt ut labore et dolore
 magna aliquyam erat, sed diam voluptua. At vero eos et</pre>
+                        <br><br>
+                        <button type="button" class=" btn-blue">더 알아보기</button>
                     </div>
                     <img src="/public/images/macbook-pro-wire.png" id="labtop" />
                 </div>
-            </section>
-            <!-- 앱 관리기능 간단 소개 -->
-            <section class="centered">
-             
+                <!-- 앱 관리기능 간단 소개 -->
                 <br />
                 <div class="des-app-container">
                     <img src="/public/images/iphones.png" id="phones" />
                     <div id="app-des">
                         <h1>A nice section heading</h1>
-                        <h1><b>goes here</b></h1>
+                        <h1><b class=" size-50">goes here</b></h1>
+                        <br>
                         <label>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed</label>
                         <pre>Lorem ipsum dolor sit amet, consetetur
 sadipscing elitr, sed diam nonumy eirmod
@@ -111,17 +116,18 @@ aliquyam erat, sed diam voluptua. At vero eos et</pre>
                         <br>
                         <!-- google play and ios download link -->
                         <div class="horizontal">
-                            <a href="#"><img id="google-play" src="/public/images/google-play-badge.png"></img></a>
+                            <a href="https://play.google.com/store/apps/details?id=com.mtsealove.github.buslinkeDV" target="_blank"><img
+                                    id="google-play" src="/public/images/google-play-badge.png"></img></a>
                             <a href="#"><img id="app-store" src="/public/images/app-store-badge.svg"></img></a>
                         </div>
                     </div>
 
                 </div>
-        </section>
-        <!-- footer -->
-        <%- include('footer') %>
+            </section>
+            <!-- footer -->
+            <%- include('footer') %>
+        </div>
     </div>
-</div>
 </body>
 
 </html>

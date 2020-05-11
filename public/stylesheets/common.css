@@ -153,13 +153,10 @@ li.drop-item:hover {
     margin-right: 20px;
     font-size: 15pt;
 }
+.active {
+    color: #5DBBFF;
 
-.nav-top {
-    margin-left: 20px;
-    margin-right: 20px;
-    font-size: 15pt;
 }
-
 .logo-container {
     cursor: pointer;
 }
@@ -409,15 +406,8 @@ img.extend-table {
     border-radius: 4px;
 }
 
-.btn-line-white {
-    background-color: transparent;
-    border: 1px solid white;
-    color: white;
-    padding: 9px 24px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    border-radius: 4px;
+.btn-slim {
+    padding: 5px 30px;
 }
 
 input.transparent {
@@ -454,6 +444,11 @@ iframe {
 
 .fc-sun {
     color: #FF0000;
+}
+
+hr.signup-hr {
+    border: 1px solid white;
+    width: 200px;
 }
 
 /* 일요일 */
@@ -548,9 +543,31 @@ tr.stp:nth-child(odd)  {
         padding-right: 150px;
         padding-top: 50px;
     }
+
+    .btn-line-white-reverse {
+        background-color: transparent;
+        border: 1px solid white;
+        color: white;
+        padding: 9px 24px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 4px;
+    }
 }
 
 @media(max-width: 767px) {
+    .btn-line-white-reverse {
+        background-color: transparent;
+        border: 1px solid #001F46;
+        color: #001F46;
+        padding: 9px 24px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 4px;
+    }
+
     .modal-popup {
         width: 90vw;
         background-color: white;

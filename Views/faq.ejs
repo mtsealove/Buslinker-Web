@@ -13,6 +13,7 @@
             $('.close').click(function (){
                 $('#modal').fadeOut(300);
             });
+            $('.nav-link').css('color', 'white');
         })
         function setHeight() {
             var viewHeight = $(window).height();
@@ -44,7 +45,7 @@
     </script>
 </head>
 
-<body>
+<body style="background-color: #F5F5F5;">
     <div id="modal">
         <div class=" modal-popup">
                 <div class=" horizontal between" style="background-color: #F5F5F5; padding: 20px;">
@@ -68,9 +69,9 @@
     <div class="main">
         <div id="contents">
             <!-- search box -->
-            <div style="width: 100%;background-color: #001F46;" id="top-div">
+            <div  id="top-div">
                 <h3 class="font-white">무엇을 도와드릴까요?</h3>
-                <div class=" box-search horizontal" style="width: 400px;margin-top: 20px;">
+                <div class=" box-search horizontal" style="width: 350px;margin-top: 20px;">
                     <input class=" transparent" placeholder="문의 키워드를 검색하세요." id="search-input">
                     <img src="/public/images/search.png">
                 </div>
