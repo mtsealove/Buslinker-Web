@@ -86,7 +86,7 @@
 
 <body>
     <div id="modal">
-        <div class="card">
+        <div class="card3d">
             <div class="card-body">
                 <div class="horizontal between">
                     <label></label>
@@ -99,17 +99,17 @@
         </div>
     </div>
     <%- include('nav')%>
-    <section class="container-main">
+    <section class="container-main" style="background-color: #f5f5f5;">
         <br><br>
         <div class="horizontal between" style="width: 96vw; align-items: baseline;">
             <!-- bus list -->
-            <div class="card" style="width: 32%;">
+            <div class="card3d" style="width: 32%;">
                 <div class="card-body" style="width: 90%; margin-left: 5%;margin-right: 5%;">
                     <br>
                     <div class="horizontal between">
                         <div>
-                            <h5>차량 현황</h5>
-                            <h4 class="card-title"><b>총 <%=res.bus.length%>대</b></h4>
+                            <label class=" size-14 primary">차량 현황</label>
+                            <h4 class="size-25 primary"><b>총 <%=res.bus.length%>대</b></h4>
                         </div>
                         <div class="box-search horizontal between">
                             <input placeholder="차량 번호를 검색하세요" class="transparent" id="search-bus">
@@ -117,9 +117,9 @@
                         </div>
                     </div>
                     <table>
-                        <thead>
-                            <th class="head">차량</th>
-                            <th class="head">일정</th>
+                        <thead class="blue">
+                            <th class="blue">차량</th>
+                            <th class="blue">일정</th>
                         </thead>
                         <tbody id="bus-table">
                             <% for(var i=0; i<res.bus.length; i++) { %>
@@ -144,13 +144,13 @@
                 </div>
             </div>
             <!-- driver list -->
-            <div class="card" style="width: 32%;">
+            <div class="card3d" style="width: 32%;">
                 <div class="card-body" >
                     <br>
                     <div class="horizontal between">
                         <div>
-                            <h5>기사 현황</h5>
-                            <h4 class="card-title"><b>총 <%=res.driver.length%>명</b></h4>
+                            <label class="size-14 primary">기사 현황</label>
+                            <h4 class="size-25 primary"><b>총 <%=res.driver.length%>명</b></h4>
                         </div>
                         <div class="box-search horizontal between">
                             <input placeholder="기사 이름을 검색하세요" class="transparent" id="search-driver">
@@ -158,10 +158,10 @@
                         </div>
                     </div>
                     <table>
-                        <thead>
-                            <th class="head">이름</th>
-                            <th class="head">연락처</th>
-                            <th class="head">일정</th>
+                        <thead class="blue">
+                            <th class="blue">이름</th>
+                            <th class="blue">연락처</th>
+                            <th class="blue">일정</th>
                         </thead>
                         <tbody id="driver-table">
                             <% for(var i=0; i<res.driver.length; i++) { %>
@@ -196,13 +196,13 @@
                 </div>
             </div>
             <!-- part time list -->
-            <div class="card" style="width: 32%;">
+            <div class="card3d" style="width: 32%;">
                 <div class="card-body">
                     <br>
                     <div class="horizontal between">
                         <div>
-                            <h5>물류관리 직원 현황</h5>
-                            <h4 class="card-title"><b>총 <%=res.part.length%>명</b></h4>
+                            <label class="size-14 primary">물류관리 직원 현황</label>
+                            <h4 class="size-25 primary"><b>총 <%=res.part.length%>명</b></h4>
                         </div>
                         <div class="box-search horizontal between">
                             <input placeholder="물류관리 직원을 검색하세요" class="transparent" id="search-pt">
@@ -210,10 +210,10 @@
                         </div>
                     </div>
                     <table>
-                        <thead>
-                            <th class="head">이름</th>
-                            <th class="head">연락처</th>
-                            <th class="head">일정</th>
+                        <thead class="blue">
+                            <th class="blue">이름</th>
+                            <th class="blue">연락처</th>
+                            <th class="blue">일정</th>
                         </thead>
                         <tbody>
                             <% for(var i=0; i<res.part.length; i++) { %>

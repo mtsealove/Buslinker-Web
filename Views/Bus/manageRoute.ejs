@@ -114,11 +114,11 @@
     <div class="container-main">
         <div class="full-contents">
             <table id="manage-route">
-                <thead>
+                <thead class="blue">
                     <tr>
-                        <th class="head">노선명</th>
-                        <th class="head">일정</th>
-                        <th class="head" colspan="11">경로</th>
+                        <th class="blue">노선명</th>
+                        <th class="blue">일정</th>
+                        <th class="blue" colspan="12">경로</th>
                     </tr>
                 <tbody>
                     <% for(var i=0; i<routes.length; i++) {
@@ -128,16 +128,16 @@
                     var endDate=new Date(routes[i].ContractEnd);
                     var end=endDate.getFullYear()+'-'+endDate.getMonth()+1+'-'+endDate.getDate();
                     %>
-                    <tr style="height: 20px;"></tr>
+                    
                     <tr class="route-tr">
-                        <td class="mid"><b><%=routes[i].Name%></b><br><%=routes[i].Bus%></td>
-                        <td class="mid2"><%=start+' ~ '+end%>
+                        <td class="mid" style="vertical-align: middle;"><b><%=routes[i].Name%></b><br><%=routes[i].Bus%></td>
+                        <td class="mid2" style="vertical-align: middle;"><%=start+' ~ '+end%>
                             <br>
                             <span class="link" data-id="<%=routes[i].RouteID%>" data-name="<%=routes[i].Name%>"
                                 data-contract="<%=start+' ~ '+end%>"><b>일정 상세보기</b></span>
                         </td>
                         <td class="space"></td>
-                        <td colspan="10">
+                        <td colspan="10" style="padding-top: 20px;">
                             <!-- station -->
                             <div class="line line-station">
                                 <div class="vertical destination destination-left">

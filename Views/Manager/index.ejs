@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Buslinker</title>
-        <%- include('config')%>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
-        <script>
-            $(function() {
-                setCat();
-                setChart();
-            });
 
-            
-            function setChart() {
+<head>
+    <title>Buslinker</title>
+    <%- include('config')%>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
+    <script>
+        $(function () {
+            setCat();
+            setChart();
+        });
+
+
+        function setChart() {
             var options = {
                 maintainAspectRatio: true,
                 spanGaps: false,
@@ -43,13 +44,13 @@
                 },
                 tooltips: {
                     mode: 'index',
-						intersect: false,
+                    intersect: false,
                     callbacks: {
                         title: function (tooltipItems, data) {
-                            const label=data.labels[tooltipItems[0].index];
+                            const label = data.labels[tooltipItems[0].index];
                             return label;
                         },
-                        
+
                     }
                 }
 
@@ -58,28 +59,28 @@
             var gradientAdd = ctx.createLinearGradient(0, 0, 0, 400);
             gradientAdd.addColorStop(0, 'rgba(119,100,228,1)');
             gradientAdd.addColorStop(1, 'rgba(119,100,228,0)');
-            var label=[], owner=[], logi=[];
-            <% for(var i=0; i<table.length; i++) { %>
+            var label = [], owner = [], logi = [];
+            <% for (var i = 0; i < table.length; i++) { %>
                 label.push('<%=table[i].Name%>');
-                owner.push(<%=table[i].OwnerCnt%>);
-                logi.push(<%=table[i].LogiCnt%>);
+                owner.push(<%=table[i].OwnerCnt %>);
+                logi.push(<%=table[i].LogiCnt %>);
             <% } %>
 
             var data = {
                 labels: label,
                 datasets: [
-                {
-                    borderColor: '#FB6740',
-                    backgroundColor: '#FB6740',
-                    data: owner,
-                    label: '수거',
-                },{
-                    borderColor: '#7764E4',
-                    backgroundColor: '#7764E4',
-                    data: logi,
-                    label: '배송',
-                }
-              ]
+                    {
+                        borderColor: '#2BB1C9',
+                        backgroundColor: '#2BB1C9',
+                        data: owner,
+                        label: '수거',
+                    }, {
+                        borderColor: '#2A94D9',
+                        backgroundColor: '#2A94D9',
+                        data: logi,
+                        label: '배송',
+                    }
+                ]
             };
 
             chart = new Chart(ctx, {
@@ -92,149 +93,153 @@
             console.log(owner);
         }
 
-            function setCat() {
-                $('#select-cat').change(function(){
-                    const cat=$(this).val();
-                    var html='';
-                    var date=new Date();
-                    if(cat=='month') {
-                        for(var i=1; i<=date.getMonth()+1; i++) {
-                            var month=date.getFullYear()+'-';
-                            if(i<10) {
-                                month+='0';
-                            }
-                            month+=i;
-                            html+=`<option value='${month}-01'>${month}</option>`;
+        function setCat() {
+            $('#select-cat').change(function () {
+                const cat = $(this).val();
+                var html = '';
+                var date = new Date();
+                if (cat == 'month') {
+                    for (var i = 1; i <= date.getMonth() + 1; i++) {
+                        var month = date.getFullYear() + '-';
+                        if (i < 10) {
+                            month += '0';
                         }
-                    } else {
-                        for(var i=1; i<=date.getDate(); i++) {
-                            var d=date.getFullYear()+'-';
-                            if(date.getMonth()<9) {
-                                d+='0';
-                            }
-                            d+=(date.getMonth()+1)+'-';
-                            if(i<10) {
-                                d+='0';
-                            }
-                            d+=i;
-                            html+=`<option value='${d}'>${d}</option>`;
-                        }
+                        month += i;
+                        html += `<option value='${month}-01'>${month}</option>`;
                     }
-                    $('#select-divide').html(html);
-                }); 
-                $('#select-cat').val('<%=cat%>').trigger('change');
-                
-                $('#select-divide').val('<%=divide%>').trigger('change');
-                $('#select-divide').change(function(){
-                    const divide=$(this).val();
-                    location.href=`?cat=${$('#select-cat').val()}&start=${divide}`;
-                });
-            }
-        </script>
-    </head>
-    <body>
-        <%- include('nav') %>
-        <section class="container-main">
-            <div class="full-contents">
-                <div class="horizontal btween">
-                    <h4><b>종합</b></h4>
-                    <div class="horizontal">
-                        <!-- 일/월 -->
-                    <select class="box0" id="select-cat">
+                } else {
+                    for (var i = 1; i <= date.getDate(); i++) {
+                        var d = date.getFullYear() + '-';
+                        if (date.getMonth() < 9) {
+                            d += '0';
+                        }
+                        d += (date.getMonth() + 1) + '-';
+                        if (i < 10) {
+                            d += '0';
+                        }
+                        d += i;
+                        html += `<option value='${d}'>${d}</option>`;
+                    }
+                }
+                $('#select-divide').html(html);
+            });
+            $('#select-cat').val('<%=cat%>').trigger('change');
+
+            $('#select-divide').val('<%=divide%>').trigger('change');
+            $('#select-divide').change(function () {
+                const divide = $(this).val();
+                location.href = `?cat=${$('#select-cat').val()}&start=${divide}`;
+            });
+        }
+    </script>
+</head>
+
+<body style="background-color: #f5f5f5;">
+    <%- include('nav') %>
+    <section class="container-main">
+        <div class="full-contents">
+            <div class="horizontal between">
+                <h4><b>종합</b></h4>
+                <div class="horizontal">
+                    <!-- 날짜/달 -->
+                    <select class="bottom-line" id="select-divide" style="margin-left: 20px;">
+
+                    </select>
+                    <div style="width: 20px;"></div>
+                    <!-- 일/월 -->
+                    <select class="bottom-line" id="select-cat">
                         <option value="date">일별</option>
                         <option value="month">월별</option>
                     </select>
-                    <!-- 날짜/달 -->
-                    <select class="box0" id="select-divide" style="margin-left: 20px;">
 
-                    </select>
-                    </div>
                 </div>
-                
-                <br>
-                <div class="horizontal between">
-                    <!-- 섬선 -->
-                    <div class="card" style="width: 24%;">
-                        <div class="card-body">
-                            <div class="horizontal">
-                                <img height="100" width="100">
-                                <div style="margin-left: 20px;">
-                                    <h3><b><%=table.length%></b></h3>
-                                    <p>통근 노선</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 배송 물량 -->
-                    <div class="card" style="width: 24%;">
-                        <div class="card-body">
-                            <div class="horizontal">
-                                <img height="100" width="100">
-                                <div style="margin-left: 20px;">
-                                    <h3><b><%=logiItemCnt.toLocaleString()%></b></h3>
-                                    <p>배송 물량</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 수거 물량 -->
-                    <div class="card" style="width: 24%;">
-                        <div class="card-body">
-                            <div class="horizontal">
-                                <img height="100" width="100">
-                                <div style="margin-left: 20px;">
-                                    <h3><b><%=ownerItemCnt.toLocaleString()%></b></h3>
-                                    <p>수거 물량</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 전체 물량 -->
-                    <div class="card" style="width: 24%;">
-                        <div class="card-body">
-                            <div class="horizontal">
-                                <img height="100" width="100">
-                                <div style="margin-left: 20px;">
-                                    <h3><b><%=(logiItemCnt+ownerItemCnt).toLocaleString()%></b></h3>
-                                    <p>전체 물량</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <br>
-                <!-- 배송 및 수거 현황 -->
-                    <h4><b>배송 및 수거 현황</b></h4>
-                    <br>
-                    <div class="horizontal between">
-                        <div class="card" style="width: 24%;">
-                            <div class="card-body">
-                                <table style="height: 300px;">
-                                    <thead>
-                                        <th class="head">노선</th>
-                                        <th class="head">배송</th>
-                                        <th class="head">수거</th>
-                                    </thead>
-                                    <tbody>
-                                       <% for(var i=0; i<table.length; i++) { %>
-                                        <tr>
-                                            <td><%=table[i].Name%></td>
-                                            <td><%=table[i].LogiCnt?(Math.round(table[i].LogiCnt)).toLocaleString():0%></td>
-                                            <td><%=table[i].OwnerCnt? table[i].OwnerCnt.toLocaleString():0%></td>
-                                        </tr>
-                                       <% } %> 
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <!-- grapgh -->
-                        <div class="card" style="width:75%">
-                            <div class="card-body">
-                                <canvas id="myChart" style="width: 100%; height: 300px;"></canvas>
-                            </div>
-                        </div>
-                    </div>
             </div>
-        </section>
-    </body>
+
+            <br>
+            <div class="horizontal between">
+                <!-- 섬선 -->
+                <div class="card3d" style="width: 24%;">
+                    <div class="card-body">
+                        <div class="horizontal">
+                            <img height="100" width="100">
+                            <div style="margin-left: 30px;">
+                                <h3 class="num"><b><%=table.length%></b></h3>
+                                <p class=" num-gray"><b>통근 노선</b></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 배송 물량 -->
+                <div class="card3d" style="width: 24%;">
+                    <div class="card-body">
+                        <div class="horizontal">
+                            <img height="100" width="100">
+                            <div style="margin-left: 20px;">
+                                <h3 class="num"><b><%=logiItemCnt.toLocaleString()%></b></h3>
+                                <p class="num-gray"><b>배송 물량</b></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 수거 물량 -->
+                <div class="card3d" style="width: 24%;">
+                    <div class="card-body">
+                        <div class="horizontal">
+                            <img height="100" width="100">
+                            <div style="margin-left: 20px;">
+                                <h3 class="num"><b><%=ownerItemCnt.toLocaleString()%></b></h3>
+                                <p class=" num-gray"><b>수거 물량</b></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 전체 물량 -->
+                <div class="card3d" style="width: 24%;">
+                    <div class="card-body">
+                        <div class="horizontal">
+                            <img height="100" width="100">
+                            <div style="margin-left: 20px;">
+                                <h3 class="num"><b><%=(logiItemCnt+ownerItemCnt).toLocaleString()%></b></h3>
+                                <p class="num-gray"><b>전체 물량</b></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <!-- 배송 및 수거 현황 -->
+            <h4><b>배송 및 수거 현황</b></h4>
+            <br>
+            <div class="horizontal between">
+                <div class="card3d" style="width: 24%;">
+                    <div class="card-body" style="overflow-y: scroll;">
+                        <table style="height: 300px;">
+                            <thead>
+                                <th class="head-line">노선</th>
+                                <th class="head-line">배송</th>
+                                <th class="head-line">수거</th>
+                            </thead>
+                            <tbody>
+                                <% for(var i=0; i<table.length; i++) { %>
+                                <tr class="line-tr">
+                                    <td><%=table[i].Name%></td>
+                                    <td><%=table[i].LogiCnt?(Math.round(table[i].LogiCnt)).toLocaleString():0%></td>
+                                    <td><%=table[i].OwnerCnt? table[i].OwnerCnt.toLocaleString():0%></td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- grapgh -->
+                <div class="card3d" style="width:75%">
+                    <div class="card-body">
+                        <canvas id="myChart" style="width: 100%; height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
 </html>;

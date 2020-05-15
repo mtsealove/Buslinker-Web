@@ -42,18 +42,6 @@ exports.startApp = (port) => {
         });
         next();
     });
-    
-    app.use((req, res, next)=> {
-        if(!req.secure) {
-            console.log('https');
-            res.redirect('https://www.buslinker.kr'+req.url);
-        } else {
-            console.log('http');
-            next();
-        }
-    });
-    
-    
 
     manager.startManager(app);
     bus.startBus(app);
@@ -263,7 +251,14 @@ exports.startApp = (port) => {
         });
     });
 
-    
+    // server
+    app.use((req, res, next)=> {
+        if(!req.secure) {
+            res.redirect('https://www.buslinker.kr'+req.url);
+        } else {
+            next();
+        }
+    });
     const options = { // letsencrypt로 받은 인증서 경로를 입력해 줍니다.
         ca: fs.readFileSync('/etc/letsencrypt/live/www.buslinker.kr/fullchain.pem'),
         key: fs.readFileSync('/etc/letsencrypt/live/www.buslinker.kr/privkey.pem'),
@@ -273,11 +268,13 @@ exports.startApp = (port) => {
     http.createServer(app).listen(80);
     https.createServer(options, app).listen(443);
     
-   /* 
+    
+    // local
+   /*
     app.listen(port, () => {
         console.log('web server runings on: ' + port);
     });
-*/    
+    */   
     
 }
 

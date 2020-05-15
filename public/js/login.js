@@ -38,7 +38,7 @@ function login() {
             success: function (data) {
                 //login success
                 if (data.userName) {
-                    alert('환영합니다 ' + data.userName + ' 님');
+                    // alert('환영합니다 ' + data.userName + ' 님');
                     // move to each other page
                     switch (data.userCat) {
                         case 1:

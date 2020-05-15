@@ -140,12 +140,19 @@
         <div id="list">
             <div>
                 <div id="table-container">
-                    <label>오늘의 운행 현황</label>
-                    <h4><b>총 <%=timeline.length%>대</b></h4>
-                    <table style="width: 100%;" class="table-hover">
+                    <div class=" horizontal">
+                        <div style="width: 15px;"></div>
+                        <div>
+                            <label class="size-15">오늘의 운행 현황</label>
+                    <h4><b class="size-25 primary">총 <%=timeline.length%>대</b></h4>
+                        </div>
+                    </div>
+
+                    <table style="width: 100%; background-color: #f5f5f5;" class="table-hover">
                         <% for(var i=0; i<timeline.length; i++) { %>
                         <tr class="tr small-tr" data-filter="0" data-lat="<%=timeline[i].Lat%>" data-lng="<%=timeline[i].Lng%>"
                             data-num="<%=timeline[i].Num%>">
+                            <td><b class=" size-13"><%=timeline[i].Name%></b></td>
                             <% var driver='기사 미배정';
                                         var bus='차량 미배정';
                                         if(timeline[i].DriverName) {

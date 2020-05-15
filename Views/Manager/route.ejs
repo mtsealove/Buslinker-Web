@@ -118,11 +118,13 @@
                 </div>
 
             </div>
-
+            <br>
+            <h5 class=" primary">노선 현황</h5>
+            <h1><b class=" size-25 primary">총 <%=routes.length%>개</b></h1>
             <div class="drop-menu" id="drop-name">
                 <ul class="drop-list">
-                    <li class="drop-item"><a href="?order=asc">물류사 오름차순</a></li>
-                    <li class="drop-item"><a href="?order=desc">물류사 내림차순</a></li>
+                    <li class="drop-item"><a href="?order=asc">노선명 오름차순</a></li>
+                    <li class="drop-item"><a href="?order=desc">노선명 내림차순</a></li>
                 </ul>
             </div>
             <div class="drop-menu" id="drop-contract">
@@ -132,23 +134,23 @@
                 </ul>
             </div>
             <table id="route-table">
-                <thead>
+                <thead class="blue" style="margin: 0px;">
                     <th class="remove"></th>
-                    <th class="head" style="width: 15 0px;">
+                    <th class="center" style="width: 15 0px;">
                         <div class="sort">
-                            <label>이름</label>
+                            <label>노선</label>
                             <img src="/public/images/down.png" class="drop" data-menu="drop-name">
                         </div>
                     </th>
-                    <th class="head" colspan="2" style="width: 300px;">
+                    <th class="center" colspan="2" style="width: 300px;">
                         <div class="sort"><label>계약 기간</label>
                             <img src="/public/images/down.png" class="drop" data-menu="drop-contract"></div>
                     </th>
-                    <th class="head" colspan="14">경로</th>
+                    <th class="blue" colspan="14">경로</th>
                 </thead>
                 <tbody>
                     <!-- add btn -->
-                    <tr>
+                    <tr style="height: 30px;">
                         <td colspan="14">
                             <br>
                             <div class="vertical" style="cursor: pointer;" id="add-btn">

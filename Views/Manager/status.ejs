@@ -21,7 +21,8 @@
                 <% }
             }%>
 
-            setCorpCnt();
+                setCorpCnt();
+            setArrow();
         });
 
         function initMap() {
@@ -131,21 +132,38 @@
         }
 
         function setCorpCnt() {
-            const small_tr=$('.small-tr');
-            const corp_tr=$('.corp-tr');
+            const small_tr = $('.small-tr');
+            const corp_tr = $('.corp-tr');
 
-            for(var i=0; i<small_tr.length; i++) {
-                for(var j=0; j<corp_tr.length; j++) {
-                    if($(corp_tr[j]).data('corp')==$(small_tr[i]).data('corp')) {
-                        $(corp_tr[j]).data('cnt', $(corp_tr[j]).data('cnt')+1);
+            for (var i = 0; i < small_tr.length; i++) {
+                for (var j = 0; j < corp_tr.length; j++) {
+                    if ($(corp_tr[j]).data('corp') == $(small_tr[i]).data('corp')) {
+                        $(corp_tr[j]).data('cnt', $(corp_tr[j]).data('cnt') + 1);
                     }
                 }
             }
-            for(var i=0; i<corp_tr.length; i++) {
-                const corp=$(corp_tr[i]).children('td').text();
-                const cnt=$(corp_tr[i]).data('cnt');
-                $(corp_tr[i]).children('td').text(`${corp}(${cnt})`);
+            for (var i = 0; i < corp_tr.length; i++) {
+                const corp = $(corp_tr[i]).children('td').text();
+                const cnt = $(corp_tr[i]).data('cnt');
+                $(corp_tr[i]).children('td').children('div.horizontal.between').children('p').text(`${corp}(${cnt})`);
             }
+        }
+
+        function setArrow() {
+            $('.arrow').click(function() {
+                const open=$(this).data('open');
+                const corp=$(this).data('corp');
+                if(open==1) {
+                    // console.log($(`tr.small-tr[data-corp=${corp}]`));
+                    $(`.small-tr[data-corp='${corp}']`).fadeOut(100);
+                    $(this).data('open', 0);
+                    $(this).attr('src', '/public/images/arrow_down.png');
+                } else {
+                    $(`.small-tr[data-corp='${corp}']`).fadeIn(100);
+                    $(this).data('open', 1);
+                    $(this).attr('src', '/public/images/arrow_up.png');
+                }
+            });
         }
     </script>
 </head>
@@ -160,18 +178,32 @@
         <div id="list">
             <div>
                 <div id="table-container">
-                    <label>오늘의 운행 현황</label>
-                    <h4><b>총 <%=timeline.length%>대</b></h4>
-                    <table style="width: 100%;" class="table-hover">
+                    <div class=" horizontal">
+                        <div style="width: 15px;"></div>
+                        <div>
+                            <label class="size-15">오늘의 운행 현황</label>
+                            <h4 class=" size-25 primary"><b>총 <%=timeline.length%>대</b></h4>
+                        </div>
+                    </div>
+                    <br>
+                    <table style="width: 100%; background-color: #F4F4F4;" class="table-hover">
                         <% for(var i=0; i<timeline.length; i++) { %>
                         <% if(i==0|| (i!=0 && timeline[i].CorpID!=timeline[i-1].CorpID)) { %>
-                            <tr class="corp-tr" data-corp="<%=timeline[i].CorpID%>" data-cnt="0">
-                                <td colspan="6"><%=timeline[i].CorpName%></td>
-                            </tr>
+                        <tr class="corp-tr" data-corp="<%=timeline[i].CorpID%>" data-cnt="0">
+                            <td class="corp-td" colspan="7">
+                                <div class=" horizontal  between">
+                                    <p><b><%=timeline[i].CorpName%></b></p>
+                                    <img src="/public/images/arrow_up.png" width="24" height="15"  class="arrow" data-open="1" data-corp="<%=timeline[i].CorpID%>">
+                                </div>
+                            </td>
+                        </tr>
                         <% } %>
-                        <tr class="tr small-tr" data-filter="0" data-lat="<%=timeline[i].Lat%>" data-lng="<%=timeline[i].Lng%>"
-                            data-num="<%=timeline[i].Num%>" data-corp="<%=timeline[i].CorpID%>">
-                            <td><%=timeline[i].DriverName?timeline[i].DriverName:'기사 미배정'%><br><%=timeline[i].Num?timeline[i].Num:'차량 미배정'%></td>
+                        <tr class="tr small-tr" data-filter="0" data-lat="<%=timeline[i].Lat%>"
+                            data-lng="<%=timeline[i].Lng%>" data-num="<%=timeline[i].Num%>"
+                            data-corp="<%=timeline[i].CorpID%>">
+                            <td><b class=" size-13"><%=timeline[i].Name%></b></td>
+                            <td><%=timeline[i].DriverName?timeline[i].DriverName:'기사 미배정'%><br><%=timeline[i].Num?timeline[i].Num:'차량 미배정'%>
+                            </td>
                             <% var start=timeline[i].Loc[0];
                                     var end=timeline[i].Loc[1];
                                     var time=new Date().getTime();
@@ -188,7 +220,8 @@
                             <td><img src="/public/images/right_arrow.png"></td>
                             <td><span class="location-name"><b><%=end.LocName%></b></span><br><%=end.LocAddr%></td>
                             <td><b><%=timeline[i].Action?timeline[i].Action:'운행 준비중'%></b></td>
-                            <td><%=timeline[i].PtName?timeline[i].PtName:'물류관리 직원 미배정'%><br><%=timeline[i].PtPhone%></td>
+                            <td><%=timeline[i].PtName?timeline[i].PtName:'물류관리 직원 미배정'%><br><%=timeline[i].PtPhone%>
+                            </td>
                         </tr>
                         <% } %>
                     </table>

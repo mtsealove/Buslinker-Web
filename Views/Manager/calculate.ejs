@@ -76,8 +76,8 @@
             };
             var ctx = document.getElementById('myChart').getContext('2d');
             var gradientAdd = ctx.createLinearGradient(0, 0, 0, 400);
-            gradientAdd.addColorStop(0, 'rgba(119,100,228,1)');
-            gradientAdd.addColorStop(1, 'rgba(119,100,228,0)');
+            gradientAdd.addColorStop(0, 'rgba(47,102,173,1)');
+            gradientAdd.addColorStop(1, 'rgba(37,102,173,0)');
             var label=[], data=[];
             <% for(var i=0; i<total.length; i++) { %>
                 label.push('<%=total[i].Ym.substring(0, 7)%>');
@@ -87,7 +87,7 @@
             var data = {
                 labels: label,
                 datasets: [{
-                    borderColor: '#7764E4',
+                    borderColor: '#2F66AD',
                     backgroundColor: gradientAdd,
                     data: data,
                     label: '',
@@ -345,7 +345,7 @@
     </script>
 </head>
 
-<body>
+<body style="background-color: #f5f5f5;">
     <%- include('nav') %>
     <div id="modal">
         <input id="input-id" hidden>
@@ -493,12 +493,11 @@
         </div>
     </div>
 
-    <section class="container-main">
-        <div style="width:95%">
+    <section class="full-contents">
+            <br><br>
+            <h4>기대수익 그래프</h4>
             <br>
-            <h4>손익 그래프</h4>
-            <br>
-            <div class="card" style="width: 100%; ">
+            <div class="card3d" style="width: 100%; ">
                 <div class="card-body">
                 <canvas id="myChart" style="width: 100%; height: 300px;"></canvas>
             </div>
@@ -529,7 +528,7 @@
                 </select>
             </div>
 
-            <div class="card" style="width: 100%;">
+            <div class="card3d" style="width: 100%;">
                 <div class="card-body">
                     <div class="horizontal between">
                         <h5>물류 수거 비용</h5>
@@ -611,7 +610,7 @@
             </div>
             <br>
             <div class="horizontal between">
-                <div class="card" style="width: 49.5%;">
+                <div class="card3d" style="width: 49.5%;">
                     <div class="card-body">
                         <div class="horizontal between">
                             <div class="horizontal" style="align-items:flex-start;">
@@ -651,7 +650,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="card" style="width: 49.5%;">
+                <div class="card3d" style="width: 49.5%;">
                     <div class="card-body">
                         <div class="horizontal between">
                             <div class="horizontal" style="align-items:flex-start;">
@@ -688,7 +687,7 @@
             </div>
             <br>
             <div class="horizontal between">
-                <div class="card" style="width: 49.5%;">
+                <div class="card3d" style="width: 49.5%;">
                     <div class="card-body">
                         <div class="horizontal between">
                             <div class="horizontal" style="align-items: flex-start;">
@@ -722,7 +721,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="card" style="width: 49.5%;">
+                <div class="card3d" style="width: 49.5%;">
                     <div class="card-body">
                         <div class="horizontal between">
                             <div class="horizontal" style="align-items: flex-start;">
@@ -762,7 +761,6 @@
                     </div>
                 </div>
             </div>
-        </div>
     </section>
 </body>
 

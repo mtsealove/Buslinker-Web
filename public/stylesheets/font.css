@@ -52,6 +52,10 @@
     font-size: 20pt;
 }
 
+.size-25 {
+    font-size: 25pt;
+}
+
 .size-50 {
     font-size: 50pt;
 }
@@ -150,4 +154,17 @@
 .index {
     cursor: pointer;
     color: #5C6774;
+}
+
+.num {
+    font-size: 40pt;
+    margin-bottom: 0px;
+}
+
+.num-gray {
+    color: #959595;
+}
+
+.primary {
+    color: #001F46;
 }
