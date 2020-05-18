@@ -291,7 +291,6 @@
                         var endDate=new Date(routes[i].ContractEnd);
                         var end=endDate.getFullYear()+'-'+(endDate.getMonth()+1)+'-'+endDate.getDate();
                         %>
-                    <tr style="height: 20px;"></tr>
                     <tr class="route-tr">
                         <td class="remove">
                             <img src="/public/images/remove.png" class="sm-btn remove-btn"
@@ -303,7 +302,7 @@
                                     data-name="<%=routes[i].Name%>" data-contract="<%=start+' ~ '+end%>"><b>일정상세보기</b></span>
                         </td>
                         <td class="space"></td>
-                        <td colspan="10">
+                        <td colspan="10" style="padding-bottom: 40px;">
                             <!-- station -->
                             <div class="line line-station">
                                 <div class="vertical destination destination-left">
@@ -361,6 +360,7 @@
                     <% } %>
                 </tbody>
             </table>
+            <br>
         </form>
     </section>
 </body>

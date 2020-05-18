@@ -113,6 +113,9 @@
     </div>
     <div class="container-main">
         <div class="full-contents">
+            <label class="primary size-15">노선 현황</label>
+            <h3 class=" primary size-25"><b>총 <%=routes.length.toLocaleString()%>개</b></h3>
+            <br>
             <table id="manage-route">
                 <thead class="blue">
                     <tr>
@@ -137,7 +140,7 @@
                                 data-contract="<%=start+' ~ '+end%>"><b>일정 상세보기</b></span>
                         </td>
                         <td class="space"></td>
-                        <td colspan="10" style="padding-top: 20px;">
+                        <td colspan="10" style="padding-bottom: 40px;">
                             <!-- station -->
                             <div class="line line-station">
                                 <div class="vertical destination destination-left">

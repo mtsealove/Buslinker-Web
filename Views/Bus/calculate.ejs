@@ -63,8 +63,8 @@
             };
             var ctx = document.getElementById('myChart').getContext('2d');
             var gradientAdd = ctx.createLinearGradient(0, 0, 0, 400);
-            gradientAdd.addColorStop(0, 'rgba(119,100,228,1)');
-            gradientAdd.addColorStop(1, 'rgba(119,100,228,0)');
+            gradientAdd.addColorStop(0, 'rgba(47,102,173,1)');
+            gradientAdd.addColorStop(1, 'rgba(47, 102, 173,0)');
             var label = [], data = [];
         <% for (var i = 0; i < total.length; i++) { %>
                 label.push('<%=total[i].Ym.substring(0, 7)%>');
@@ -73,7 +73,7 @@
             var data = {
                 labels: label,
                 datasets: [{
-                    borderColor: '#7764E4',
+                    borderColor: '#2F66AD',
                     backgroundColor: gradientAdd,
                     data: data,
                     label: '',
@@ -115,16 +115,16 @@
     <%- include('nav') %>
     <section class="container-main">
         <div class="full-contents">
-            <h4><b>수익 그래프</b></h4>
-            <div class="card">
+            <h4><b>기대 수익 그래프</b></h4><br>
+            <div class="card3d">
                 <div class="card-body">
                     <canvas id="myChart" style="width: 100%; height: 300px;"></canvas>
                 </div>
             </div>
-            <br>
+            <br><br>
             <div class="horizontal between">
-                <h4 class="card-title">세부 내역</h4>
-                <select class="box0" id="select-end">
+                <h4><b>세부 내역</b></h4>
+                <select class="bottom-line" id="select-end">
                     <% var month=new Date().getMonth()+1;
                     for(var i=1; i<=month; i++) { 
                         var date=new Date().getFullYear()+'-';
@@ -143,11 +143,9 @@
                 </select>
             </div>
             <br>
-
             <!-- detail -->
-            <div class="card">
+            <div class="card3d">
                 <div class="card-body">
-                    
                         <table>
                             <thead>
                                 <th class="head">물류사</th>

@@ -167,7 +167,7 @@
 
     <section class="full" style="background: url('/public/images/account_back.png'); background-size: 100vw;">
         <div id="login-div" style="height: 80vh; overflow-y: auto; width: 600px;">
-            <img src="/public/images/user.png" class="user-img" id="user_img">
+            <img src="/public/images/user.svg" class="user-img" id="user_img">
             <h5>프로필 사진 등록</h5>
             <% if(MemberCat!=5) {%>
             <label class="size-10" for="input_profile">회사의 대표 이미지를 설정해주세요.</label><br>
@@ -176,31 +176,31 @@
                 <input type="number" value="<%=MemberCat%>" name="cat" hidden>
                 <input type="file" accept="image/*" hidden name="profile" id="input_profile">
 
-                <label>이메일</label>
-                <input class="input-shadow" name="email" type="email" id="input_email" placeholder="Email">
+                <label class=" size-11 primary"><b>이메일</b></label>
+                <input class="input-line" name="email" type="email" id="input_email" placeholder="Email">
                 <label class="error-msg" id="err_email">올바른 이메일을 입력해주세요.</label>
                 <label class="error-msg" id="reuse_email" data-check="0">이미 사용중인 이메일입니다.</label><br>
-                <label>비밀번호</label>
-                <input class="input-shadow" name="password" type="password" id="input_pw" placeholder="Password">
+                <label class=" size-11 primary"><b>비밀번호</b></label>
+                <input class="input-line" name="password" type="password" id="input_pw" placeholder="Password">
                 <label class="error-msg" id="err_pw">비밀번호는 영문 대/소문자, 특수문자 포함 10자 이상이여야 합니다.</label><br>
-                <label>비밀번호 확인</label>
-                <input class="input-shadow" type="password" id="input_pw_ck" placeholder="Password Check">
+                <label class=" size-11 primary"><b>비밀번호 확인</b></label>
+                <input class="input-line" type="password" id="input_pw_ck" placeholder="Password Check">
                 <label class="error-msg" id="err_pw_ck">비밀번호가 일치하지 않습니다.</label><br>
-                <label>전화번호</label>
-                <input class="input-shadow" name="phone" type="tel" id="input_phone" placeholder="Phone number"
+                <label class=" size-11 primary"><b>전화번호</b></label>
+                <input class="input-line" name="phone" type="tel" id="input_phone" placeholder="Phone number"
                     onkeyup="inputPhoneNumber(this)">
                 <label class="error-msg" id="err_phone">올바른 전화번호를 입력해주세요.</label><br>
-                <label>물류센터 주소</label>
-                <input class="input-shadow" name="center" type="text" id="input_center" placeholder="Center Address"
+                <label class=" size-11 primary"><b>물류센터 주소</b></label>
+                <input class="input-line" name="center" type="text" id="input_center" placeholder="Center Address"
                     readonly><br>
-                <label>사업자등록증</label>
+                <label class=" size-11 primary"><b>사업자등록증</b></label>
                 <div class="custom-file">
                     <input type="file" class="custom-file-input" id="input_biz" accept="image/*" name="biz" required>
                     <label class="custom-file-label" for="input_biz">파일을 선택하세요</label>
                 </div>
                 <% if(MemberCat==2) { %>
-                <br><br><label>차고지 주소</label>
-                <input class="input-shadow" type="text" name="garage" id="input_garage" placeholder="차고지 주소">
+                <br><br><label class=" size-11 primary"><b>차고지 주소</b></label>
+                <input class="input-line" type="text" name="garage" id="input_garage" placeholder="차고지 주소">
                 <% } else { %>
                 <input hidden name="garage" id="input_garage" value="none">
                 <% } %>
@@ -208,28 +208,26 @@
             <% } else { %>
             <label class="size-10" for="input_profile">대표 이미지를 설정해주세요.</label><br>
             <form enctype="multipart/form-data" method="POST" action="/Manager/SignUp" id="signup_form" >
-
                 <input type="number" value="<%=MemberCat%>" name="cat" hidden>
                 <input type="file" accept="image/*" hidden name="profile" id="input_profile">
-
-                <label>이름</label>
-                <input class="input-shadow" name="name" type="text" id="input-name" placeholder="이름"><br>
-                <label>이메일</label>
-                <input class="input-shadow" name="email" type="email" id="input_email" placeholder="Email">
+                <label class=" size-11 primary"><b>이름</b></label>
+                <input class="input-line" name="name" type="text" id="input-name" placeholder="이름"><br>
+                <label class=" size-11 primary"><b>이메일</b></label>
+                <input class="input-line" name="email" type="email" id="input_email" placeholder="Email">
                 <label class="error-msg" id="err_email">올바른 이메일을 입력해주세요.</label>
                 <label class="error-msg" id="reuse_email" data-check="0">이미 사용중인 이메일입니다.</label><br>
-                <label>비밀번호</label>
-                <input class="input-shadow" name="password" type="password" id="input_pw" placeholder="Password">
+                <label class=" size-11 primary"><b>비밀번호</b></label>
+                <input class="input-line" name="password" type="password" id="input_pw" placeholder="Password">
                 <label class="error-msg" id="err_pw">비밀번호는 영문 대/소문자, 특수문자 포함 10자 이상이여야 합니다.</label><br>
-                <label>비밀번호 확인</label>
-                <input class="input-shadow" type="password" id="input_pw_ck" placeholder="Password Check">
+                <label class=" size-11 primary"><b>비밀번호 확인</b></label>
+                <input class="input-line" type="password" id="input_pw_ck" placeholder="Password Check">
                 <label class="error-msg" id="err_pw_ck">비밀번호가 일치하지 않습니다.</label><br>
-                <label>전화번호</label>
-                <input class="input-shadow" name="phone" type="tel" id="input_phone" placeholder="Phone number"
+                <label class=" size-11 primary"><b>전화번호</b></label>
+                <input class="input-line" name="phone" type="tel" id="input_phone" placeholder="Phone number"
                     onkeyup="inputPhoneNumber(this)">
                 <label class="error-msg" id="err_phone">올바른 전화번호를 입력해주세요.</label><br>
-                <label>주소</label>
-                <input class="input-shadow" name="center" type="text" id="input_center" placeholder="주소" readonly>
+                <label class=" size-11 primary"><b>주소</b></label>
+                <input class="input-line" name="center" type="text" id="input_center" placeholder="주소" readonly>
             </form>
             <% } %>
         </div>

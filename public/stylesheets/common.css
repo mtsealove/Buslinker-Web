@@ -297,9 +297,8 @@ table {
 tr.route-tr {
     height: 120px;
     padding-top: 20px;
+    
     vertical-align: middle;
-    /* border-bottom: 1px solid #1C69A5; */
-    vertical-align: top;
 }
 tr.route-tr:nth-child(odd)  {
     background-color: #F8F8F8;
@@ -380,6 +379,7 @@ img.extend-table {
     cursor: pointer;
 }
 #login-div {
+    overflow-y: auto;
     width: 450px;
     display: flex;
     flex-direction: column;
@@ -388,7 +388,23 @@ img.extend-table {
     padding: 50px 0px 50px 0px;
 }
 
-
+.input-line {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1.5px solid #001F46;
+    color:#001F46;
+    width: 100%;
+    margin-top: -10px;
+    margin-bottom: 5px;
+    font-size: 11pt;
+    padding: 10px;
+    background-color: transparent;
+    box-shadow: none;
+}
+.input-line::placeholder {
+    color: #73A1C2;
+}
 .input-shadow {
     border-radius: 5px;
     padding: 10px;
