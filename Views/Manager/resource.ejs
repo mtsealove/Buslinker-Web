@@ -24,9 +24,17 @@
             $('.part-tr').show();
             $('.extend-table').click(function () {
                 var tr = $(this).data('corp');
+                const extend=$(this).data('extend');
+                if(extend==1) {
+                    $(this).attr('src', '/public/images/arrow_down.png');
+                    $(this).data('extend', 0);
+                } else {
+                    $(this).attr('src', '/public/images/arrow_up.png');
+                    $(this).data('extend', 1);
+                }
                 if ($(this).data('cat') == 0) {
                     $(`.common-tr[data-bus=${tr}]`).fadeToggle(400);
-
+                    
                 } else {
                     $(`.common-tr[data-driver=${tr}]`).fadeToggle(400);
                 }
@@ -112,8 +120,8 @@
                             <h4 class="size-25 primary"><b>총 <%=res.bus.length%>대</b></h4>
                         </div>
                         <div class="box-search horizontal between">
-                            <input placeholder="차량 번호를 검색하세요" class="transparent" id="search-bus">
-                            <img src="/public/images/search.png" class="search">
+                            <input placeholder="차량번호 검색" class="transparent" id="search-bus">
+                            <img src="/public/images/search.svg" class="search">
                         </div>
                     </div>
                     <table>
@@ -128,7 +136,7 @@
                                 <td colspan="2">
                                     <div class="horizontal between">
                                         <h2 class="bus-title"><%=res.bus[i].Corp+' ('+res.bus[i].CorpCnt%>)</h2>
-                                        <img src="/public/images/down.png" class="extend-table"
+                                        <img src="/public/images/arrow_up.png" class="extend-table" data-extend="1"
                                             data-corp="<%=res.bus[i].Corp%>" data-cat="0">
                                     </div>
                                 </td>
@@ -153,8 +161,8 @@
                             <h4 class="size-25 primary"><b>총 <%=res.driver.length%>명</b></h4>
                         </div>
                         <div class="box-search horizontal between">
-                            <input placeholder="기사 이름을 검색하세요" class="transparent" id="search-driver">
-                            <img src="/public/images/search.png" class="search">
+                            <input placeholder="이름 검색" class="transparent" id="search-driver">
+                            <img src="/public/images/search.svg" class="search">
                         </div>
                     </div>
                     <table>
@@ -170,7 +178,7 @@
                                     <td colspan="3">
                                         <div class="horizontal between">
                                             <h2 class="bus-title"><%=res.driver[i].Corp+' ('+res.driver[i].CorpCnt%>)</h2>
-                                            <img src="/public/images/down.png" class="extend-table"
+                                            <img src="/public/images/arrow_up.png" class="extend-table" data-extend="1"
                                                 data-corp="<%=res.driver[i].Corp%>" data-cat="1">
                                         </div>
                                     </td>
@@ -205,8 +213,8 @@
                             <h4 class="size-25 primary"><b>총 <%=res.part.length%>명</b></h4>
                         </div>
                         <div class="box-search horizontal between">
-                            <input placeholder="물류관리 직원을 검색하세요" class="transparent" id="search-pt">
-                            <img src="/public/images/search.png" class="search">
+                            <input placeholder="이름 검색" class="transparent" id="search-pt">
+                            <img src="/public/images/search.svg" class="search">
                         </div>
                     </div>
                     <table>

@@ -15,105 +15,125 @@
             <!-- modal popups -->
             <div id="modal">
                 <!-- station -->
-                <div class="card popup" id="popup-station">
-                    <div class="card-body">
-                        <div class="horizontal between">
-                            <h4 class="card-title">정류장 선택</h4>
-                            <img src="/public/images/x_icon.png" class="close">
-                        </div>
-                        <label>정류장 이름</label>
-                        <input class="form-control" placeholder="정류장 이름" id="station-name" name="station-name"><br>
-                        <label>정류장 주소</label>
-                        <input class="form-control" readonly placeholder="주소 검색" id="station-addr"
+                <div class="popup small-popup" id="popup-station">
+                    <div class=" samll-popup-header">
+                        <label class=" small-popup-title"><b>새로운 노선 추가</b></label>
+                        <img src="/public/images/popup_x_white.svg" class="close">
+                    </div>
+                    <div class=" small-popup-contents">
+                        <label><b>정류장 이름</b></label>
+                        <input class="input-shadow" placeholder="정류장 이름" id="station-name" name="station-name"><br>
+                        <label><b>정류장 주소</b></label>
+                        <input class="input-shadow" readonly placeholder="주소 검색" id="station-addr"
                             name="station-addr"><br>
-                        <label>출근 출발 시간</label>
-                        <input class="form-control" type="time" id="station-start" name="station-start"><br>
-                        <label>퇴근 도착 시간</label>
-                        <input class="form-control" type="time" id="station-end" name="station-end"><br>
-                        <button class="btn-block btn-main" id="station-btn" type="button">확인</button>
+                        <label><b>출근 출발 시간</b></label>
+                        <input class="input-shadow" type="time" id="station-start" name="station-start"><br>
+                        <label><b>퇴근 도착 시간</b></label>
+                        <input class="input-shadow" type="time" id="station-end" name="station-end"><br>
+                        <div class=" horizontal between">
+                            <label></label>
+                            <button class="btn-blue" id="station-btn" type="button">확인</button>
+                        </div>
                     </div>
                 </div>
                 <!-- logistic -->
-                <div class="card popup" id="popup-logi">
-                    <div class="card-body">
-                        <div class="horizontal between">
-                            <h4 class="card-title">물류사 선택</h4>
-                            <img src="/public/images/x_icon.png" class="close">
-                        </div>
-                        <label>물류사 이름</label>
+                <div class="popup small-popup" id="popup-logi">
+                    <div class="samll-popup-header">
+                        <label class=" small-popup-title"><b>새로운 노선 추가</b></label>
+                        <img src="/public/images/popup_x_white.svg" class="close">
+                    </div>
+                    <div class=" small-popup-contents">
+                        <label><b>물류사 이름</b></label>
                         <select class="custom-select" id="logi-id" name="logi-id">
                             <% for(var i=0; i<logis.length; i++) { %>
                             <option value="<%=logis[i].ID+'-'+logis[i].Name%>"><%=logis[i].Name%></option>
                             <% } %>
                         </select><br>
-                        <label>간선상차 시작 시간</label>
-                        <input class="form-control" type="time" id="logi-start" name="logi-start"><br>
-                        <label>간선하차 시작 시간</label>
-                        <input class="form-control" type="time" id="logi-end" name="logi-end"><br>
-                        <button class="btn-block btn-main" id="logi-btn" type="button">확인</button>
+                        <label><b>간선상차 시작 시간</b></label>
+                        <input class="input-shadow" type="time" id="logi-start" name="logi-start"><br>
+                        <label><b>간선하차 시작 시간</b></label>
+                        <input class="input-shadow" type="time" id="logi-end" name="logi-end"><br>
+                        <div class=" horizontal between">
+                            <label></label>
+                            <button class="btn-blue" id="logi-btn" type="button">확인</button>
+                        </div>
+                        
                     </div>
+                    
+
                 </div>
                 <!-- 공터 -->
-                <div class="card popup" id="popup-empty">
-                    <div class="card-body">
-                        <div class="horizontal between">
-                            <h4 class="card-title">공터 선택</h4>
-                            <img src="/public/images/x_icon.png" class="close">
+                <div class="small-popup popup" id="popup-empty">
+                        <div class="samll-popup-header">
+                            <label class=" small-popup-title"><b>새로운 노선 추가</b></label>
+                            <img src="/public/images/popup_x_white.svg" class="close">
                         </div>
-                        <label>공터 이름</label>
-                        <input class="form-control" type="text" name="empty-name" id="empty-name"><br>
-                        <label>공터 주소</label>
-                        <input class="form-control" name="empty-addr" id="empty-addr" readonly><br>
-                        <label>간선하차 시작 시간</label>
-                        <input class="form-control" name="empty-time" id="empty-time" type="time"><br>
-                        <button type="button" class="btn-block btn-main" id="empty-btn">확인</button>
-                    </div>
+                        <div class=" small-popup-contents">
+                            <label><b>공터 이름</b></label>
+                            <input class="input-shadow" type="text" name="empty-name" id="empty-name"><br>
+                            <label><b>공터 주소</b></label>
+                            <input class="input-shadow" name="empty-addr" id="empty-addr" readonly><br>
+                            <label><b>간선하차 시작 시간</b></label>
+                            <input class="input-shadow" name="empty-time" id="empty-time" type="time"><br>
+                            <div class=" horizontal between">
+                                <label></label>
+                                <button type="button" class="btn-blue" id="empty-btn">확인</button>
+                            </div>
+                        </div>
                 </div>
                 <!-- owner -->
-                <div class="card popup" id="popup-owner">
-                    <div class="card-body">
-                        <div class="horizontal between">
-                            <h4 class="card-title">화주사 추가</h4>
-                            <img src="/public/images/x_icon.png" class="close">
+                <div class="small-popup popup" id="popup-owner">
+                        <div class="samll-popup-header">
+                            <label class=" small-popup-title"><b>새로운 노선 추가</b></label>
+                            <img src="/public/images/popup_x_white.svg" class="close">
                         </div>
-                        <select class="custom-select" id="owner-id">
-                        </select><br>
-                        <label>수거 시작 시간</label>
-                        <input class="form-control" type="time" id="owner-time"><br>
-                        <button class="btn-block btn-main" type="button" id="owner-btn">확인</button>
-                    </div>
+                        <div class=" small-popup-contents">
+                            <select class="input-shadow" id="owner-id">
+                            </select><br>
+                            <label><b>수거 시작 시간</b></label>
+                            <input class="input-shadow" type="time" id="owner-time"><br>
+                            <div class=" horizontal between">
+                                <label></label>
+                                <button class="btn-blue" type="button" id="owner-btn">확인</button>
+                            </div>
+                        </div>
                 </div>
                 <!-- select bus -->
-                <div class="card popup" id="popup-bus">
-                    <div class="card-body">
-                        <div class="horizontal between">
-                            <h4 class="card-title">버스사 선택</h4>
-                            <img src="/public/images/x_icon.png" class="close">
+                <div class="small-popup popup" id="popup-bus">
+                    
+                        <div class="samll-popup-header">
+                            <label class=" small-popup-title"><b>새로운 노선 추가</b></label>
+                            <img src="/public/images/popup_x_white.svg" class="close">
                         </div>
-                        <select name="bus" class="custom-select">
-                            <% for(var i=0; i<bus.length; i++) { %>
-                            <option value="<%=bus[i].ID%>"><%=bus[i].Name%></option>
-                            <% } %>
-                        </select>
-                        <br>
-                        <br>
-                        <button class="btn-block btn-main" id="bus-btn" type="button">확인</button>
-                    </div>
+                        <div class=" small-popup-contents">
+                            <select name="bus" class="custom-select">
+                                <% for(var i=0; i<bus.length; i++) { %>
+                                <option value="<%=bus[i].ID%>"><%=bus[i].Name%></option>
+                                <% } %>
+                            </select>
+                            <br>
+                            <br>
+                            <div class=" horizontal between">
+                                <label></label>
+                                <button class="btn-blue" id="bus-btn" type="button">확인</button>
+                            </div>
+                        </div>
                 </div>
                 <!-- maange part time member -->
-                <div id="manage-pt" class="popup" style="width: 70vw;">
-                    <div class="vertical" style="background-color: white;">
+                <div id="manage-pt" class="popup big-popup" style="width: 60vw;">
+                    <div class="vertical" style="background-color: #f5f5f5">
                         <br>
                         <div class="horizontal between" style="width: 95%;">
                             <div>
-                                <label id="route-name">마포-대한통운</label><br>
-                                <label id="contract">2020-01-01 ~ 2020-06-01</label>
+
+                                <label id="route-name" class=" primary">마포-대한통운</label><br>
+                                <label id="contract" class=" primary">2020-01-01 ~ 2020-06-01</label>
                             </div>
-                            <h3>원하는 날짜에 물류관리 직원을 드래그하세요.</h3>
-                            <img src="/public/images/x_icon.png" class="close">
+                            <p class=" primary size-15"><b>원하는 날짜에 물류관리 직원을 드래그하세요.</b></p>
+                            <img src="/public/images/popup_x_navy.svg" class="close">
                         </div>
                         <br>
-                        <iframe id="schedule-frame" style="width: 100%; height: 70vh; border: none;"></iframe>
+                        <iframe id="schedule-frame" style="width: 100%; height: 62vh; border: none;"></iframe>
                     </div>
                 </div>
 
@@ -154,7 +174,7 @@
                         <td colspan="14">
                             <br>
                             <div class="vertical" style="cursor: pointer;" id="add-btn">
-                                <img src="/public/images/add.png" class="add-icon">
+                                <img src="/public/images/add.svg" class="add-icon">
                                 <p class="add-txt"><b>경로 추가</b></p>
                             </div>
                         </td>
@@ -162,9 +182,10 @@
                     <!-- add line -->
                     <tr id="add-tr" class="route-tr">
                         <td class="remove"></td>
-                        <td class="mid">
+                        <td class="mid" style="padding-top: 56px;">
+
                             <input class="box0" placeholder="name" name="name" id="input-name" hidden>
-                            <select id="select-gu" class="box0">
+                            <select id="select-gu" class="bottom-line" style="height: 43px;">
                                 <option>구역을 선택하세요</option>
                                 <% var gu=["강남구",
                             "강동구",
@@ -221,13 +242,13 @@
                                 <% } %>
                             </select><br><br>
                             <input name="gu" id="gu-input" hidden>
-                            <label id="route-show"></label>
+                            <label id="route-show">경로명</label>
                         </td>
 
                         <td class="mid2" style="width: 400px;">
-                            <input type="date" id="contract-start" class="box0" name="contract-start">
+                            <input type="date" id="contract-start" class="bottom-line" name="contract-start" style="width: 180px;">
                             &nbsp;~&nbsp;
-                            <input class="box0" type="date" id="contract-end" name="contract-end">
+                            <input class="bottom-line" type="date" id="contract-end" name="contract-end" style="width: 180px;">
                         </td>
                         <td class="space">
                         </td>
@@ -278,7 +299,7 @@
                         </td>
                         <td style="width: 100px;">
                             <div class="horizontal center" style="margin-left: 30px; margin-bottom: -5px;">
-                                <img src="/public/images/yes.png" class="sm-btn" id="next-btn">
+                                <img src="/public/images/yes.svg" class="sm-btn" id="next-btn">
                                 <img src="/public/images/add_primary.png" class="sm-btn" id="add-owner-btn">
                             </div>
                         </td>
@@ -293,13 +314,14 @@
                         %>
                     <tr class="route-tr">
                         <td class="remove">
-                            <img src="/public/images/remove.png" class="sm-btn remove-btn"
+                            <img src="/public/images/remove.svg" class="sm-btn remove-btn"
                                 data-id="<%=routes[i].RouteID%>" data-name="<%=routes[i].Name%>">
                         </td>
                         <td class="mid" style="width: 150px;"><b><%=routes[i].Name%></b><br><%=routes[i].Bus%></td>
                         <td class="mid" style="width: 300px;"><b><%=start+' ~ '+end%></b><br>
-                                <span class="link link-schedule" data-id="<%=routes[i].RouteID%>"
-                                    data-name="<%=routes[i].Name%>" data-contract="<%=start+' ~ '+end%>"><b>일정상세보기</b></span>
+                            <span class="link link-schedule" data-id="<%=routes[i].RouteID%>"
+                                data-name="<%=routes[i].Name%>"
+                                data-contract="<%=start+' ~ '+end%>"><b>일정상세보기</b></span>
                         </td>
                         <td class="space"></td>
                         <td colspan="10" style="padding-bottom: 40px;">

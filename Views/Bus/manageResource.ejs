@@ -103,10 +103,13 @@
             $('.link').click(function(){
                 const cat=$(this).data('cat');
                 const id=$(this).data('id');
+                const name=$(this).data('name');
                 if(cat=='bus') {
+                    $('#schedule-name').text(name);
                     $('#iframe').attr('src', '/Bus/View/Schedule?bus='+id);
                     $('#modal').fadeIn(300);
                 } else if(cat=='driver') {
+                    $('#schedule-name').text(name+' 기사');
                     $('#iframe').attr('src', '/Bus/View/Schedule?driver='+id);
                     $('#modal').fadeIn(300);
                 }
@@ -138,16 +141,16 @@
 
 <body style="background-color: #f5f5f5;">
     <div id="modal">
-        <div class="card">
-            <div class="card-body">
-                <div class="horizontal between">
-                    <label></label>
-                    <img src="/public/images/x_icon.png" id="close-btn" style="cursor: pointer;">
+        <div class="big-popup">
+                <div class="samll-popup-header">
+                    <label class=" small-popup-title"><b><span id="schedule-name">이름</span>의 일정</b></label>
+                    <img src="/public/images/popup_x_white.svg" id="close-btn" class="close">
                 </div>
                 <br>
-                <iframe id="iframe" style="width: 60vw; height: 90vh; border: none;">
-                </iframe>
-            </div>
+                <div class=" small-popup-contents">
+                    <iframe id="iframe" style="width: 45vw; height: 70vh; border: none;">
+                    </iframe>
+                </div>
         </div>
     </div>
     <%- include('nav') %>
@@ -164,9 +167,9 @@
                                 <h3>총 <%=busList.length%>대</h3>
                             </div>
                         </div>
-                        <div class="box0 horizontal" style="width: 250px;">
-                            <input style="width: 100%;" class="transparent" placeholder="차량 번호를 검색하세요" id="search-bus">
-                            <img src="/public/images/search.png" id="search-btn">
+                        <div class="bottom-line horizontal" >
+                            <input style="width: 100%;" class="transparent" placeholder="차량 번호 검색" id="search-bus">
+                            <img src="/public/images/search.svg" id="search-btn">
                         </div>
                     </div>
                     <table class="table table-borderless">
@@ -194,7 +197,7 @@
                                     <div style="width: 100%; text-align: center;">
                                         <div style="cursor: pointer;" id="add-btn">
                                             <br>
-                                            <img src="/public/images/add.png" class="add-icon">
+                                            <img src="/public/images/add.svg" class="add-icon">
                                             <p class="size-13 add-txt"><b>차량 추가</b></p>
                                         </div>
                                 </td>
@@ -204,24 +207,24 @@
                                 <td><label></label></td>
                                 <td><input style="width: 180px;" class="box0" placeholder="차량번호를 입력해주세요" id="car-num">
                                 </td>
-                                <td><span class="link">일정</span></td>
+                                <td style="vertical-align: middle;"><span class="link">일정</span></td>
                                 <td style="width: 100px;">
                                     <div class="horizontal">
-                                        <img src="/public/images/yes.png" class="check_icon" id="yes">
-                                        <img src="/public/images/no.png" class="check_icon" id="no">
+                                        <img src="/public/images/yes.svg" class="check_icon" id="yes">
+                                        <img src="/public/images/remove.svg" class="check_icon" id="no">
                                     </div>
                                 </td>
                             </tr>
 
                             <!-- real data -->
                             <% for(var i=0; i<busList.length; i++) { %>
-                            <tr class="bus-tr" data-num="<%=busList[i].Num%>">
-                                <td style="width: 50px;"><img src="/public/images/remove.png"
-                                        class="check_icon remove-btn" data-id="<%=busList[i].ID%>"></td>
-                                <td style="width: 200px;">
-                                    <p><b><%=busList[i].Num%></b></p>
+                            <tr class="bus-tr stp-grey" data-num="<%=busList[i].Num%>">
+                                <td style="width: 50px; vertical-align: middle;">
+                                    <img src="/public/images/remove.svg" class="check_icon remove-btn" data-id="<%=busList[i].ID%>"></td>
+                                <td style="width: 200px; vertical-align: middle;">
+                                    <span class=" size-12"><b><%=busList[i].Num%></b></span>
                                 </td>
-                                <td><span class="link" data-id="<%=busList[i].ID%>" data-cat="bus">일정 상세보기</span></td>
+                                <td style="vertical-align: middle;"><span class="link" data-id="<%=busList[i].ID%>" data-cat="bus" data-name="<%=busList[i].Num%>">일정 상세보기</span></td>
                                 <td></td>
                             </tr>
                             <% } %>
@@ -239,9 +242,9 @@
                                 <h3>총 <%=driverList.length%>명</h3>
                             </div>
                         </div>
-                        <div class="box0 horizontal" style="width: 250px;">
-                            <input style="width: 100%" class="transparent" placeholder="기사 이름을 검색하세요" id="search-driver">
-                            <img src="/public/images/search.png" id="search-btn">
+                        <div class="bottom-line horizontal" >
+                            <input style="width: 100%" class="transparent" placeholder="이름 검색" id="search-driver">
+                            <img src="/public/images/search.svg" id="search-btn">
                         </div>
                     </div>
                     <table class="table table-borderless">
@@ -275,14 +278,14 @@
                                     <div style="width: 100%; text-align: center;">
                                         <div style="cursor: pointer;" id="add-driver-btn">
                                             <br>
-                                            <img src="/public/images/add.png" class="add-icon">
+                                            <img src="/public/images/add.svg" class="add-icon">
                                             <p class="size-13 add-txt"><b>기사 추가</b></p>
                                         </div>
                                 </td>
                             </tr>
                             <% for(var i=-0; i<driverList.length; i++) { %>
-                            <tr data-name="<%=driverList[i].Name%>" class="driver-tr">
-                                <td><img src="/public/images/remove.png" class="check_icon remove-driver-btn"
+                            <tr data-name="<%=driverList[i].Name%>" class="driver-tr stp-grey">
+                                <td style="vertical-align: middle;"><img src="/public/images/remove.svg" class="check_icon remove-driver-btn"
                                         data-name="<%=driverList[i].Name%>" data-id="<%=driverList[i].ID%>"></td>
                                 <td style="width: 220px;">
                                     <div class="horizontal"
@@ -294,9 +297,9 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td><b><%=driverList[i].Phone%></b></td>
-                                <td>
-                                    <span class="link" data-id="<%=driverList[i].ID%>" data-cat="driver">일정 상세보기</span>
+                                <td style="vertical-align: middle;"><b><%=driverList[i].Phone%></b></td>
+                                <td style="vertical-align: middle;">
+                                    <span class="link" data-id="<%=driverList[i].ID%>" data-cat="driver" data-name="<%=driverList[i].Name%>">일정 상세보기</span>
                                 </td>
                             </tr>
                             <% } %>

@@ -505,34 +505,50 @@
             <br>
             <div class="horizontal between">
                 <h4>세부 내역</h4>
-                <select class="box0" id="op-month">
-                    <% 
-                    var year=new Date().getFullYear();
-                    var selected='';
-                    var month=new Date().getMonth()+2;
-                        for(var m=1; m<month; m++) { 
-                            var data=year+'-'+m+'-01';
-                            if(data==start) {
-                                selected='selected';
-                            } else {
-                                selected='';
-                            }
-                            var print=year+'-';
-                            if(m<10)
-                                print+='0';
-                            print+=m;
-                            %>
-
-                    <option value="<%=year%>-<%=m%>-01:<%=year%>-<%=m+1%>-01" <%=selected%>><%=print%></option>
-                    <% } %>
-                </select>
+                <div class=" horizontal bottom-line">
+                    <img src="/public/images/calendar.svg">
+                    <select class="transparent" id="op-month">
+                        <% 
+                        var year=new Date().getFullYear();
+                        var selected='';
+                        var month=new Date().getMonth()+2;
+                            for(var m=1; m<month; m++) { 
+                                var data=year+'-'+m+'-01';
+                                if(data==start) {
+                                    selected='selected';
+                                } else {
+                                    selected='';
+                                }
+                                var print=year+'-';
+                                if(m<10)
+                                    print+='0';
+                                print+=m;
+                                %>
+    
+                        <option value="<%=year%>-<%=m%>-01:<%=year%>-<%=m+1%>-01" <%=selected%>><%=print%></option>
+                        <% } %>
+                    </select>
+                </div>
+                
             </div>
-
-            <div class="card3d" style="width: 100%;">
+            <div style="height: 10px;"></div>
+            <div class=" horizontal between">
+                <div class="card3d" style="width: 25%;">
+                    <div class="card-body">
+                        <div class=" horizontal between">
+                            <img src="/public/images/logo_negative.svg">
+                            <div>
+                                <p><%=start.split('-')[1]%>월 예상 비용</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="card3d" style="width: 74%;">
                 <div class="card-body">
                     <div class="horizontal between">
                         <h5>물류 수거 비용</h5>
-                        <select class="box0" id="op-logis">
+                        <div class=" horizontal bottom-line">
+                        <select class="transparent" id="op-logis">
                             <% for(var i=0; i<logis.length; i++) { 
                                 var selectedL='';
                                 if(logis[i].ID==corp) {
@@ -544,6 +560,7 @@
                             <option value="<%=logis[i].ID%>" <%=selectedL%>><%=logis[i].Name%></option>
                             <% } %>
                         </select>
+                    </div>
                     </div>
                     <table style="width: 100%;">
                         <thead>
@@ -607,6 +624,7 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
             </div>
             <br>
             <div class="horizontal between">

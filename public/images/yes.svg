@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 35 35">
+  <g id="그룹_1502" data-name="그룹 1502" transform="translate(-1825 -554)">
+    <g id="그룹_1497" data-name="그룹 1497" transform="translate(1765 64)">
+      <g id="타원_482" data-name="타원 482" transform="translate(60 490)" fill="#011d46" stroke="#021b46" stroke-width="1">
+        <circle cx="17.5" cy="17.5" r="17.5" stroke="none"/>
+        <circle cx="17.5" cy="17.5" r="17" fill="none"/>
+      </g>
+    </g>
+    <path id="Checkbox" d="M6.18,10.748,0,4.568,1.254,3.314,6.18,8.15,14.331,0l1.254,1.254Z" transform="translate(1835 566)" fill="#fff"/>
+  </g>
+</svg>

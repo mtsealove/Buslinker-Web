@@ -354,19 +354,18 @@
 
 <!-- show by iframe -->
 
-<body>
+<body style="background-color: #f5f5f5;">
     <div class="vertical">
         <!-- calnedar and data -->
-        <div class="horizontal between" style="width: 95%; align-items: baseline;">
-            <div class="card" style="width: 70%;">
+        <div class="horizontal between" style="width: 100%; align-items: baseline;">
+            <div class="card3d" style="width: 70%;">
                 <div class="card-body">
                     <div id="calendar"></div>
                 </div>
             </div>
-
             <!-- bus and driver event -->
             <div style="width: 29%; height: 100%;">
-                <div class="card">
+                <div class="card3d">
                     <div class="card-body">
                         <!-- driver list -->
                         <div id="driver-event" style="height: 180px;">
@@ -384,15 +383,15 @@
                             <div class="event item-bus" data-cat="bus" data-id="<%=bus[i].ID%>"><%=bus[i].Num%></div>
                             <% } %>
                         </div>
+                        <div id="trashCan">
+                            <img src="/public/images/trashcan.svg" width="40" height="48">
+                            <label style="opacity: 0.7; margin-top: 10px;">삭제 스케줄을 드래그하세요.</label>
+                        </div>
+                        <br>
+                        <button class="btn-blue btn-block" id="confirm-btn">확인</button>
                     </div>
                 </div>
-                <br>
-                <div id="trashCan">
-                    <img src="/public/images/trashcan.png">
-                    <label style="opacity: 0.7; margin-top: 10px;">삭제 스케줄을 드래그하세요.</label>
-                </div>
-                <br>
-                <button class="btn-main" style="width: 100%;" id="confirm-btn">확인</button>
+                
             </div>
         </div>
         <form id="calendar-form" hidden>

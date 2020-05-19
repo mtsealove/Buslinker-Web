@@ -80,8 +80,8 @@
                 const contract = $(this).data('contract');
 
                 $('#schedule-frame').attr('src', `/Bus/Manage/Route/Schedule?routeID=${id}`);
-                $('#route-name').text(name);
-                $('#contract').text(contract);
+                $('#route-name').text(name+'의 일정');
+                // $('#contract').text(contract);
                 $('#modal').fadeIn(300);
             });
 
@@ -97,18 +97,18 @@
 <body>
     <%- include('nav') %>
     <div id="modal">
-        <div class="vertical" style="background-color: white;">
-            <br>
-            <div class="horizontal between" style="width: 95%;">
+        <div class="vertical small-popup" style="width: 65vw;">
+            <div class="samll-popup-header" style="width: 100%;">
                 <div>
-                    <label id="route-name">마포-대한통운</label><br>
-                    <label id="contract">2020-01-01 ~ 2020-06-01</label>
+                    <p><b id="route-name" class="size-16">마포-대한통운</b><br>
+                        <span id="contract">원하는 날짜에 기사와 차량을 드래그하세요.</span>
+                    </p>
                 </div>
-                <h3>원하는 날짜에 기사 및 차량을 드래그하세요.</h3>
-                <img src="/public/images/x_icon.png" id="close-btn">
+                <img src="/public/images/popup_x_white.svg" id="close-btn" class="close">
             </div>
-            <br>
-            <iframe id="schedule-frame" style="width: 80vw; height: 85vh; border: none;"></iframe>
+            <div class=" small-popup-contents" style="width: 98%; padding: 2%;">
+                <iframe id="schedule-frame" style="width: 100%; height: 75vh; border: none;"></iframe>
+            </div>
         </div>
     </div>
     <div class="container-main">
