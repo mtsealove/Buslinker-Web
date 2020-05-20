@@ -1886,17 +1886,19 @@ exports.getGuCnt = (gu, callback) => {
 
 // manager, bus, logi all accept
 exports.getStatus = (date, bus, logi, callback) => {
-    var timelineQuery = `select TTTTT.*, CORPR.Name CorpName from 
-    (select TTTT.*, Buss.Num from 
-        (select TTT.*, DRV.Name DriverName from 
-       (select TT.*, PT.Name PtName, PT.Phone PtPhone from
-       (select R.*,T.BusID, T.DriverID, T.PTID, T.Action, T.Lat, T.Lng from Timeline T 
-       left outer join Route R on T.RouteID=R.RouteID
-        where T.RunDate='${date}') TT left outer join Members PT
-        on TT.PTID=PT.ID) TTT left outer join Members DRV
-        on TTT.DriverID=DRV.ID) TTTT left outer join Bus Buss
-        on TTTT.BusID=Buss.ID) TTTTT join Members CORPR
-        on TTTTT.CorpID=CORPR.ID`;
+    var timelineQuery = `select TTTTTT.*, LOGIST.CenterAddr LogiAddr from
+    (select TTTTT.*, CORPR.Name CorpName from 
+        (select TTTT.*, Buss.Num from 
+            (select TTT.*, DRV.Name DriverName from 
+           (select TT.*, PT.Name PtName, PT.Phone PtPhone from
+           (select R.*,T.BusID, T.DriverID, T.PTID, T.Action, T.Lat, T.Lng from Timeline T 
+           left outer join Route R on T.RouteID=R.RouteID
+            where T.RunDate='${date}') TT left outer join Members PT
+            on TT.PTID=PT.ID) TTT left outer join Members DRV
+            on TTT.DriverID=DRV.ID) TTTT left outer join Bus Buss
+            on TTTT.BusID=Buss.ID) TTTTT join Members CORPR
+            on TTTTT.CorpID=CORPR.ID) TTTTTT join Members LOGIST
+            on TTTTTT.Logi=LOGIST.ID`;
 
     if (bus) {
         timelineQuery += ` where CorpID='${bus}'`;
@@ -1929,6 +1931,7 @@ exports.getStatus = (date, bus, logi, callback) => {
                     cnt++;
                 });
             }
+
             var interval = setInterval(() => {
                 if (cnt == total) {
                     clearInterval(interval);

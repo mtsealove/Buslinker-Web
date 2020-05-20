@@ -5,7 +5,7 @@
     <%- include('config') %>
     <title>BusLinker 운행 현황</title>
     <script type="text/javascript"
-        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8d8a439d20cdda219547d464d94644cf"></script>
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8d8a439d20cdda219547d464d94644cf&libraries=services"></script>
     <script>
         var map;
         $(function () {
@@ -15,12 +15,28 @@
             initTab();
             initTable();
             initMapLocation();
-            <%for (var i = 0; i < timeline.length; i++) {
-                for (var j = 0; j < timeline[i].Loc.length; j++) {%>
-                    addMarker(<%=timeline[i].Loc[j].Lat %>, <%=timeline[i].Loc[j].Lng %>, '<%=timeline[i].Loc[j].LocName%>', <%=timeline[i].Loc[j].LocCat %>);
+            <% for (var i = 0; i < timeline.length; i++) {
+                for (var j = 0; j < timeline[i].Loc.length; j++) {
+                    if (timeline[i].Loc[j].LocCat == 4) { %>
+                        addMarker(<%=timeline[i].Loc[j].Lat %>, <%=timeline[i].Loc[j].Lng %>, '<%=timeline[i].Loc[j].LocName%>', 3);
                 <% }
+                }
             }%>
 
+
+            // 운행 버스 추가
+            var geocoder = new kakao.maps.services.Geocoder();
+            <% for (var i = 0; i < timeline.length; i++) { %>
+                addMarker(<%=timeline[i].Lat ? timeline[i].Lat : 0 %>, <%=timeline[i].Lng ? timeline[i].Lng : 0 %>, '<%=timeline[i].Name%>', 1);
+                // 물류사 추가
+                geocoder.addressSearch('<%=timeline[i].LogiAddr%>', function (result, status) {
+                    // 정상적으로 검색이 완료됐으면 
+                    if (status === kakao.maps.services.Status.OK) {
+                        var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                        addMarker(result[0].y, result[0].x, '<%=timeline[i].Logi%>', 2);
+                    }
+                }); 
+            <% } %>
                 setCorpCnt();
             setArrow();
         });
@@ -81,12 +97,11 @@
                 const title = $(tr[i]).attr('data-num');
 
                 if (lat && lng) {
-                    var imageSrc = '/public/images/bus_marker.png', // 마커이미지의 주소입니다    
+                    var imageSrc = '/public/images/bus_marker.svg', // 마커이미지의 주소입니다    
                         imageSize = new kakao.maps.Size(50, 50),
                         imageOption = { offset: new kakao.maps.Point(27, 69) };
 
-                    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
-                        markerPosition = new kakao.maps.LatLng(37.54699, 127.09598);
+                    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
                     var markerPosition = new kakao.maps.LatLng(lat, lng);
                     var marker = new kakao.maps.Marker({
                         position: markerPosition,
@@ -100,19 +115,51 @@
 
         // create each location marker
         function addMarker(lat, lng, name, cat) {
-            var imageSrc = '/public/images/bus_marker.png', // 마커이미지의 주소입니다    
-                imageSize = new kakao.maps.Size(50, 50),
-                imageOption = { offset: new kakao.maps.Point(27, 69) };
+
+            if (lat == 0 && lng == 0)
+                return;
+            var imageSrc = '/public/images/bus_marker.svg', // 마커이미지의 주소입니다   
+                imageSize = new kakao.maps.Size(50, 50);
+            switch (cat) {
+                // 운행 버스
+                case 1:
+                    imageSrc = '/public/images/bus_marker.svg';
+                    break;
+                case 2:
+                    imageSrc = '/public/images/logi_marker.svg';
+                    break;
+                case 3:
+                    imageSrc = '/public/images/owner_marker.svg';
+                default:
+                    break;
+            }
+            imageOption = { offset: new kakao.maps.Point(27, 69) };
             var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
                 markerPosition = new kakao.maps.LatLng(lat, lng);
             var markerPosition = new kakao.maps.LatLng(lat, lng);
             var marker = new kakao.maps.Marker({
                 position: markerPosition,
                 image: markerImage,
-                title: name
+                title: name,
+                clickble:true
             });
 
+            var iwContent = `<div style="padding:10px;backgroud:url('/public/images/conversation.png')">
+                            <p class='white size-14>${name}</p>
+                            <p>dㅇㅇㅇㅇㅇ</p>
+                            </div>`,
+                iwPosition = new kakao.maps.LatLng(lat, lng);
+            var infowindow = new kakao.maps.InfoWindow({
+                position: iwPosition,
+                content: iwContent,
+                removable: true
+            });
             marker.setMap(map);
+            var click=false;
+            kakao.maps.event.addListener(marker, 'click', function() {
+               // 마커 위에 인포윈도우를 표시합니다
+                infowindow.open(map, marker);  
+            });
         }
 
         function initMapLocation() {
@@ -150,10 +197,10 @@
         }
 
         function setArrow() {
-            $('.arrow').click(function() {
-                const open=$(this).data('open');
-                const corp=$(this).data('corp');
-                if(open==1) {
+            $('.arrow').click(function () {
+                const open = $(this).data('open');
+                const corp = $(this).data('corp');
+                if (open == 1) {
                     // console.log($(`tr.small-tr[data-corp=${corp}]`));
                     $(`.small-tr[data-corp='${corp}']`).fadeOut(100);
                     $(this).data('open', 0);
@@ -193,7 +240,8 @@
                             <td class="corp-td" colspan="7">
                                 <div class=" horizontal  between">
                                     <p><b><%=timeline[i].CorpName%></b></p>
-                                    <img src="/public/images/arrow_up.png" width="24" height="15"  class="arrow" data-open="1" data-corp="<%=timeline[i].CorpID%>">
+                                    <img src="/public/images/arrow_up.png" width="24" height="15" class="arrow"
+                                        data-open="1" data-corp="<%=timeline[i].CorpID%>">
                                 </div>
                             </td>
                         </tr>

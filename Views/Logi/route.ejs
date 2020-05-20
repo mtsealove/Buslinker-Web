@@ -1,41 +1,45 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <%- include('config') %>
-        <title>노선 관리</title>
-        <script>
-            $(function() {
-                $('#modal').hide();
-                setLink();
-            })
 
-            function setLink() {
-                $('.link').click(function() {
-                    const route=$(this).data('id');
-                    $('#iframe').attr('src', `/Logistics/Route/Schedule?route=${route}`);
-                    $('#modal').fadeIn(300);
+<head>
+    <%- include('config') %>
+    <title>노선 관리</title>
+    <script>
+        $(function () {
+            $('#modal').hide();
+            setLink();
+        })
 
-                });
-            }
+        function setLink() {
+            $('.link').click(function () {
+                const route = $(this).data('id');
+                $('#iframe').attr('src', `/Logistics/Route/Schedule?route=${route}`);
+                $('#modal').fadeIn(300);
 
-            function closeModal() {
-                $('#modal').fadeOut(300);
-            }
-        </script>
-    </head>
-    <body>
-        <%-include('nav')%>
-        <div id="modal">
-            <iframe id="iframe" style="width: 50vw; height: 50vw;"></iframe>
-        </div>
-        <section class=" container-main">
-            <div class=" full-contents">
+            });
+        }
+
+        function closeModal() {
+            $('#modal').fadeOut(300);
+        }
+    </script>
+</head>
+
+<body>
+    <%-include('nav')%>
+    <div id="modal">
+        <iframe id="iframe" style="width: 50vw; height: 50vw;"></iframe>
+    </div>
+    <section class=" container-main">
+        <div class=" full-contents">
+            <h5 class="primary">노선 현황</p>
+            <h1 class="size-25 primary"><b>총 <%=routes.length%>개</b></h1><br>
             <table id="manage-route">
-                <thead>
+                <thead class=" blue">
                     <tr>
-                        <th class="head">노선명</th>
-                        <th class="head">일정</th>
-                        <th class="head" colspan="11">경로</th>
+                        <th class="blue">노선명</th>
+                        <th class="blue">일정</th>
+                        <th class="blue" colspan="12">경로</th>
                     </tr>
                 <tbody>
                     <% for(var i=0; i<routes.length; i++) {
@@ -45,34 +49,37 @@
                         var endDate=new Date(routes[i].ContractEnd);
                         var end=endDate.getFullYear()+'-'+(endDate.getMonth()+1)+'-'+endDate.getDate();
                         %>
-                        <tr style="height: 20px;"></tr>
-                        <tr class="route-tr">
+                    <tr class="route-tr">
                         <td class="mid"><b><%=routes[i].Name%></b><br><%=routes[i].Bus%></td>
                         <td class="mid2"><%=start+' ~ '+end%>
                             <br>
-                                <span class="link" data-id="<%=routes[i].RouteID%>" data-name="<%=routes[i].Name%>" data-contract="<%=start+' ~ '+end%>"><b>일정 상세보기</b></span>
-                            </td>
+                            <span class="link" data-id="<%=routes[i].RouteID%>" data-name="<%=routes[i].Name%>"
+                                data-contract="<%=start+' ~ '+end%>"><b>일정 상세보기</b></span>
+                        </td>
                         <td class="space"></td>
-                        <td colspan="10">
+                        <td colspan="10"  style="padding-bottom: 40px;">
                             <!-- station -->
                             <div class="line line-station">
                                 <div class="vertical destination destination-left">
                                     <div class="destination-circle"></div>
-                                    <label class="destination-txt" ><%=routes[i].Loc[0].LocName%><br><%=(routes[i].Loc[0].RcTime).substr(0, 5)%></label>
+                                    <label
+                                        class="destination-txt"><%=routes[i].Loc[0].LocName%><br><%=(routes[i].Loc[0].RcTime).substr(0, 5)%></label>
                                 </div>
-    
+
                                 <!-- logistic center -->
-                                <div class="line line-logi" >
+                                <div class="line line-logi">
                                     <div class="vertical destination destination-left">
                                         <div class="destination-circle"></div>
-                                        <label class="destination-txt" ><%=routes[i].Loc[1].LocName%><br><%=(routes[i].Loc[1].RcTime).substr(0, 5)%></label>
+                                        <label
+                                            class="destination-txt"><%=routes[i].Loc[1].LocName%><br><%=(routes[i].Loc[1].RcTime).substr(0, 5)%></label>
                                     </div>
                                     <!-- owners -->
                                     <div class="line line-owner">
                                         <!-- 공터 -->
                                         <div class="vertical destination destination-left">
                                             <div class="destination-circle"></div>
-                                            <label class="destination-txt" ><%=routes[i].Loc[2].LocName%><br><%=(routes[i].Loc[2].RcTime).substr(0, 5)%></label>
+                                            <label
+                                                class="destination-txt"><%=routes[i].Loc[2].LocName%><br><%=(routes[i].Loc[2].RcTime).substr(0, 5)%></label>
                                         </div>
                                         <!-- owners-->
                                         <% for(var j=3; j<routes[i].Loc.length-2; j++) { 
@@ -81,32 +88,36 @@
                                                 right='destination-right';
                                             }
                                             %>
-                                            <div class="vertical destination <%=right%>">
+                                        <div class="vertical destination <%=right%>">
                                             <div class="destination-circle"></div>
-                                            <label class="destination-txt" ><%=routes[i].Loc[j].LocName%><br><%=(routes[i].Loc[j].RcTime).substr(0, 5)%></label>
+                                            <label
+                                                class="destination-txt"><%=routes[i].Loc[j].LocName%><br><%=(routes[i].Loc[j].RcTime).substr(0, 5)%></label>
                                         </div>
                                         <% } %>
                                     </div>
                                     <div class="vertical destination destination-right">
                                         <div class="destination-circle"></div>
-                                        <label class="destination-txt" ><%=routes[i].Loc[routes[i].Loc.length-2].LocName%><br><%=(routes[i].Loc[routes[i].Loc.length-2].RcTime).substr(0, 5)%></label>
+                                        <label
+                                            class="destination-txt"><%=routes[i].Loc[routes[i].Loc.length-2].LocName%><br><%=(routes[i].Loc[routes[i].Loc.length-2].RcTime).substr(0, 5)%></label>
                                     </div>
                                 </div>
-    
+
                                 <div class="vertical destination destination-right">
                                     <div class="destination-circle"></div>
-                                    <label class="destination-txt" ><%=routes[i].Loc[routes[i].Loc.length-1].LocName%><br><%=(routes[i].Loc[routes[i].Loc.length-1].RcTime).substr(0, 5)%></label>
+                                    <label
+                                        class="destination-txt"><%=routes[i].Loc[routes[i].Loc.length-1].LocName%><br><%=(routes[i].Loc[routes[i].Loc.length-1].RcTime).substr(0, 5)%></label>
                                 </div>
                             </div>
-                            </td>
-                            <td style="width: 100px;">
+                        </td>
+                        <td style="width: 100px;">
                         </td>
                     </tr>
-                    <% } %>    
+                    <% } %>
                 </tbody>
                 </thead>
             </table>
-            </div>
-        </section>
-    </body>
+        </div>
+    </section>
+</body>
+
 </html>

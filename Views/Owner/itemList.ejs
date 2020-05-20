@@ -186,11 +186,11 @@
 
 </head>
 
-<body>
+<body style="background-color: #f5f5f5;">
     <%- include('nav') %>
     <!-- modal popup -->
     <div id="modal">
-        <div class="card">
+        <div class="card3d">
             <div class="card-body">
                 <div class="horizontal between">
                     <label>양식 업로드</label>
@@ -210,26 +210,26 @@
     <section class="container-main">
         <form id="item-form" hidden action="/Owner/Create/ItemList" method="POST"></form>
         <div class="full-contents" >
-            <h5>오늘의 물량 현황</h5>
+            <p class=" size-15 primary">오늘의 물량 현황</p>
             <div class="horizontal between">
-                <h3><b><%=ItemCnt!=0?ItemCnt.toLocaleString()+'개':'물량 등록 안됨'%></b></h3>
+                <h3 class=" primary"><b><%=ItemCnt!=0?ItemCnt.toLocaleString()+'개':'물량 등록 안됨'%></b></h3>
                 <% if(ItemCnt==0) { %>
-                <button type="button" class="btn-blue" id="upload-btn0">물량 업로드</button>
+                <button type="button" class="btn-blue btn-slim" id="upload-btn0">물량 업로드</button>
                 <% } %>
             </div>
             <br>
             <div class="horizontal between">
                 <!-- route info -->
-                <div class="card" style="width: 39%;">
+                <div class="card3d" style="width: 39%;">
                     <div class="card-body">
                         <div id="left-div">
-                        <div class="horizontal between">
+                        <div class="horizontal between" style="align-items: center;">
                             <div class="horizontal">
-                                <img src="/public/images/logo_512x512.png" width="45" height="45">
-                                <label class=" logo-txt" style="margin-top: 15px;">Bus<b>Linker</b></label>
+                                <img src="/public/images/logo_negative.svg" width="45" height="45">
+                                <label class=" logo-txt primary" style="margin-top: 15px;">Bus<b>Linker</b></label>
                             </div>
 
-                            <p><%=yyyymm%></p>
+                            <label style="margin: 0px;" class=" primary"><%=yyyymm%></label>
                         </div>
                         <div style="width: 70%; margin-left: 15%;">
                             <h3 style="text-align: center;"><b><%=routeTimeline.timeline.Name%></b></h3><br>
@@ -341,7 +341,7 @@
                     </div>
                 </div>
                 <!-- calendar -->
-                <div class="card" style="width: 59%;">
+                <div class="card3d" style="width: 59%;">
                     <div class="card-body">
                         <div id="calendar"></div>
                     </div>

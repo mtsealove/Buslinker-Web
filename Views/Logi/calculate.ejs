@@ -213,7 +213,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><%=logi[0].TotalFee.toLocaleString()%>원</td>
+                                    <td><%=logi[0].TotalFee?logi[0].TotalFee.toLocaleString():0%>원</td>
                                     <td><%=logi[0].Commission%>%</td>
                                     <td><%=((logi[0].TotalFee/100)*logi[0].Commission).toLocaleString()%>원</td>
                                 </tr>

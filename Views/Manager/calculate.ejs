@@ -350,147 +350,150 @@
     <div id="modal">
         <input id="input-id" hidden>
         <!-- logi commission -->
-        <div class="popup card" id="popup-commission">
-            <div class="card-body">
-                <div class="horizontal between">
-                    <h4 class="name">물류사</h4>
-                    <img class=" close" src="/public/images/x_icon.png">
+        <div class="popup small-popup" id="popup-commission">
+                <div class="samll-popup-header">
+                    <p class="small-popup-title"><b>물류사 수거 수수료 &gt; 수수료율</b></p>
+                    <img class=" close" src="/public/images/popup_x_white.svg">
                 </div>
-                <br>
+                <div class=" small-popup-contents">
                 <label><b>수수료율</b></label>
-                <input id="commission-input" class="box0" style="width: 100%;" type="number"
+                <input id="commission-input" class="input-shadow"  type="number"
                     placeholder="수수료율(%)을 입력하세요.">
                 <br><br>
                 <div class="horizontal between">
                     <label></label>
-                    <button type="button" class="btn-main" id="btn-commission">확인</button>
+                    <button type="button" class="btn-blue" id="btn-commission">확인</button>
                 </div>
             </div>
         </div>
         <!-- logi-ad-fee -->
-        <div class="popup card" id="popup-logi-ad-fee">
-            <div class="card-body">
-                <div class="horizontal between">
-                    <h4 class="name">물류사</h4>
-                    <img class=" close" src="/public/images/x_icon.png">
+        <div class="popup small-popup" id="popup-logi-ad-fee">
+            
+                <div class="samll-popup-header">
+                    <p class="small-popup-title"><b>물류사 배송 비용 &gt; 단가</b></p>
+                    <img class=" close" src="/public/images/popup_x_white.svg">
                 </div>
-                <br>
+                <div class=" small-popup-contents">
                 <label><b>단가</b></label>
-                <input id="logi-ad-fee-input" class="box0" style="width: 100%;" type="number"
+                <input id="logi-ad-fee-input" class="input-shadow" type="number"
                     placeholder="단가(원)를 입력하세요.">
                 <br><br>
                 <div class="horizontal between">
                     <label></label>
-                    <button type="button" class="btn-main" id="btn-logi-ad-fee">확인</button>
+                    <button type="button" class="btn-blue" id="btn-logi-ad-fee">확인</button>
                 </div>
             </div>
         </div>
         <!-- logi-run-fee -->
-        <div class="popup card" id="popup-logi-run-fee">
-            <div class="card-body">
-                <div class="horizontal between">
-                    <h4 class="name">물류사</h4>
-                    <img class=" close" src="/public/images/x_icon.png">
+        <div class="popup small-popup" id="popup-logi-run-fee">
+                <div class="samll-popup-header">
+                    <p class="small-popup-title"><b>통근 노선 비용 &gt; 운임</b></p>
+                    <img class=" close" src="/public/images/popup_x_white.svg">
                 </div>
                 <br>
+                <div class=" small-popup-contents">
                 <label><b>운임</b></label>
-                <input id="logi-run-fee-input" class="box0" style="width: 100%;" type="number"
+                <input id="logi-run-fee-input" class="input-shadow" type="number"
                     placeholder="운임(원)을 입력하세요.">
                 <br><br>
                 <div class="horizontal between">
                     <label></label>
-                    <button type="button" class="btn-main" id="btn-logi-run-fee">확인</button>
+                    <button type="button" class="btn-blue" id="btn-logi-run-fee">확인</button>
                 </div>
             </div>
         </div>
         <!-- bus run fee -->
-        <div class="popup card" id="popup-bus-fee">
-            <div class="card-body">
-                <div class="horizontal between">
-                    <h4 class="name">물류사</h4>
-                    <img class=" close" src="/public/images/x_icon.png">
+        <div class="popup small-popup" id="popup-bus-fee">
+                <div class="samll-popup-header">
+                    <p class="small-popup-title"><b>물류 노선 비용 &gt; 운임</b></p>
+                    <img class=" close" src="/public/images/popup_x_white.svg">
                 </div>
-                <br>
+                <div class=" small-popup-contents">
+
                 <label><b>운임</b></label>
-                <input id="bus-fee-input" class="box0" style="width: 100%;" type="number" placeholder="운임(원)을 입력하세요.">
+                <input id="bus-fee-input" class="input-shadow" type="number" placeholder="운임(원)을 입력하세요.">
                 <br><br>
                 <div class="horizontal between">
                     <label></label>
-                    <button type="button" class="btn-main" id="btn-bus-fee">확인</button>
+                    <button type="button" class="btn-blue" id="btn-bus-fee">확인</button>
                 </div>
             </div>
         </div>
         <!-- logi defulat fee -->
-        <div class="popup card" id="popup-logi-default">
-            <div class="card-body">
-                <div class="horizontal between">
-                    <h4 class="name">물류사</h4>
-                    <img class=" close" src="/public/images/x_icon.png">
+        <div class="popup small-popup" id="popup-logi-default">
+            
+                <div class="samll-popup-header">
+                    <p class="small-popup-title">물류 수거 비용</p>
+                    <img class=" close" src="/public/images/popup_x_white.svg">
                 </div>
-                <br>
+                <div class=" small-popup-contents">
                 <label><b>물류 수거 비용</b></label>
-                <input id="logi-default-input" class="box0" style="width: 100%;" type="number"
+                <input id="logi-default-input" class="input-shadow" type="number"
                     placeholder="물류 수거 비용(원)을 입력하세요.">
                 <br><br>
                 <div class="horizontal between">
                     <label></label>
-                    <button type="button" class="btn-main" id="btn-logi-default">확인</button>
+                    <button type="button" class="btn-blue" id="btn-logi-default">확인</button>
                 </div>
-            </div>
+            </b>
+        </div>
         </div>
         <!-- owener default fee -->
-        <div class="popup card" id="popup-owner-default">
-            <div class="card-body">
-                <div class="horizontal between">
-                    <h4 class="name">물류사</h4>
-                    <img class=" close" src="/public/images/x_icon.png">
+        <div class="popup small-popup" id="popup-owner-default">
+            
+                <div class="samll-popup-header">
+                    <p class="small-popup-title"><b>물류 수거 비용 &gt; 기본 비용</b></p>
+                    <img class=" close" src="/public/images/popup_x_white.svg">
                 </div>
-                <br>
+                <div class=" small-popup-contents">
                 <label><b>기본 비용</b></label>
-                <input id="owner-default-input" class="box0" style="width: 100%;" type="number"
+                <input id="owner-default-input" class="input-shadow" type="number"
                     placeholder="기본 비용(원)을 입력하세요.">
                 <br><br>
                 <div class="horizontal between">
                     <label></label>
-                    <button type="button" class="btn-main" id="btn-owner-default">확인</button>
+                    <button type="button" class="btn-blue" id="btn-owner-default">확인</button>
                 </div>
             </div>
         </div>
         <!-- owner ad fee -->
-        <div class="popup card" id="popup-owner-ad">
-            <div class="card-body">
-                <div class="horizontal between">
-                    <h4 class="name">물류사</h4>
-                    <img class=" close" src="/public/images/x_icon.png">
+        <div class="popup small-popup" id="popup-owner-ad">
+            
+                <div class="samll-popup-header">
+                    <p class="small-popup-title"><b>물류 수거 비용 &gt; 초과 단가</b></p>
+                    <img class=" close" src="/public/images/popup_x_white.svg">
                 </div>
-                <br>
+                <div class=" small-popup-contents">
                 <label><b>추가 단가</b></label>
-                <input id="owner-ad-input" class="box0" style="width: 100%;" type="number"
+                <input id="owner-ad-input" class="input-shadow" type="number"
                     placeholder="추가 단가(원)을 입력하세요.">
                 <br><br>
                 <div class="horizontal between">
                     <label></label>
-                    <button type="button" class="btn-main" id="btn-owner-ad">확인</button>
+                    <button type="button" class="btn-blue" id="btn-owner-ad">확인</button>
                 </div>
             </div>
         </div>
         <!-- owner defulat cnt -->
-        <div class="popup card" id="popup-owner-cnt">
-            <div class="card-body">
-                <div class="horizontal between">
-                    <h4 class="name">물류사</h4>
-                    <img class=" close" src="/public/images/x_icon.png">
+        <div class="popup small-popup" id="popup-owner-cnt">
+            
+                <div class="samll-popup-header">
+                    <p class="small-popup-title"><b>물류 수거 비용 &gt; 기본 물량</b></p>
+                    <img class=" close" src="/public/images/popup_x_white.svg">
                 </div>
-                <br>
+                <div class=" small-popup-contents">
                 <label><b>기본 물량</b></label>
-                <input id="owner-cnt-input" class="box0" style="width: 100%;" type="number" placeholder="기본 물량을 입력하세요.">
+                <input id="owner-cnt-input" class="input-shadow" type="number" placeholder="기본 물량을 입력하세요.">
                 <br><br>
                 <div class="horizontal between">
                     <label></label>
-                    <button type="button" class="btn-main" id="btn-owner-cnt">확인</button>
+                    <button type="button" class="btn-blue" id="btn-owner-cnt">확인</button>
                 </div>
             </div>
+            
         </div>
+        </div>
+        
     </div>
 
     <section class="full-contents">
@@ -532,6 +535,7 @@
                 
             </div>
             <div style="height: 10px;"></div>
+            <%  %>
             <div class=" horizontal between">
                 <div class="card3d" style="width: 25%;">
                     <div class="card-body">
@@ -539,6 +543,7 @@
                             <img src="/public/images/logo_negative.svg">
                             <div>
                                 <p><%=start.split('-')[1]%>월 예상 비용</p>
+                                
                             </div>
                         </div>
                     </div>
@@ -605,7 +610,7 @@
                                     totalFee=defaultFee+(stackCnt-defaultCnt)*adFee;
                                 }
                                 %>
-                            <tr>
+                            <tr class="logi-take" data-price="<%=totalFee%>">
                                 <td><b><%=ownerName%></b></td>
                                 <td><b><span class="price" data-cat="owner-cnt" data-id="<%=ownerFee[i].ID%>"
                                             data-name="<%=ownerFee[i].Name%>"><%=defaultCnt.toLocaleString()%>개</span></b>

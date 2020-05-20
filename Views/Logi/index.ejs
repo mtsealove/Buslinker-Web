@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Buslinker</title>
-        <%- include('config')%>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
-        <script>
-            $(function() {
-                setSelect();
-            });
 
-            function setChart(label, logi, owner) {
+<head>
+    <title>Buslinker</title>
+    <%- include('config')%>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
+    <script>
+        $(function () {
+            setSelect();
+        });
+
+        function setChart(label, logi, owner) {
             var options = {
                 maintainAspectRatio: true,
                 spanGaps: false,
@@ -41,37 +42,34 @@
                 },
                 tooltips: {
                     mode: 'index',
-						intersect: false,
+                    intersect: false,
                     callbacks: {
                         title: function (tooltipItems, data) {
-                            const label=data.labels[tooltipItems[0].index];
+                            const label = data.labels[tooltipItems[0].index];
                             return label;
                         },
-                        
+
                     }
                 }
 
             };
             var ctx = document.getElementById('myChart').getContext('2d');
-            var gradientAdd = ctx.createLinearGradient(0, 0, 0, 400);
-            gradientAdd.addColorStop(0, 'rgba(119,100,228,1)');
-            gradientAdd.addColorStop(1, 'rgba(119,100,228,0)');
 
             var data = {
                 labels: label,
                 datasets: [
-                {
-                    borderColor: '#FB6740',
-                    backgroundColor: '#FB6740',
-                    data: owner,
-                    label: '수거',
-                },{
-                    borderColor: '#7764E4',
-                    backgroundColor: '#7764E4',
-                    data: logi,
-                    label: '배송',
-                }
-              ]
+                    {
+                        borderColor: '#2BB1C9',
+                        backgroundColor: '#2BB1C9',
+                        data: owner,
+                        label: '수거',
+                    }, {
+                        borderColor: '#2A94D9',
+                        backgroundColor: '#2A94D9',
+                        data: logi,
+                        label: '배송',
+                    }
+                ]
             };
 
             chart = new Chart(ctx, {
@@ -79,173 +77,189 @@
                 data: data,
                 options: options
             });
-            console.log(label);
-            console.log(logi);
-            console.log(owner);
         }
 
-            function setSelect() {
-                var child=$('#select-date');
-                $('#select-divide').change(function() {
-                    var value=$(this).val();
-                    var html=``;
-                    var date=new Date();
-                    if(value==0) {
-                        for(var i=1; i<=date.getDate(); i++) {
-                            var d=date.getFullYear()+'-';
-                            if(date.getMonth()<9) {
-                                d+='0';
-                            }
-                            d+=(date.getMonth()+1)+'-';
-                            if(i<10) {
-                                d+='0';
-                            }
-                            d+=i;
-                            html+=`<option value='${d}'>${d}</option>`;
+        function setSelect() {
+            var child = $('#select-date');
+            $('#select-divide').change(function () {
+                var value = $(this).val();
+                var html = ``;
+                var date = new Date();
+                if (value == 0) {
+                    for (var i = 1; i <= date.getDate(); i++) {
+                        var d = date.getFullYear() + '-';
+                        if (date.getMonth() < 9) {
+                            d += '0';
                         }
-                    } else {
-                        for(var i=1; i<=(date.getMonth()+1); i++) {
-                            var d=date.getFullYear()+'-';
-                            if(i<10) {
-                                d+='0';
-                            }
-                            d+=i;
-                            html+=`<option value='${d}'>${d}</option>`;
+                        d += (date.getMonth() + 1) + '-';
+                        if (i < 10) {
+                            d += '0';
                         }
+                        d += i;
+                        html += `<option value='${d}'>${d}</option>`;
                     }
-                    child.html(html);
-                });
-                $('#select-divide').val('0').trigger('change');
-                child.change(function() {
-                    var date=$(this).val();
-                    if(date.length==10) {
-                        getItemCnt(null, date);
-                    } else {
-                        getItemCnt(date, null);
+                } else {
+                    for (var i = 1; i <= (date.getMonth() + 1); i++) {
+                        var d = date.getFullYear() + '-';
+                        if (i < 10) {
+                            d += '0';
+                        }
+                        d += i;
+                        html += `<option value='${d}'>${d}</option>`;
                     }
-                });
-                var date=new Date();
-                var str=date.getFullYear()+'-';
-                if(date.getMonth()<9) {
-                    str+='0';
                 }
-                str+=(date.getMonth()+1)+'-';
-                if(date.getDate()<10) {
-                    str+='0';
+                child.html(html);
+            });
+            $('#select-divide').val('0').trigger('change');
+            child.change(function () {
+                var date = $(this).val();
+                if (date.length == 10) {
+                    getItemCnt(null, date);
+                } else {
+                    getItemCnt(date, null);
                 }
-                str+=date.getDate();
-                console.log(str);
-                child.val(str).trigger('change');
+            });
+            var date = new Date();
+            var str = date.getFullYear() + '-';
+            if (date.getMonth() < 9) {
+                str += '0';
             }
+            str += (date.getMonth() + 1) + '-';
+            if (date.getDate() < 10) {
+                str += '0';
+            }
+            str += date.getDate();
+            console.log(str);
+            child.val(str).trigger('change');
+        }
 
-            function getItemCnt(month, date) {
-                $.get('/Logistics/ajax/ItemCnt', {
-                    date:date,
-                    month: month
-                }, function(data){
-                    var html=``;
-                    var logi=[], owner=[], label=[];
-                    for(var i=0; i<data.length; i++) {
-                        html+=`<tr>
+        function getItemCnt(month, date) {
+            $.get('/Logistics/ajax/ItemCnt', {
+                date: date,
+                month: month
+            }, function (data) {
+                var html = ``;
+                var logi = [], owner = [], label = [];
+                for (var i = 0; i < data.length; i++) {
+                    html += `<tr>
                             <td>${data[i].Name}</td>
                             <td>
-                                배송: ${data[i].LogiCnt?data[i].LogiCnt:0}<br>
-                                수거: ${data[i].OwnerCnt?data[i].OwnerCnt:0}
+                                배송: ${data[i].LogiCnt ? data[i].LogiCnt : 0}<br>
+                                수거: ${data[i].OwnerCnt ? data[i].OwnerCnt : 0}
                             </td>
                             </tr>`;
-                        logi.push(data[i].LogiCnt?data[i].LogiCnt:0);
-                        owner.push(data[i].OwnerCnt?data[i].OwnerCnt:0);
-                        label.push(data[i].Name);
-                    }
-                    $('#tbody').html(html);
-                    setChart(label,logi, owner);
-                });
-            }
+                    logi.push(data[i].LogiCnt ? data[i].LogiCnt : 0);
+                    owner.push(data[i].OwnerCnt ? data[i].OwnerCnt : 0);
+                    label.push(data[i].Name);
+                }
+                $('#tbody').html(html);
+                setChart(label, logi, owner);
+            });
+        }
 
-        </script>
-    </head>
-    <body>
-        <%- include('nav')%>
-        <section class="container-main">
-            <div class="normal">
-                <h3><b>종합</b></h3>
-                <br>
-                <!-- month data -->
-                <div class="horizontal between">
-                    <!-- route cnt -->
-                    <div class="card quarter">
-                        <div class="card-body">
-                            <div class=" horizontal">
-                                <img width="100" height="100">
-                                <div style="width: 20px;"></div>
-                                <div>
-                                    <h3><b><%=logi[0].RouteCnt?logi[0].RouteCnt.toLocaleString():0%></b></h3>
-                                    <p>통근 노선</p>
-                                </div>
-                            </div>
-                        </div>
+    </script>
+</head>
+
+<body style="background-color: #f5f5f5;">
+    <%- include('nav')%>
+    <section class="container-main">
+        <div class="full-contents">
+            <div class=" horizontal  between">
+                <h4><b>종합</b></h4>
+                <div class="horizontal">
+                    <div class=" bottom-line horizontal">
+                        <img src="/public/images/calendar.svg">
+                        <select class="transparent" id="select-date">
+
+                        </select>
                     </div>
-                    <!-- delivery cnt -->
-                    <div class="card quarter">
-                        <div class="card-body">
-                            <div class=" horizontal">
-                                <img width="100" height="100">
-                                <div style="width: 20px;"></div>
-                                <div>
-                                    <h3><b><%=logi[0].ItemCnt?logi[0].ItemCnt.toLocaleString():0%></b></h3>
-                                    <p>배송 물량</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- take cnt -->
-                    <div class="card quarter">
-                        <div class="card-body">
-                            <div class="horizontal">
-                                <img width="100" height="100">
-                                <div style="width: 20px;"></div>
-                                <div>
-                                    <h3><b><%=owner[0].ItemCnt?owner[0].ItemCnt.toLocaleString():0%></b></h3>
-                                    <p>수거 물량</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- total cnt  -->
-                    <div class="card quarter">
-                        <div class="card-body">
-                            <div class="horizontal">
-                                <img width="100" height="100">
-                                <div style="width: 20px;"></div>
-                                <div>
-                                    <h3><b><%=owner[0].ItemCnt+logi[0].ItemCnt?(owner[0].ItemCnt+logi[0].ItemCnt).toLocaleString():0%></b></h3>
-                                    <p>전체 물량</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <br>
-                <!-- individual data -->
-                <h3><b>배송 및 수거 현황</b></h3>
-                <div class=" horizontal between">
-                    <label></label>
-                    <div class="horizontal">
-                    <select class="box0" id="select-divide">
+                    
+                    <div style="width: 20px;"></div>
+                    <select class=" bottom-line" id="select-divide">
                         <option value="0">일별</option>
                         <option value="1">월별</option>
                     </select>
-                    <div style="width: 20px;"></div>
-                    <select class="box0" id="select-date">
-                        
-                    </select>
+                </div>
+            </div>
+
+            <br>
+            <!-- month data -->
+            <div class="horizontal between">
+                <!-- route cnt -->
+                <div class="card3d quarter">
+                    <div class="card-body">
+                        <div class=" horizontal">
+                            <div class="card-icon">
+                                <div class="card-shadow"></div>
+                                <img src="/public/images/card_commute.svg" class=" card-icon-img">
+                            </div>
+                            <div style="width: 20px;"></div>
+                            <div>
+                                <h3 class=" num"><b><%=logi[0].RouteCnt?logi[0].RouteCnt.toLocaleString():0%></b></h3>
+                                <p class=" num-gray">통근 노선</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <br>
-                <div class="horizontal between" style="align-items:flex-start">
-                <div class="card" style="width: 24%;">
+                <!-- delivery cnt -->
+                <div class="card3d quarter">
                     <div class="card-body">
-                        <table>
+                        <div class=" horizontal">
+                            <div class="card-icon">
+                                <div class="card-shadow"></div>
+                                <img src="/public/images/card_delivery.svg" class=" card-icon-img">
+                            </div>
+                            <div style="width: 20px;"></div>
+                            <div>
+                                <h3 class=" num"><b><%=logi[0].ItemCnt?logi[0].ItemCnt.toLocaleString():0%></b></h3>
+                                <p class=" num-gray">배송 물량</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- take cnt -->
+                <div class="card3d quarter">
+                    <div class="card-body">
+                        <div class="horizontal">
+                            <div class="card-icon">
+                                <div class="card-shadow"></div>
+                                <img src="/public/images/card_take.svg" class=" card-icon-img">
+                            </div>
+                            <div style="width: 20px;"></div>
+                            <div>
+                                <h3 class=" num"><b><%=owner[0].ItemCnt?owner[0].ItemCnt.toLocaleString():0%></b></h3>
+                                <p class=" num-gray">수거 물량</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- total cnt  -->
+                <div class="card3d quarter">
+                    <div class="card-body">
+                        <div class="horizontal">
+                            <div class="card-icon">
+                                <div class="card-shadow"></div>
+                                <img src="/public/images/card_total.svg" class=" card-icon-img">
+                            </div>
+                            <div style="width: 20px;"></div>
+                            <div>
+                                <h3 class=" num">
+                                    <b><%=owner[0].ItemCnt+logi[0].ItemCnt?(owner[0].ItemCnt+logi[0].ItemCnt).toLocaleString():0%></b>
+                                </h3>
+                                <p class=" num-gray">전체 물량</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <!-- individual data -->
+            <h3><b>배송 및 수거 현황</b></h3>
+            <br>
+            <div class="horizontal between" style="align-items:flex-start">
+                <div class="card3d" style="width: 24%;">
+                    <div class="card-body">
+                        <table style="height: 300px;">
                             <thead>
                                 <th class="head">노선명</th>
                                 <th class="head">물량</th>
@@ -256,13 +270,14 @@
                         </table>
                     </div>
                 </div>
-                <div class="card" style="width: 75%;">
+                <div class="card3d" style="width: 75%;">
                     <div class="card-body">
                         <canvas id="myChart" style="width: 100%; height: 300px;"></canvas>
                     </div>
                 </div>
-                </div>
             </div>
-        </section>
-    </body>
+        </div>
+    </section>
+</body>
+
 </html>

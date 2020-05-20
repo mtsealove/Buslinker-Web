@@ -1,10 +1,10 @@
 <script>
     $(function() {
         const url=$(location).attr('pathname');
-        $(`.nav-top[data-url='${url}']`).addClass('active');
+        $(`.nav-top[data-url='${url}']`).children('.nav-link').addClass('active');
 
         $('.logo-container').click(function() {
-            location.href='/Logistics';
+            location.href='/';
         });
 
         $('#logout-container').hide();
@@ -18,9 +18,6 @@
                 location.href='/Logout';
             }
         });
-        $('#sign-up-btn').click(function() {
-            location.href='/Manager/SignUp';
-        }); 
     });
 </script>
 
@@ -41,17 +38,20 @@
 
         <div class="nav-container">
             <ul class="navbar-nav mr-auto">
+                <li class="nav-item nav-top" data-url="/Logistics">
+                    <a class="nav-link size-13" href="/Logistics">톺아보기</a>
+                </li>
                 <li class="nav-item nav-top" data-url="/Logistics/Status">
-                    <a class="nav-link" href="/Logistics/Status">운행 현황</a>
+                    <a class="nav-link size-13" href="/Logistics/Status">운행 현황</a>
                 </li>
                 <li class="nav-item nav-top" data-url="/Logistics/Route">
-                    <a class="nav-link" href="/Logistics/Route">노선관리</a>
+                    <a class="nav-link size-13" href="/Logistics/Route">노선관리</a>
                 </li>
                 <li class="nav-item nav-top" data-url="/Logistics/ItemList">
-                    <a class="nav-link" href="/Logistics/ItemList">물량관리</a>
+                    <a class="nav-link size-13" href="/Logistics/ItemList">물량관리</a>
                 </li>
                 <li class="nav-item nav-top" data-url="/Logistics/Calculate">
-                    <a class="nav-link" href="/Logistics/Calculate">정산관리</a>
+                    <a class="nav-link size-13" href="/Logistics/Calculate">정산관리</a>
                 </li>
             </ul>
             <div class="horizontal center">

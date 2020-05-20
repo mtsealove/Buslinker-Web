@@ -279,12 +279,14 @@
         <div class="full-contents">
             <div class="horizontal between">
                 <div>
-                    <label>물량 현황</label>
-                    <h3 id="total-cnt">배송 </h3>
+                    <h5 class=" primary">물량 현황</h5>
+                    <h1 class=" size25 primary" id="total-cnt"><b>배송 </b></h1>
                 </div>
                 <div class="horizontal">
                     <!-- select date -->
-                    <select class="box0" id="select-date">
+                    <div class=" horizontal bottom-line">
+                        <img src="/public/images/calendar.svg">
+                    <select class="transparent" id="select-date">
                         <% var d=new Date(); 
                                     var length=d.getDate()+1;
                                     var month=d.getMonth()+1;
@@ -309,9 +311,10 @@
                         <option value="<%=str%>" <%=selected%>><%=str%></option>
                         <% } %>
                     </select>
+                </div>
                     <div style="width: 20px;"></div>
                     <!-- 배송 / 수거 선택 -->
-                    <select class="box0" id="select-cat">
+                    <select class="bottom-line" id="select-cat">
                         <option value="delivery">배송</option>
                         <option value="take">수거</option>
                     </select>
@@ -321,7 +324,7 @@
                 <input type="file" hidden id="input-file" onchange="excelExport(event)">
                 <label></label>
                 <% if(items.length==0) { %>
-                <button class=" btn-blue" id="upload-btn">물량 업로드</button>
+                <button class=" btn-blue btn-slim" id="upload-btn">물량 업로드</button>
                 <% }else {%>
                 <div class="horizontal">
                     <button class=" btn-blue" id="upload-btn">물량 재업로드</button>
@@ -334,18 +337,18 @@
 
             <% if(cat=='delivery') {%>
             <table style="width: 100%; margin-top: 30px;">
-                <thead>
-                    <th class="head">노선명</th>
-                    <th class="head">기사</th>
-                    <th class="head">차량</th>
-                    <th class="head">상태</th>
-                    <th class="head">물량</th>
+                <thead class="blue">
+                    <th class="blue">노선명</th>
+                    <th class="blue">기사</th>
+                    <th class="blue">차량</th>
+                    <th class="blue">상태</th>
+                    <th class="blue">물량</th>
                 </thead>
                 <tbody>
                     <% for(var i=0; i<route.length; i++) {     %>
                     <% if(i==0 ||(i!=0&&route[i].Gu!=route[i-1].Gu)) { %>
-                    <tr>
-                        <td colspan="4"><%=route[i].Gu%></td>
+                    <tr style="height: 50px;">
+                        <td colspan="4"><b class=" primary size-14" style="margin: 10px;"><%=route[i].Gu%></b></td>
                         <td class="gu-cnt" data-gu="<%=route[i].Gu%>"></td>
                     </tr>
                     <% } %>
@@ -353,7 +356,7 @@
                     <tr data-logi="<%=route[i].Logi%>" style="height: 50px; vertical-align: middle;">
                         <td>
                             <div class="horizontal">
-                                <div class="item-divider"></div>
+                                <div class="item-divider" style="margin-left: 30px;"></div>
                                 <label><%=route[i].Name%></label>
                             </div>
                         </td>
@@ -382,17 +385,17 @@
             </table>
             <% } else { %>
                 <table style="width: 100%; margin-top: 30px;">
-                    <thead>
-                    <th class="head">노선</th>
-                    <th class="head">기사</th>
-                    <th class="head">차량</th>
-                    <th class="head">상태</th>
-                    <th class="head">물량</th>
-                    <th class="head">화주</th>
+                    <thead class="blue">
+                    <th class="blue">노선</th>
+                    <th class="blue">기사</th>
+                    <th class="blue">차량</th>
+                    <th class="blue">상태</th>
+                    <th class="blue">물량</th>
+                    <th class="blue">화주</th>
                 </thead>
                 <tbody>
                     <% for(var i=0; i<take.length; i++) { %>
-                    <tr>
+                    <tr style="height: 50px; border-bottom: 1px solid #DDDDDD;">
                         <td><%=take[i].Name%></td>
                         <td><%=take[i].DriverName?take[i].DriverName:'기사 미배정'%></td>
                         <td><%=take[i].Num?take[i].Num:'차량 미배정'%></td>

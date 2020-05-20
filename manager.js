@@ -80,11 +80,8 @@ exports.startManager = (app) => {
                             res.render('./Manager/index', {user:user, routeCnt:routeCnt, ownerItemCnt:ownerItemCnt, logiItemCnt:logiItemCnt, cat:cat, divide:start, table:table});
                             console.log(table);
                         });
-                    }
-                    
-                   
-                    
-                })
+                    } 
+                });
                 
             });
             

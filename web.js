@@ -253,6 +253,7 @@ exports.startApp = (port) => {
 
     
     // server
+    /*
     app.use((req, res, next)=> {
         if(!req.secure) {
             res.redirect('https://www.buslinker.kr'+req.url);
@@ -268,14 +269,14 @@ exports.startApp = (port) => {
         
     http.createServer(app).listen(80);
     https.createServer(options, app).listen(443);
-    
+    */
     
     // local
-   /*
+   
     app.listen(port, () => {
         console.log('web server runings on: ' + port);
     });
-    */
+    
 
     
 }

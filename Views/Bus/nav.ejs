@@ -56,13 +56,18 @@
                     profile='/public/images/user.png';
                 } %>
                 <img src="/public/uploads/<%=profile%>" id="user-profile">
-                <label class="font-white" id="user-name"><%=user.userName%></label>
+                <label class="font-white" id="user-name"><b><%=user.userName%></b> 님</label>
+                <img src="/public/images/nav_down.svg" class=" point">
             </div>
         </div>
     </div>
 </nav>
-<div class="card" id="logout-container">
+<div id="logout-container" style="background: url('/public/images/drop_top.svg'); background-repeat: no-repeat; background-size: 100%; padding-top: 5px;">
     <div class="card-body">
-        <button class="btn-main" id="logout-btn">로그아웃</button>
+    <div class=" horizontal">
+        <img src="/public/images/logout.svg" class="manager-menu">
+        <label class="font-white point size-11" id="logout-btn">로그아웃</label>
+    </div> 
+        
     </div>
 </div>

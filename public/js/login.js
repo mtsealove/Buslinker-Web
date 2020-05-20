@@ -52,6 +52,10 @@ function login() {
                             break;
                         case 4:
                             location.href = '/Logistics';
+                            break;
+                        default:
+                            alert('버스 기사와 물류관리 직원은 접속할 수 없습니다.');
+                            return;
                     }
                 } else {
                     alert('아이디와 비밀번호를 확인하세요');
