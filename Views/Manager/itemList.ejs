@@ -45,6 +45,15 @@
             $('.extend-table').click(function () {
                 var logi = $(this).data('logi');
                 $(`tr[data-logi='${logi}']`).fadeToggle(300);
+                var opened=$(this).data('open');
+                if(opened==1) {
+                    $(this).attr('src', '/public/images/arrow_down.png');
+                    opened=0;
+                } else {
+                    $(this).attr('src', '/public/images/arrow_up.png');
+                    opened=1;
+                }
+                $(this).data('open', opened);
             });
         }
         function setLink() {
@@ -104,7 +113,9 @@
                 </div>
                 <div class="horizontal">
                     <!-- select date -->
-                    <select class="box0" id="select-date">
+                    <div class=" bottom-line">
+                        <img src="/public/images/calendar.svg" height="21" width="21">
+                    <select class="transparent" id="select-date" style="margin-left: 5px;">
                         <% var d=new Date(); 
                                 var length=d.getDate()+1;
                                 var month=d.getMonth()+1;
@@ -126,9 +137,10 @@
                         <option value="<%=str%>" selected><%=str%></option>
                         <% } %>
                     </select>
+                </div>
                     <div style="width: 20px;"></div>
                     <!-- 배송 / 수거 선택 -->
-                    <select class="box0" id="select-cat">
+                    <select class="bottom-line" id="select-cat">
                         <option value="delivery">배송</option>
                         <option value="take">수거</option>
                     </select>
@@ -159,9 +171,8 @@
                         <td>
                             <div class=" horizontal between">
                                 <label></label>
-                                <img class="extend-table" src="/public/images/down.png" data-logi="<%=route[i].Logi%>">
+                                <img class="extend-table" src="/public/images/arrow_up.png" data-logi="<%=route[i].Logi%>" data-open="1">
                             </div>
-
                         </td>
                     </tr>
                     <% } %>

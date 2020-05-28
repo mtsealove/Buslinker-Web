@@ -73,8 +73,8 @@
                 labels: label,
                 datasets: [
                     {
-                        borderColor: '#FB6740',
-                        backgroundColor: '#FB6740',
+                        borderColor: '#2A94D9',
+                        backgroundColor: '#2A94D9',
                         data: cnt,
                         label: '수거',
                     }
@@ -107,7 +107,7 @@
                             total
                         ],
                         backgroundColor: [
-                            '#001F46',
+                            '#2A94D9',
                             '#D3D3D3'
                         ]
                     }],
@@ -147,13 +147,15 @@
     </script>
 </head>
 
-<body>
+<body style="background-color: #f5f5f5;">
     <%-include('nav') %>
     <section class="container-main">
         <div class="full-contents">
             <div class=" horizontal between">
                 <h3><b>종합</b></h3>
-                <select class="box0" id="select-month">
+                <div class=" bottom-line horizontal">
+                <img src="/public/images/calendar.svg" style="margin-right: 10px;">
+                <select class="transparent" id="select-month">
                     <% var year=new Date().getFullYear();
                         var month=new Date().getMonth()+1;
                         %>
@@ -167,8 +169,9 @@
                     <% }%>
                 </select>
             </div>
+            </div>
             <div class="horizontal">
-                <div class="card" style="width: 40%;" >
+                <div class="card3d" style="width: 40%;" >
                     <div class=" horizontal" id="receipt-div">
                         <div id="receipt-left">
                             <div style="text-align: center;">
@@ -214,7 +217,7 @@
                     </div>
 
                 </div>
-                <div class="card" style="width: 30%; margin-left: 20px;"id="doughnut-div">
+                <div class="card3d" style="width: 30%; margin-left: 20px;"id="doughnut-div">
                     <div class="card-body" style="text-align: center;" >
                         <canvas id="chart-area" style="height: 200px; margin-bottom: -30px;"></canvas>
                         <h2><b><%=parseInt(((cnt[0].ItemCnt?cnt[0].ItemCnt:1)/cnt[0].DefaultCnt)*100)%>%</b></h2>
@@ -225,7 +228,7 @@
             </div>
 
             <br>
-            <div class="card" >
+            <div class="card3d" >
                 <div class="card-body">
                     <canvas id="myChart" style="width: 100%;" height="300px"></canvas>
                 </div>

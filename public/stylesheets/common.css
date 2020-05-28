@@ -236,6 +236,29 @@ li.drop-item:hover {
     z-index: 3;
 }
 
+#logout-tri {
+    width: 0px;height: 0px;
+  border-top: 10px solid none;
+  border-bottom: 15px solid #436CF4;
+  border-right: 10px solid transparent;
+  border-left: 10px solid  transparent;
+}
+
+#logout-content {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: #436CF4;
+    padding: 10px 20px 10px 20px;
+}
+
+hr.logout-hr {
+    border: .1px solid #7C98F5;
+    height: 0px;
+    margin: 0px 0px 5px 0px;
+    width: 100%;
+}
+
 .box0 {
     border: 2px solid #011D46;
     background-color: #F7F7F7;

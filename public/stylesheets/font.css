@@ -3,6 +3,8 @@
     src: url('/public/fonts/EuroStyle\ Normal.ttf');
 }
 
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+
 .font-white {
     color: white;
 }
@@ -57,14 +59,14 @@
 }
 
 .size-50 {
-    font-size: 50pt;
+    font-size: 40pt;
 }
  @media ( min-width: 768px) {
     #brand {
-        font-size: 50pt;
+        font-size: 28pt;
     }
     #brand-big {
-        font-size: 55pt;
+        font-size: 30pt;
     }
     .faq-big {
         color: #001F46;
@@ -103,7 +105,7 @@
 
 #philosophy {
     margin-top: 30px;
-    font-size: 24pt;
+    font-size: 20pt;
     text-align: center;
 }
 

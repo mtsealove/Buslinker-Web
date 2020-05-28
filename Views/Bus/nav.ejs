@@ -62,12 +62,24 @@
         </div>
     </div>
 </nav>
-<div id="logout-container" style="background: url('/public/images/drop_top.svg'); background-repeat: no-repeat; background-size: 100%; padding-top: 5px;">
-    <div class="card-body">
-    <div class=" horizontal">
-        <img src="/public/images/logout.svg" class="manager-menu">
-        <label class="font-white point size-11" id="logout-btn">로그아웃</label>
-    </div> 
-        
+<div id="logout-container" >
+    <div class=" horizontal between">
+    <label></label>
+    <div id="logout-tri"></div>
+    </div>
+    <div id="logout-content">  
+        <div class=" horizontal">
+            <img src="/public/images/nav_faq.svg" class="manager-menu">
+            <label class="font-white point size-11" onclick="location.href='/Faq'">고객지원</label>
+        </div>
+        <div class=" horizontal">
+            <img src="/public/images/nav_ask.svg" class="manager-menu">
+            <label class="font-white point size-11" onclick="location.href='/Ask'">문의하기</label>
+        </div>
+        <hr class="logout-hr">
+        <div class=" horizontal">
+            <img src="/public/images/logout.svg" class="manager-menu">
+            <label class="font-white point size-11" id="logout-btn">로그아웃</label>
+        </div>
     </div>
 </div>

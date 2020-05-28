@@ -23,6 +23,9 @@
                     uploadFile();
                 }
             })
+            $(window).resize(function() {
+                setLeftHeight();
+            });
 
             $("#item_file").change(function () {
                 var list = $(this).val().split(`\\`);
@@ -179,8 +182,10 @@
 
         function setLeftHeight() {
             var height=$('#calendar').outerHeight();
-            
-            $('#left-div').height(height);
+            const left=$('#left-div');
+            if(left.height()<height) {
+                $('#left-div').height(height);
+            }
         }
     </script>
 
@@ -190,22 +195,26 @@
     <%- include('nav') %>
     <!-- modal popup -->
     <div id="modal">
-        <div class="card3d">
-            <div class="card-body">
-                <div class="horizontal between">
+        <div class="small-popup">
+                <div class="samll-popup-header">
                     <label>양식 업로드</label>
-                    <img src="/public/images/x_icon.png" class="close">
+                    <img src="/public/images/popup_x_white.svg" class="close">
                 </div>
-                <br>
+                <div class=" small-popup-contents">
                 <form enctype="multipart/form-data" id="ajaxFrom" method="post">
                     <div class="custom-file">
                         <input type="file" class="custom-file-input" id="item_file" accept=".xlsx">
                         <label class="custom-file-label" for="item_file" id="file-name">물량 양식을 업로드하세요.</label>
                     </div><br><br>
-                    <button class="btn-main btn-block" type="button" id="upload-btn">확인</button>
+                    <div class="horizontal between">
+                        <label></label>
+                        <button class="btn-blue " type="button" id="upload-btn">확인</button>
+                    </div>
+                    
                 </form>
             </div>
-        </div>
+            </div>
+        
     </div>
     <section class="container-main">
         <form id="item-form" hidden action="/Owner/Create/ItemList" method="POST"></form>
@@ -322,14 +331,14 @@
                             <br>
                             <div class="horizontal between">
                                 <div style="width: 50%;" class="horizontal">
-                                    <img src="<%=routeTimeline.timeline.DriverPath%>" width="40" height="40">
+                                    <img src="<%=routeTimeline.timeline.DriverPath?routeTimeline.timeline.DriverPath:'/public/images/user.svg'%>" width="40" height="40">
                                     <div style="margin-left: 10px;">
                                         <label><b><%=routeTimeline.timeline.DriverName?routeTimeline.timeline.DriverName+'기사':'기사 미배정'%></b></label>
                                         <label><%=routeTimeline.timeline.DriverPhone?routeTimeline.timeline.DriverPhone:''%></label>
                                     </div>
                                 </div>
                                 <div style="width: 50%;" class="horizontal">
-                                    <img src="<%=routeTimeline.timeline.PtPath%>" width="40" height="40">
+                                    <img src="<%=routeTimeline.timeline.PtPath?routeTimeline.timeline.PtPath:'/public/images/user.svg'%>" width="40" height="40">
                                     <div style="margin-left: 10px;">
                                         <label><b><%=routeTimeline.timeline.PtName?routeTimeline.timeline.PtName+'알바':'알바 미배정'%></b></label>
                                         <label><%=routeTimeline.timeline.PtPhone?routeTimeline.timeline.PtPhone:''%></label>
@@ -347,8 +356,9 @@
                     </div>
                 </div>
             </div>
+            <br><br>
         </div>
-
+        
 
     </section>
 </body>
