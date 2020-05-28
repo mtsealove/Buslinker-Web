@@ -277,7 +277,7 @@ exports.startApp = (port) => {
     app.listen(port, () => {
         console.log('web server runings on: ' + port);
     });
-    /*
+    */
 
     
 }

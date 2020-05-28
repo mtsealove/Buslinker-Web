@@ -1,4 +1,4 @@
-const web=require('./web');
+const web = require('./web');
 const mobile=require('./mobile');
 const ip = require('ip');
 //console.log('Server IP: '+ip.address());
