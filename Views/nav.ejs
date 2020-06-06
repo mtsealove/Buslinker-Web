@@ -6,6 +6,7 @@
 
         const url = $(location).attr('pathname');
         $(`.nav-top[data-url='${url}']`).addClass('active');
+        $(`.nav-top[data-url='${url}']`).children('a').css('color', '#5DBBFF');
 
         $('#start-btn').click(function () {
             location.href = '/Login';
@@ -50,16 +51,13 @@
 
             <div class="nav-container">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item nav-top" data-url="/Introduction">
-                        <a class="nav-link size-13" href="/Introduction">회사소개</a>
-                    </li>
                     <li class="nav-item nav-top" data-url="/Notice">
                         <a class="nav-link size-13" href="/Notice">공지사항</a>
                     </li>
                     <li class="nav-item nav-top" data-url="/Ask">
                         <a class="nav-link size-13" href="/Ask">문의사항</a>
                     </li>
-                    <li class="nav-item nav-top">
+                    <li class="nav-item nav-top" data-url="/Faq">
                         <a class="nav-link size-13" href="/Faq">고객지원</a>
                     </li>
                     <!-- not logined -->

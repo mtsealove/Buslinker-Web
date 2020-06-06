@@ -187,7 +187,7 @@
                                 <tr class="common-tr driver-tr" data-driver="<%=res.driver[i].Corp%>" data-driver-name="<%=res.driver[i].Name%>">
                                     <td style="width: 45%;">
                                         <div class="horizontal" style="align-items: center;">
-                                            <img src="/public/uploads/<%=res.driver[i].ProfilePath%>" class="table-img">
+                                            <img src="<%=res.driver[i].ProfilePath?'/public/uploads/'+res.driver[i].ProfilePath:'/public/images/user.svg'%>" class="table-img">
                                             <div style="width: 20px;"></div>
                                             <div>
                                                 <p style="margin-top: 10px;"><b><%=res.driver[i].Name%></b></p>
@@ -228,7 +228,7 @@
                                 <tr class="common-tr part-tr" data-pt-name="<%=res.part[i].Name%>">
                                     <td style="width: 45%;">
                                         <div class="horizontal" style="align-items: center;">
-                                            <img src="/public/uploads/<%=res.part[i].ProfilePath%>" class="table-img">
+                                            <img src="<%=res.part[i].ProfilePath?'/public/uploads/'+res.part[i].ProfilePath:'/public/images/user.svg'%>" class="table-img">
                                             <div style="width: 20px;"></div>
                                             <div>
                                                 <p style="margin-top: 10px;"><b><%=res.part[i].Name%></b></p>

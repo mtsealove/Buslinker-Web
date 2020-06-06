@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="45" height="45" viewBox="0 0 45 45">
+  <defs>
+    <filter id="패스_1199" x="0" y="0" width="45" height="45" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="그룹_1388" data-name="그룹 1388" transform="translate(-1213 -623)">
+    <g id="그룹_1387" data-name="그룹 1387" transform="translate(1048 334)">
+      <g transform="matrix(1, 0, 0, 1, 165, 289)" filter="url(#패스_1199)">
+        <path id="패스_1199-2" data-name="패스 1199" d="M13.5,0A13.5,13.5,0,1,1,0,13.5,13.5,13.5,0,0,1,13.5,0Z" transform="translate(9 6)" fill="#fff"/>
+      </g>
+    </g>
+    <g id="그룹_1172" data-name="그룹 1172" transform="translate(1186.386 616.905)">
+      <path id="패스_1176" data-name="패스 1176" d="M48.9,18.94c-4.225,0-7.65,2.888-7.65,6.45a6.3,6.3,0,0,0,3.629,5.488c-.16.637-.579,2.308-.663,2.665-.1.444.152.438.32.319.131-.093,2.1-1.518,2.944-2.133a9.066,9.066,0,0,0,1.42.111c4.225,0,7.65-2.888,7.65-6.45S53.126,18.94,48.9,18.94Z" transform="translate(0 0)" fill="#58ade7"/>
+    </g>
+  </g>
+</svg>
