@@ -7,20 +7,19 @@
     <script src="/public/js/container.js"></script>
     <link href="/public/stylesheets/common.css" type="text/stylesheet">
     <script>
-        $(function(){
-
+        $(function () {
             $('#nav-main').css('background-color', '#001f46');
             $('.nav-link').css('color', 'white');
-            $('#create-btn').click(function() {
-                location.href='/Notice/Create';
+            $('#create-btn').click(function () {
+                location.href = '/Notice/Create';
             });
             setTrLink();
         });
 
         function setTrLink() {
-            $('tr').click(function() {
-                const ID=$(this).data('id');
-                location.href=`/Notice/Detail?ID=${ID}`;
+            $('tr').click(function () {
+                const ID = $(this).data('id');
+                location.href = `/Notice/Detail?ID=${ID}`;
             });
         }
     </script>
@@ -31,7 +30,7 @@
     <div class="container-main">
         <div class='normal'>
             <h3><b>공지사항</b></h3>
-            <div class="horizontal between" >
+            <div class="horizontal between">
                 <label>버스링커의 최신 소식을 알아보세요.</label>
                 <div class=" box-search horizontal">
                     <input class=" transparent" placeholder="제목을 검색하세요.">
@@ -40,44 +39,44 @@
             </div>
             <br>
             <div style="height: 600px;">
-            <table class="table-hover">
-                <thead class=" blue">
-                    <th class="blue middle">번호</th>
-                    <th class="blue">제목</th>
-                    <th class="blue middle">조회수</th>
-                    <th class="blue middle">게시일</th>
-                </thead>
-                <tbody>
-                    <% for(var i=0; i<notice.length; i++) { %>
+                <table class="table-hover">
+                    <thead class=" blue">
+                        <th class="blue middle">번호</th>
+                        <th class="blue">제목</th>
+                        <th class="blue middle">조회수</th>
+                        <th class="blue middle">게시일</th>
+                    </thead>
+                    <tbody>
+                        <% for(var i=0; i<notice.length; i++) { %>
                         <tr data-id="<%=notice[i].ID%>" class="stp">
                             <td class="blue middle"><%=notice[i].ID%></td>
                             <td class="notice-title blue"><%=notice[i].Title%></td>
                             <td class="blue middle"><%=notice[i].Click%></td>
                             <td class="blue middle"><%=notice[i].Date%></td>
-                        </tr>  
-                    <% } %>
-                    
-                </tbody>
-            </table>
-        </div>
-            
+                        </tr>
+                        <% } %>
+
+                    </tbody>
+                </table>
+            </div>
+
             <div class="horizontal between">
                 <label></label>
                 <div class="horizontal">
                     <% for(var i=0; i<pageList; i++) { %>
-                        <a href="?page=<%=i+1%>""><%=i+1%></a>
+                    <a href="?page=<%=i+1%>""><%=i+1%></a>
                     <%  }%>
                 </div>
                 <% if(user.userCat==1) {%>    
-                <button class="btn-main" id="create-btn">공지사항 작성</button>
-                <% } else { %>
-                    <label></label>
-                <% } %>
+                <button class=" btn-main" id="create-btn">공지사항 작성</button>
+                        <% } else { %>
+                        <label></label>
+                        <% } %>
+                </div>
             </div>
-        
+            
         </div>
         
-    </div>
 </body>
 
 </html>

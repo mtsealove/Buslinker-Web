@@ -21,6 +21,8 @@
     <title><%=title%></title>
     <script>
         $(function () {
+            $('#nav-main').css('background-color', '#001f46');
+            $('.nav-link').css('color', 'white');
             $(`.rules:contains('<%=title%>')`).addClass('active');
             setHeight();
             scrollContent();
@@ -56,8 +58,8 @@
             <div class="horizontal between">
                 <label></label>
                 <div class="horizontal">
-                    <label class="rules" data-cat="use">이용약관</label>
-                    <label class="rules" data-cat="delivery">운송약관</label>
+                    <!-- <label class="rules" data-cat="use">이용약관</label> -->
+                    <!-- <label class="rules" data-cat="delivery">운송약관</label> -->
                     <label class="rules" data-cat="privacy">개인정보 처리방침</label>
                 </div>
             </div>
