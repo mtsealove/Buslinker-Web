@@ -130,7 +130,7 @@ exports.startManager = (app) => {
         const garage = req.body['garage'];
 
         if (req.files['profile'] != null) {
-            ProfilePath = (req.files['profile'][0]).path;
+            ProfilePath = (req.files['profile'][0]).filename;
         }
 
         var request = require('request');
