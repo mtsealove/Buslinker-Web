@@ -1456,7 +1456,7 @@ async function updatePartTime(routeID, part, callback) {
 }
 
 function setFullTimeline(year) {
-    const routeQuery = `select RouteID from Route where RouteID!=0`;
+    const routeQuery = `select RouteID from Route order by RouteID desc limit 1`;
     var cnt = 0;
     connection.query(routeQuery, (e0, route) => {
         if (e0) {
