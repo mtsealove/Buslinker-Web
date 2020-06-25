@@ -180,14 +180,14 @@
                             </div>
                             <label>① 기본 비용</label><br>
                             <label
-                                style="margin-left: 20px; font-size: small;"><b><%=cnt[0].DefaultFee.toLocaleString()%>원</b></label><br>
+                                style="margin-left: 20px; font-size: small;"><b><%=cnt[0].DefaultFee?cnt[0].DefaultFee.toLocaleString():0%>원</b></label><br>
                             <label>② 기본 물량</label><br>
                             <label
-                                style="margin-left: 20px; font-size: small;"><b><%=cnt[0].DefaultCnt.toLocaleString()%>개</b></label><br>
+                                style="margin-left: 20px; font-size: small;"><b><%=cnt[0].DefaultCnt?cnt[0].DefaultCnt.toLocaleString():0%>개</b></label><br>
                             <label>③ 추가 비용</label><br>
-                            <label style="margin-left: 20px; font-size: small;"><b><%=cnt[0].AdFee.toLocaleString()%>원 X
+                            <label style="margin-left: 20px; font-size: small;"><b><%=cnt[0].AdFee?cnt[0].AdFee.toLocaleString():0%>원 X
                                     (<%=cnt[0].ItemCnt?cnt[0].ItemCnt.toLocaleString():0%> -
-                                    <%=cnt[0].DefaultCnt.toLocaleString()%>)개</b></label><br>
+                                    <%=cnt[0].DefaultCnt?cnt[0].DefaultCnt.toLocaleString():0%>)개</b></label><br>
                             <label style="font-size: small;">* 추가 비용이 음수일경우, 0으로 처리</label>
                         </div>
                         <div id="receipt-right">
@@ -198,7 +198,7 @@
                             <br>
                             <div class=" horizontal between">
                                 <label>기본 비용</label>
-                                <label><%=cnt[0].DefaultFee.toLocaleString()%>원</label>
+                                <label><%=cnt[0].DefaultFee?cnt[0].DefaultFee.toLocaleString():0%>원</label>
                             </div>
                             <div class=" horizontal between">
                                 <label>추가 비용</label>
@@ -221,7 +221,7 @@
                     <div class="card-body" style="text-align: center;" >
                         <canvas id="chart-area" style="height: 200px; margin-bottom: -30px;"></canvas>
                         <h2><b><%=parseInt(((cnt[0].ItemCnt?cnt[0].ItemCnt:1)/cnt[0].DefaultCnt)*100)%>%</b></h2>
-                        <label><%=cnt[0].DefaultCnt.toLocaleString()%>개 중
+                        <label><%=cnt[0].DefaultCnt?cnt[0].DefaultCnt.toLocaleString():0%>개 중
                             <%=cnt[0].ItemCnt?cnt[0].ItemCnt.toLocaleString():0%>개 수거</label>
                     </div>
                 </div>

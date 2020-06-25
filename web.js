@@ -40,8 +40,6 @@ exports.startApp = (port) => {
         }
     });
 
-
-
     app.use((req, res, next) => {
         req.setTimeout(1200000, () => {
             let err = new Error('Req Timeout');
@@ -280,13 +278,12 @@ exports.startApp = (port) => {
     
 
     // local
+    
     /*
     app.listen(port, () => {
         console.log('web server runings on: ' + port);
     });
     */
-
-
 
 }
 

@@ -227,7 +227,7 @@
                             </div>
                             <div style="width: 20px;"></div>
                             <div>
-                                <h3 class=" num"><b><%=owner[0].ItemCnt?owner[0].ItemCnt.toLocaleString():0%></b></h3>
+                                <h3 class=" num"><b><%=owner[0]?owner[0].ItemCnt.toLocaleString():0%></b></h3>
                                 <p class=" num-gray">수거 물량</p>
                             </div>
                         </div>
@@ -244,7 +244,7 @@
                             <div style="width: 20px;"></div>
                             <div>
                                 <h3 class=" num">
-                                    <b><%=owner[0].ItemCnt+logi[0].ItemCnt?(owner[0].ItemCnt+logi[0].ItemCnt).toLocaleString():0%></b>
+                                    <b><%=owner[0]&&logi[0].ItemCnt?(owner[0].ItemCnt+logi[0].ItemCnt).toLocaleString():0%></b>
                                 </h3>
                                 <p class=" num-gray">전체 물량</p>
                             </div>

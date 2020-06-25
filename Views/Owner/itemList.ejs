@@ -293,8 +293,8 @@
                                 </div>
                             </div>
                             <div class=" horizontal between" style="margin-top: -10px; padding-left: 10px; padding-right: 10px;">
-                                <label style="font-size: smaller;"><%=lastLoc.RcTime.substring(0, 5)%></label>
-                                <label style="font-size: smaller;"><%=nextLoc.RcTime.substring(0, 5)%></label>
+                                <label style="font-size: smaller;"><%=lastLoc.RcTime?lastLoc.RcTime.substring(0, 5):''%></label>
+                                <label style="font-size: smaller;"><%=nextLoc.RcTime?nextLoc.RcTime.substring(0, 5):''%></label>
                             </div>
                             <br>
                             <div class="horizontal between" style="margin-top: -10px;">
@@ -309,7 +309,7 @@
                             </div>
                             <div class="horizontal between">
                                 <label>기본 물량</label>
-                                <label><b><%=routeTimeline.item.DefaultCnt.toLocaleString()%>개</b></label>
+                                <label><b><%=routeTimeline.item.DefaultCnt?routeTimeline.item.DefaultCnt.toLocaleString():0%>개</b></label>
                             </div>
                             <div class="horizontal between">
                                 <label>누적 물량</label>

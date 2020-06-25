@@ -590,6 +590,7 @@
                                 } else if(defaultCnt==stackCnt) {
                                     status='기본 물량';
                                 } else {
+                                    
                                     status=(stackCnt-defaultCnt).toLocaleString()+'개 초과';
                                 }
                                 // set total fee
@@ -724,7 +725,7 @@
                                     <td><b><%=busFee[i].Name%></b></td>
                                     <td><b><%=busFee[i].Cnt%>개</b></td>
                                     <td><b>노선당 <span class="price" data-cat="bus" data-id="<%=busFee[i].ID%>"
-                                                data-name="<%=busFee[i].Name%>"><%=busFee[i].DefaultFee.toLocaleString()%>원</span></b>
+                                                data-name="<%=busFee[i].Name%>"><%=busFee[i].DefaultFee?busFee[i].DefaultFee.toLocaleString():0%>원</span></b>
                                     </td>
                                     <td><b><%=(busFee[i].DefaultFee*busFee[i].Cnt).toLocaleString()%>원</b></td>
                                 </tr>
