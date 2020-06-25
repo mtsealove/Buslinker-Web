@@ -219,7 +219,7 @@ exports.getLogis = (callback) => {
 }
 
 exports.getOwners = (logi, callback) => {
-    const query = `select ID, Name from Members where MemberCat=3 and Corp='${logi}'`;
+    const query = `select ID, Name from Members where MemberCat=3`;
     connection.query(query, (error, results) => {
         if (error) {
             console.error(error);
