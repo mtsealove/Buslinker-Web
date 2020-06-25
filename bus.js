@@ -162,7 +162,7 @@ exports.startBus = (app) => {
         var profilePath = '', licensePath = '';
         // profile maybe not selected
         if (req.files['profile']) {
-            profilePath = (req.files['profile'][0]).path;
+            profilePath = (req.files['profile'][0]).filename;
         }
         if (req.files['license']) {
             licensePath = (req.files['license'][0]).path;
